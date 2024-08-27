@@ -15,19 +15,69 @@ body, html {
     padding: 0;
     font-family: 'Poppins', sans-serif;
     font-size: 16px;
-    background-color:pink;
+    background-color:black;
     color:black;
+    overflow-x:hidden;
 }
 
 #gwamble-bar {
     background-color: black;
-    padding: 20px;
-    text-align: center;   
-    color:pink;
+    padding: 10px;
+    color: pink;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    justify-content: center;
+    position:sticky;
+    top:0;
 }
 
 #gwamble-bar h1 {
-    font-family: 'Righteous', sans-serif;
-    font-size:100px;
-    color:pink;
+    font-family: 'Righteous';
+    font-size: 30px;
+    color: pink;
+    margin: auto;
+    line-height: normal;
+    margin-bottom: 2.5px;
 }
+
+#gwamble-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    height: calc(100% - 60px);
+    background-color: pink;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    gap: 20px;
+}
+
+#gwamble-body span {
+    font-family: 'Righteous';
+    color:pink;
+    line-height:1;
+    font-size:25px;
+
+}
+
+
+#gwamble-body i {
+    float:right;
+    font-size:30px;
+    line-height:1;
+}
+
+
+.gwamble-option {
+    background-color: black;
+    border-radius: 20px;
+    width: 100%;
+    color: pink;
+    font-family: 'Poppins';
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+
