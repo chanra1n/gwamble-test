@@ -106,22 +106,28 @@ body {
 }
 
 .gwamble-option button {
-    width: 100%;
+    width: 50%;
     border: none;
     padding: 10px;
     font-family: 'Righteous';
     font-size: 20px;
-    border-radius: 10px;
+    border-radius: 0px 10px 10px 0px;
     box-sizing: border-box;
     background-color: pink;
     margin-top: 10px; /* Adds some space between the button and previous elements */
+    color:black;
+}
+
+.gwamble-option .cancel {
+    background-color: #ffc0cb50;
+    color: pink;
+    border-radius: 10px 0px 0px 10px;
 }
 
 
 #create-gwamble-options {
     display: none;
     opacity: 0;
-    pointer-events: none;
     transition: opacity 0.5s;
     flex-grow: 1;
     align-items: flex-end;

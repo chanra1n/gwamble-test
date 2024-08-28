@@ -38,6 +38,7 @@
         <input type = "text" placeholder = "...">
         <br>
         <br>
+    <button onclick = "closeCreateGwamble()" class = "cancel">Cancel</button>
     <button>Post</button>
     </div>
     </div>
@@ -57,66 +58,45 @@
     var join_gwamble_is_triggered = false;
 
     function createGwamble() {
+        console.log("create gwamble");
         document.getElementById('create-gwamble-container').style.flexDirection = "column";
         document.getElementById('create-gwamble-container').style.height = "0";
         document.getElementById('create-gwamble-container').offsetHeight;
-        document.getElementById('create-gwamble-container').style.height = "100%";
+        document.getElementById('create-gwamble-container').style.height = "inherit";
         document.getElementById('create-gwamble-options').style.display = "flex";
         // any elements with the class "hidden-while-displayed" will be hidden
         for (var i = 0; i < document.getElementsByClassName('hidden-while-displayed').length; i++) {
             document.getElementsByClassName('hidden-while-displayed')[i].style.display = "none";
         }
         setTimeout(function() {
-            document.getElementById('create-gwamble-container').style.paddingTop = "5px";
             document.getElementById('create-gwamble-options').style.opacity = "100%";
             document.getElementById('create-gwamble-options').style.pointerEvents = "all";
             document.getElementById('join-gwamble-container').style.display = "none";   
+            document.getElementById('create-gwamble-container').onclick = null;
         }, 1);
         create_gwamble_is_triggered = true;
-        toggleCloseIcon();
     }
 
-    function toggleCloseIcon() {
-        if (create_gwamble_is_triggered) {
-            document.getElementById('create-gwamble-icon').classList.remove('ri-sticky-note-add-fill');
-            document.getElementById('create-gwamble-icon').classList.add('ri-close-fill');
-            document.getElementById('create-gwamble-container').setAttribute('onclick', 'closeCreateGwamble()');
-        } else {
-            document.getElementById('create-gwamble-icon').classList.remove('ri-close-fill');
-            document.getElementById('create-gwamble-icon').classList.add('ri-sticky-note-add-fill');
-            document.getElementById('create-gwamble-container').setAttribute('onclick', 'createGwamble()');
-        }
-
-        if (join_gwamble_is_triggered) {
-            document.getElementById('join-gwamble-icon').classList.remove('ri-link-m');
-            document.getElementById('join-gwamble-icon').classList.add('ri-close-fill');
-            document.getElementById('join-gwamble-container').setAttribute('onclick', 'closeJoinGwamble()');
-        } else {
-            document.getElementById('join-gwamble-icon').classList.remove('ri-close-fill');
-            document.getElementById('join-gwamble-icon').classList.add('ri-link-m');
-            document.getElementById('join-gwamble-container').setAttribute('onclick', 'joinGwamble()');
-        }
-    }
 
     function closeCreateGwamble() {
+        console.log("close create gwamble");
         document.getElementById('create-gwamble-options').style.opacity = "0";
         document.getElementById('create-gwamble-options').style.display = "none";
-        document.getElementById('create-gwamble-options').style.pointerEvents = "none";
         document.getElementById('create-gwamble-container').style.height = "0";
         
         for (var i = 0; i < document.getElementsByClassName('hidden-while-displayed').length; i++) {
             document.getElementsByClassName('hidden-while-displayed')[i].style.display = "flex";
         }
 
-        document.getElementById('create-gwamble-container').style.paddingTop = "20px";
-
         setTimeout(function() {
             document.getElementById('create-gwamble-container').style.height = "unset";
             document.getElementById('join-gwamble-container').style.display = "flex";
             document.getElementById('create-gwamble-container').style.flexDirection = "row";
-        }, 300);
+            document.getElementById('create-gwamble-container').onclick = function() {
+                createGwamble();
+            };
+        }, 1);
         create_gwamble_is_triggered = false;
-        toggleCloseIcon();
     }
 
     
