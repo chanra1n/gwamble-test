@@ -17,7 +17,7 @@ body, html {
     font-size: 16px;
     background-color:black;
     color:black;
-    overflow-x:hidden;
+    overflow:hidden;
 }
 
 body {
@@ -68,9 +68,10 @@ body {
 
 
 #gwamble-body i {
-    float:right;
-    font-size:30px;
-    line-height:1;
+    float: right;
+    font-size: 30px;
+    line-height: 1;
+    margin-top: -2.5px;
 }
 
 
@@ -94,7 +95,7 @@ body {
     padding: 10px;
     font-family: 'Righteous';
     font-size: 20px;
-    border-radius: 5px;
+    border-radius: 10px;
     position: absolute;
     bottom: 0;
     left: 0;
@@ -110,6 +111,7 @@ body {
     opacity:0%;
     pointer-events:none;
     transition: all 0.5s;
+    height: 100%;
 }
 
 #create-gwamble-options hr {
@@ -127,14 +129,14 @@ body {
     font-size: 16px;
     font-family: 'Poppins';
     font-weight: 900;
-    border-radius: 5px;
+    border-radius: 10px;
     background-color: pink;
     color: black;
     resize: none;
 }
 
 #create-gwamble-options textarea {
-    height: 30vmin;
+    height: 40%;
 }
 
 #create-gwamble-options .small-title {
@@ -142,4 +144,5 @@ body {
     display: block;
     margin: 10px;
     margin-left: 0;
+    opacity:50%;
 }
