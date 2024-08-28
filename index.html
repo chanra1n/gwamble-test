@@ -98,6 +98,7 @@
 
     var create_gwamble_is_triggered = false;
     var join_gwamble_is_triggered = false;
+    var is_pwa = false;
 
     function createGwamble() {
         console.log("create gwamble");
@@ -105,6 +106,7 @@
         const createOptions = document.getElementById('create-gwamble-options');
         const hiddenElements = document.getElementsByClassName('hidden-while-displayed');
         document.getElementById('join-gwamble-container').style.display = "none";
+        document.getElementById('pwa-notice').style.display = "none";
 
 
         for (var i = 0; i < hiddenElements.length; i++) {
@@ -141,6 +143,11 @@
             createContainer.onclick = function () {
                 createGwamble();
             };
+            if (is_pwa){
+                document.getElementById('pwa-notice').style.display = "none";
+            } else {
+                document.getElementById('pwa-notice').style.display = "block";
+            }
         }, 1);
         create_gwamble_is_triggered = false;
     }
@@ -237,9 +244,11 @@ function verifyPWA(){
 ) {
         console.log('PWA detected');
         document.getElementById('pwa-notice').style.display = "none";
+        is_pwa = true;
     } else {
         console.log('PWA not detected');
         document.getElementById('pwa-notice').style.display = "block";
+        is_pwa = false;
     }
     
 
