@@ -62,6 +62,29 @@ body {
     margin-top:7.5px;
 }
 
+#reload-icon, #download-icon {
+    color: black;
+    float: left;
+    font-size: 50px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    line-height: normal;
+    margin: 15px;
+    transform: scale(0.75);
+    font-weight: 900;
+    mix-blend-mode: overlay;
+    z-index: 2;
+    opacity: 75%;
+}
+
+    .right {
+        left: auto!important;
+        right: 0;
+        float: right!important;
+        margin-right: 15px!important;
+}
+
 #gwamble-body {
     display: flex;
     flex-direction: column;
