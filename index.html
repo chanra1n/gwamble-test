@@ -34,9 +34,9 @@
 </head>
 
 <body>
-    <i class="ri-loop-right-fill" id = "reload-icon"></i>
+    <i class="ri-loop-right-fill" onclick = "reloadPage()" id = "reload-icon"></i>
     <i class="ri-download-fill right" id = "download-icon"></i>
-    
+
     <nav id="gwamble-bar" uk-navbar>
         <h1>gwamble</h1>
     </nav>
@@ -213,14 +213,10 @@
 }
 OTPInput();
 
-    self.addEventListener('visibilitychange', function() {
-    if (document.visibilityState === 'visible') {
-        console.log('APP resumed');
-        window.location.reload();
-    }
-});
-
-
+function reloadPage(){
+    console.log('APP resumed');
+    window.location.reload();
+}
 
 </script>
 
