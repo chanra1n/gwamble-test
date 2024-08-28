@@ -58,10 +58,11 @@
     var join_gwamble_is_triggered = false;
 
     function createGwamble() {
+        document.getElementById('create-gwamble-container').style.flexDirection = "column";
         document.getElementById('create-gwamble-container').style.height = "0";
         document.getElementById('create-gwamble-container').offsetHeight;
         document.getElementById('create-gwamble-container').style.height = "100%";
-        document.getElementById('create-gwamble-options').style.display = "block";
+        document.getElementById('create-gwamble-options').style.display = "flex";
         setTimeout(function() {
             document.getElementById('create-gwamble-options').style.opacity = "100%";
             document.getElementById('create-gwamble-options').style.pointerEvents = "all";
@@ -101,6 +102,7 @@
         setTimeout(function() {
             document.getElementById('create-gwamble-container').style.height = "unset";
             document.getElementById('join-gwamble-container').style.display = "block";
+            document.getElementById('create-gwamble-container').style.flexDirection = "row";
         }, 300);
         create_gwamble_is_triggered = false;
         toggleCloseIcon();
