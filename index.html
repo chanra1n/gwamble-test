@@ -61,8 +61,8 @@
                 <span class="small-title">Outcome B</span>
                 <input style = "margin-bottom:20px" type="text" placeholder="..." maxlength="20">
  
-                <button onclick="closeCreateGwamble()" class="cancel">Cancel</button>
-                <button onclick="passGwamble()">Post</button>
+                <button id = "cancel-gwamble-post-button" onclick="closeCreateGwamble()" class="cancel">Cancel</button>
+                <button id = "create-gwamble-post-button" disabled onclick="passGwamble()">Post</button>
             </div>
         </div>
 
@@ -274,10 +274,31 @@
         //window.location.replace("session.html");
     }
 
+    // let's set an even listener for the inputs and textareas inside the create-gwamble-options.
+    // onchange, we will check if all the inputs/textareas have values, if they do, we will enable the post button
+    // if they don't, we will disable the post button
+
+    function initCreateGwambleListeners() {
+        const createGwambleOptions = document.getElementById('create-gwamble-options');
+        const createGwamblePostButton = document.getElementById('create-gwamble-post-button');
+
+        createGwambleOptions.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('change', function () {
+                const allInputsHaveValues = Array.from(createGwambleOptions.querySelectorAll('input, textarea')).every(input => input.value);
+                if (allInputsHaveValues) {
+                    createGwamblePostButton.disabled = false;
+                } else {
+                    createGwamblePostButton.disabled = true;
+                }
+            });
+        });
+    }
+
 
     window.onload = function() {
-        OTPInput();
         verifyPWA();
+        OTPInput();
+        initCreateGwambleListeners();
     };
 
 </script>

@@ -166,6 +166,7 @@ body {
     margin-top: 10px; /* Adds some space between the button and previous elements */
     color:black;
     font-weight:900;
+    opacity:100%;
 }
 
 .gwamble-option .cancel {
@@ -324,4 +325,8 @@ input::placeholder, textarea::placeholder {
     font-weight: bolder;
     margin-left: 2.5px;
     margin-right: 2.5px;
+}
+
+button:disabled {
+    opacity: 50%;
 }
