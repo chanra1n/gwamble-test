@@ -35,8 +35,7 @@ body {
 
 .gwamble-button-container {
     display: flex;
-    align-items: center;
-    margin-bottom: 20px; /* Adds space between each button-counter pair */
+    align-items: stretch;
 }
 
 .gwamble-button-container button {
@@ -46,22 +45,31 @@ body {
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 10px 20px;
+    padding: 5px 15px;
     border: none;
     border-radius: 10px 0px 0px 10px;
     font-size: 25px;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    box-sizing: border-box;
 }
 
 .gwamble-bets {
     font-size: 30px;
     color: pink;
+    background-color: black;
+    border: 5px solid pink;
     border-radius: 0px 10px 10px 0px;
-    padding: 10px;
+    padding: 5px;
     font-weight: 900;
     font-family: 'Manrope';
-    margin-left: 10px;
     line-height: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    box-sizing: border-box;
+    padding-left: 10px;
+    padding-right: 10px;
 }
