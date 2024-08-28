@@ -4,8 +4,23 @@
 }
 
 @font-face {
+    font-family: 'Poppins-Bold';
+    src: url('../../font/poppins/Poppins-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins-SemiBold';
+    src: url('../../font/poppins/Poppins-SemiBold.ttf');
+}
+
+@font-face {
     font-family: 'Righteous';
     src: url('../../font/righteous/Righteous-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Manrope';
+    src: url('../../font/Manrope.ttf');
 }
 
 body, html {
@@ -38,11 +53,11 @@ body {
 
 #gwamble-bar h1 {
     font-family: 'Righteous';
-    font-size: 25px;
+    font-size: 35px;
     color: black;
     margin: auto;
     line-height: normal;
-    margin-bottom: 5px;
+    margin-top:7.5px;
 }
 
 #gwamble-body {
@@ -61,11 +76,12 @@ body {
 
 
 #gwamble-body span {
-    font-family: 'Righteous';
+    font-family: 'Manrope';
     color: pink;
     font-size: 25px;
-    margin: 0; /* Reset margin */
-    flex-grow: 0; /* Allow span to take up remaining space */
+    margin: 0;
+    flex-grow: 0;
+    font-weight:900;
 }
 
 #gwamble-body i {
