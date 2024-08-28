@@ -73,50 +73,52 @@
 
     var create_gwamble_is_triggered = false;
     var join_gwamble_is_triggered = false;
-
     function createGwamble() {
-        console.log("create gwamble");
-        document.getElementById('create-gwamble-container').style.flexDirection = "column";
-        document.getElementById('create-gwamble-container').style.height = "0";
-        document.getElementById('create-gwamble-container').offsetHeight;
-        document.getElementById('create-gwamble-container').style.height = "inherit";
-        document.getElementById('create-gwamble-options').style.display = "flex";
-        // any elements with the class "hidden-while-displayed" will be hidden
-        for (var i = 0; i < document.getElementsByClassName('hidden-while-displayed').length; i++) {
-            document.getElementsByClassName('hidden-while-displayed')[i].style.display = "none";
-        }
-        setTimeout(function() {
-            document.getElementById('create-gwamble-options').style.opacity = "100%";
-            document.getElementById('create-gwamble-options').style.pointerEvents = "all";
-            document.getElementById('join-gwamble-container').style.display = "none";   
-            document.getElementById('create-gwamble-container').onclick = null;
-        }, 1);
-        create_gwamble_is_triggered = true;
-    }
-
-
-    function closeCreateGwamble() {
-        console.log("close create gwamble");
-        document.getElementById('create-gwamble-options').style.opacity = "0";
-        document.getElementById('create-gwamble-options').style.display = "none";
-        document.getElementById('create-gwamble-container').style.height = "0";
-        
-        for (var i = 0; i < document.getElementsByClassName('hidden-while-displayed').length; i++) {
-            document.getElementsByClassName('hidden-while-displayed')[i].style.display = "flex";
-        }
-
-        setTimeout(function() {
-            document.getElementById('create-gwamble-container').style.height = "unset";
-            document.getElementById('join-gwamble-container').style.display = "flex";
-            document.getElementById('create-gwamble-container').style.flexDirection = "row";
-            document.getElementById('create-gwamble-container').onclick = function() {
-                createGwamble();
-            };
-        }, 1);
-        create_gwamble_is_triggered = false;
-    }
-
+    console.log("create gwamble");
+    const createContainer = document.getElementById('create-gwamble-container');
+    const createOptions = document.getElementById('create-gwamble-options');
+    const hiddenElements = document.getElementsByClassName('hidden-while-displayed');
     
+    createContainer.style.flexDirection = "column";
+    createOptions.style.display = "flex";
+    createContainer.style.height = "auto"; // Set to auto to expand
+
+    for (var i = 0; i < hiddenElements.length; i++) {
+        hiddenElements[i].style.display = "none";
+    }
+
+    setTimeout(function() {
+        createOptions.style.opacity = "1"; // Ensure opacity is set correctly
+        createOptions.style.pointerEvents = "all";
+        document.getElementById('join-gwamble-container').style.display = "none";   
+        createContainer.onclick = null;
+    }, 1);
+    create_gwamble_is_triggered = true;
+}
+
+function closeCreateGwamble() {
+    console.log("close create gwamble");
+    const createContainer = document.getElementById('create-gwamble-container');
+    const createOptions = document.getElementById('create-gwamble-options');
+    const hiddenElements = document.getElementsByClassName('hidden-while-displayed');
+    
+    createOptions.style.opacity = "0";
+    createOptions.style.display = "none";
+    
+    for (var i = 0; i < hiddenElements.length; i++) {
+        hiddenElements[i].style.display = "flex";
+    }
+
+    setTimeout(function() {
+        createContainer.style.height = "auto"; // Reset to auto to shrink back down if needed
+        document.getElementById('join-gwamble-container').style.display = "flex";
+        createContainer.style.flexDirection = "row";
+        createContainer.onclick = function() {
+            createGwamble();
+        };
+    }, 1);
+    create_gwamble_is_triggered = false;
+}
 
 
 </script>

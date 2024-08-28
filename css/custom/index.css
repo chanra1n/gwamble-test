@@ -50,14 +50,15 @@ body {
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
-    height: calc(100% - 60px);
+    height: auto; /* Changed from fixed height to auto */
     background-color: pink;
     width: 100%;
     padding: 15px;
     box-sizing: border-box;
     gap: 15px;
-    overflow-y: auto; /* Enable scrolling if needed */
+    overflow-y: auto; /* Allow vertical scrolling */
 }
+
 
 #gwamble-body span {
     font-family: 'Righteous';
@@ -77,14 +78,18 @@ body {
 }
 
 #create-gwamble-container {
-    display: flex;
-    flex-direction: row;
     width: 100%;
-    max-height: 100%;
-    overflow: hidden;
+    background-color: black;
+    border-radius: 20px;
+    color: pink;
+    font-family: 'Poppins';
+    padding: 20px;
+    box-sizing: border-box;
     transition: all 0.2s;
     transition-timing-function: ease-in-out;
+    overflow: hidden;
     position: relative;
+    height: fit-content; /* Allow the height to fit content */
 }
 
 
@@ -100,9 +105,10 @@ body {
     transition-timing-function: ease-in-out;
     overflow: hidden;
     position: relative;
-    display: flex; /* Flexbox for horizontal alignment */
-    align-items: center; /* Align items vertically in the center */
-    gap: 10px; /* Add gap between span and i */
+    height: auto; /* Ensure height is auto for dynamic content adjustment */
+    display: flex; /* Flexbox to align contents correctly */
+    align-items: center; /* Center align vertically */
+    justify-content: space-between; /* Space between elements */
 }
 
 .gwamble-option button {
@@ -128,13 +134,11 @@ body {
 #create-gwamble-options {
     display: none;
     opacity: 0;
+    pointer-events: none;
     transition: opacity 0.5s;
-    flex-grow: 1;
-    align-items: flex-end;
+    height: auto; /* Allow height to adjust automatically */
+    align-items: flex-start;
     flex-wrap: wrap;
-    max-height: calc(100vh - 120px);
-    overflow-y: auto;
-    box-sizing: border-box;
 }
 
 #create-gwamble-options hr {
@@ -173,3 +177,72 @@ body {
 
 
 
+
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    background-color: black;
+    color: black;
+    overflow: hidden;
+}
+
+body {
+    background-image: linear-gradient(to bottom, black, pink);
+}
+
+#gwamble-bar {
+    background-color: black;
+    padding: 5px;
+    color: pink;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+}
+
+#gwamble-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Align items to the bottom initially */
+    align-items: center;
+    height: calc(100% - 60px); /* Full height minus nav bar */
+    background-color: pink;
+    width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+    gap: 15px;
+    overflow-y: auto; /* Allow vertical scrolling if content overflows */
+}
+
+.gwamble-option {
+    background-color: black;
+    border-radius: 20px;
+    width: 100%;
+    color: pink;
+    font-family: 'Poppins';
+    padding: 20px;
+    box-sizing: border-box;
+    transition: all 0.5s;
+    transition-timing-function: ease-in-out;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#create-gwamble-options {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    height: 50%;
+}
