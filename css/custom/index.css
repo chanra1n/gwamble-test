@@ -25,7 +25,7 @@ body {
 }
 
 #gwamble-bar {
-    background-color: black;
+    background-color: pink;
     padding: 5px;
     color: pink;
     display: flex;
@@ -39,7 +39,7 @@ body {
 #gwamble-bar h1 {
     font-family: 'Righteous';
     font-size: 25px;
-    color: pink;
+    color: black;
     margin: auto;
     line-height: normal;
     margin-bottom: 5px;
