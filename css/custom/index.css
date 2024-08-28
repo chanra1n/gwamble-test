@@ -55,7 +55,7 @@ body {
 
 #gwamble-bar h1 {
     font-family: 'Righteous';
-    font-size: 35px;
+    font-size: 40px;
     color: black;
     margin: auto;
     line-height: normal;
@@ -135,13 +135,14 @@ body {
     width: 50%;
     border: none;
     padding: 10px;
-    font-family: 'Righteous';
-    font-size: 20px;
+    font-family: 'Manrope';
+    font-size: 25px;
     border-radius: 0px 10px 10px 0px;
     box-sizing: border-box;
     background-color: pink;
     margin-top: 10px; /* Adds some space between the button and previous elements */
     color:black;
+    font-weight:900;
 }
 
 .gwamble-option .cancel {
@@ -172,9 +173,9 @@ body {
     width: 100%;
     box-sizing: border-box;
     border: none;
-    padding: 7.5px;
-    font-size: 20px;
-    font-family: 'Poppins';
+    padding: 10px;
+    font-size: 25px;
+    font-family: 'Manrope';
     font-weight: 900;
     border-radius: 10px;
     background-color: pink;
@@ -187,6 +188,12 @@ body {
     height: 40vmin;
     flex-grow: 1;
     margin-bottom: 20px;
+}
+
+input::placeholder, textarea::placeholder {
+    color: #00000050;
+    font-weight: 900;
+    font-family:'Manrope';
 }
 
 #create-gwamble-options .small-title {
