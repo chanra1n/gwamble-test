@@ -40,12 +40,27 @@
         <h1>gwamble</h1>
     </nav>
 
-<div class = "gwamble-post" id = "posted-gwamble">
-    <h1 id = "gwamble-subject">Subject</h1>
-    <br>
-    <button id = "gwamble-outcome-a" style= "margin-bottom:20px">Outcome A</button>
-    <button id = "gwamble-outcome-b">Outcome B</button>
-</div>
+    <div class="gwamble-post" id="posted-gwamble">
+        <h1 id="gwamble-subject">Subject</h1>
+        <br>
+        
+        <p>Outcome A</p>
+        <div class="gwamble-button-container">
+            <button id="gwamble-outcome-a">
+                <span id="gwamble-outcome-a-text">Outcome A</span>
+            </button>
+            <span id="gwamble-outcome-a-bets" class="gwamble-bets">0</span>
+        </div>
+
+        <p>Outcome B</p>
+        <div class="gwamble-button-container">
+            <button id="gwamble-outcome-b">
+                <span id="gwamble-outcome-b-text">Outcome B</span>
+            </button>
+            <span id="gwamble-outcome-b-bets" class="gwamble-bets">0</span>
+        </div>
+    </div>
+    
 
 </body>
 <script src="js/lib/uikit.js"></script>
@@ -67,8 +82,8 @@ function initSession() {
     }
 
     document.getElementById('gwamble-subject').innerHTML = gwamble.subject;
-    document.getElementById('gwamble-outcome-a').innerHTML = gwamble.outcome_a;
-    document.getElementById('gwamble-outcome-b').innerHTML = gwamble.outcome_b;
+    document.getElementById('gwamble-outcome-a-text').innerHTML = gwamble.outcome_a;
+    document.getElementById('gwamble-outcome-b-text').innerHTML = gwamble.outcome_b;
 
 
 }

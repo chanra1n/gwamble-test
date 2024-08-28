@@ -1,8 +1,7 @@
 body {
-    background-color:pink;
-    background-image:none;
+    background-color: pink;
+    background-image: none;
 }
-
 
 #posted-gwamble {
     background-color: black;
@@ -17,21 +16,52 @@ body {
 }
 
 #posted-gwamble h1 {
-    font-family: 'Manrope';
+    font-family: 'Manrope', sans-serif;
     font-weight: 900;
     font-size: 40px;
     color: pink;
-    margin-bottom:20px;
+    display: block;
+    margin-bottom: 20px;
 }
 
- #posted-gwamble button {
-    padding: 10px;
-    font-size: 30px;
-    font-family: 'Poppins-Bold';
+.gwamble-post p {
+    margin: 0px;
+    margin-bottom: 10px;
     font-weight: 900;
-    border-radius: 10px;
+    font-family: 'Manrope';
+    opacity: 50%;
+    font-size: 20px;
+}
+
+.gwamble-button-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px; /* Adds space between each button-counter pair */
+}
+
+.gwamble-button-container button {
+    font-family: 'Poppins-Bold', sans-serif;
     background-color: pink;
     color: black;
-    border: none;
+    display: flex;
+    align-items: center;
     width: 100%;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px 0px 0px 10px;
+    font-size: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.gwamble-bets {
+    font-size: 30px;
+    color: pink;
+    border-radius: 0px 10px 10px 0px;
+    padding: 10px;
+    font-weight: 900;
+    font-family: 'Manrope';
+    margin-left: 10px;
+    line-height: normal;
 }
