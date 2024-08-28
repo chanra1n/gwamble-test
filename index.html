@@ -73,15 +73,16 @@
 
     var create_gwamble_is_triggered = false;
     var join_gwamble_is_triggered = false;
+
     function createGwamble() {
     console.log("create gwamble");
     const createContainer = document.getElementById('create-gwamble-container');
     const createOptions = document.getElementById('create-gwamble-options');
     const hiddenElements = document.getElementsByClassName('hidden-while-displayed');
-    
-    createContainer.style.flexDirection = "column";
+
+    // Ensure the container's height can expand
+    createContainer.style.height = "auto";
     createOptions.style.display = "flex";
-    createContainer.style.height = "auto"; // Set to auto to expand
 
     for (var i = 0; i < hiddenElements.length; i++) {
         hiddenElements[i].style.display = "none";
@@ -90,7 +91,7 @@
     setTimeout(function() {
         createOptions.style.opacity = "1"; // Ensure opacity is set correctly
         createOptions.style.pointerEvents = "all";
-        document.getElementById('join-gwamble-container').style.display = "none";   
+        document.getElementById('join-gwamble-container').style.display = "none";
         createContainer.onclick = null;
     }, 1);
     create_gwamble_is_triggered = true;
@@ -104,21 +105,21 @@ function closeCreateGwamble() {
     
     createOptions.style.opacity = "0";
     createOptions.style.display = "none";
-    
+
     for (var i = 0; i < hiddenElements.length; i++) {
         hiddenElements[i].style.display = "flex";
     }
 
     setTimeout(function() {
-        createContainer.style.height = "auto"; // Reset to auto to shrink back down if needed
+        createContainer.classList.remove('open'); // Remove class to trigger transition
         document.getElementById('join-gwamble-container').style.display = "flex";
-        createContainer.style.flexDirection = "row";
         createContainer.onclick = function() {
             createGwamble();
         };
     }, 1);
     create_gwamble_is_triggered = false;
 }
+
 
 
 </script>
