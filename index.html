@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="https://chanra1n.github.io/gwamble-test/manifest.json">
     <link rel="apple-touch-icon" sizes="72x72" href="icon/icon-72x72.png">
     <link rel="icon" type="image/png" sizes="96x96" href="icon/icon-96x96.png">
     <link rel="icon" type="image/png" sizes="128x128" href="icon/icon-128x128.png">
@@ -53,16 +53,16 @@
 
             <div id="create-gwamble-options">
                 <span class="small-title">Subject</span>
-                <textarea id="create-gwamble-subject" placeholder="What are we gwambling on?"></textarea>
+                <textarea id="create-gwamble-subject" placeholder="What are we gwambling on?" maxlength="50"></textarea>
 
                 <span class="small-title">Outcome A</span>
-                <input type="text" placeholder="...">
+                <input type="text" placeholder="..." maxlength="20">
  
                 <span class="small-title">Outcome B</span>
-                <input style = "margin-bottom:20px" type="text" placeholder="...">
+                <input style = "margin-bottom:20px" type="text" placeholder="..." maxlength="20">
  
                 <button onclick="closeCreateGwamble()" class="cancel">Cancel</button>
-                <button>Post</button>
+                <button onclick="passGwamble()">Post</button>
             </div>
         </div>
 
@@ -140,6 +140,9 @@
         setTimeout(function () {
             createContainer.classList.remove('open'); // Remove class to trigger transition
             document.getElementById('join-gwamble-container').style.display = "flex";
+            // clear all the inputs
+            document.getElementById('create-gwamble-subject').value = "";
+            document.getElementById('create-gwamble-options').querySelectorAll('input').forEach(input => input.value = "");
             createContainer.onclick = function () {
                 createGwamble();
             };
@@ -225,12 +228,12 @@
   }
 }
 
-function reloadPage(){
+    function reloadPage(){
     console.log('APP resumed');
     window.location.reload();
 }
 
-function verifyPWA(){
+    function verifyPWA(){
     // get current URL, look for ?pwa=true
     const urlParams = new URLSearchParams(window.location.search);
     const pwa = urlParams.get('pwa');
@@ -254,10 +257,28 @@ function verifyPWA(){
 
 }
 
-window.onload = function() {
-OTPInput();
-verifyPWA();
-};
+
+    function passGwamble() {
+        var gwamble_subject = document.getElementById('create-gwamble-subject').value;
+        var gwamble_outcome_a = document.getElementById('create-gwamble-options').querySelectorAll('input')[0].value;
+        var gwamble_outcome_b = document.getElementById('create-gwamble-options').querySelectorAll('input')[1].value;
+
+        var gwamble = {
+            "subject": gwamble_subject,
+            "outcome_a": gwamble_outcome_a,
+            "outcome_b": gwamble_outcome_b
+        };
+
+        sessionStorage.setItem('gwamble', JSON.stringify(gwamble));
+        window.location.href = "session.html";
+        //window.location.replace("session.html");
+    }
+
+
+    window.onload = function() {
+        OTPInput();
+        verifyPWA();
+    };
 
 </script>
 

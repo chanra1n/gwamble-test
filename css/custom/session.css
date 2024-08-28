@@ -1,0 +1,37 @@
+body {
+    background-color:pink;
+    background-image:none;
+}
+
+
+#posted-gwamble {
+    background-color: black;
+    color: pink;
+    padding: 20px;
+    margin: 20px;
+    margin-top: 30px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+#posted-gwamble h1 {
+    font-family: 'Manrope';
+    font-weight: 900;
+    font-size: 40px;
+    color: pink;
+    margin-bottom:20px;
+}
+
+ #posted-gwamble button {
+    padding: 10px;
+    font-size: 30px;
+    font-family: 'Poppins-Bold';
+    font-weight: 900;
+    border-radius: 10px;
+    background-color: pink;
+    color: black;
+    border: none;
+    width: 100%;
+}

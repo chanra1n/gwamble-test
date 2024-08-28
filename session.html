@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>GWAMBLE</title>
+    <link rel="stylesheet" type="text/css" href="css/lib/remixicon.css">
+    <link rel="stylesheet" type="text/css" href="css/lib/uikit.css">
+    <link rel="stylesheet" type="text/css" href="css/custom/index.css">
+    <link rel="stylesheet" type="text/css" href="css/custom/session.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <link rel="manifest" href="https://chanra1n.github.io/gwamble-test/manifest.json">
+    <link rel="apple-touch-icon" sizes="72x72" href="icon/icon-72x72.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="icon/icon-96x96.png">
+    <link rel="icon" type="image/png" sizes="128x128" href="icon/icon-128x128.png">
+    <link rel="icon" type="image/png" sizes="144x144" href="icon/icon-144x144.png">
+    <link rel="icon" type="image/png" sizes="152x152" href="icon/icon-152x152.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="384x384" href="icon/icon-384x384.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon/icon-512x512.png">
+    <meta name="theme-color" content="#ffc0cb">
+    <meta name="background-color" content="#ffc0cb">
+    <meta name="msapplication-TileColor" content="#ffc0cb">
+    <meta name="msapplication-TileImage" content="icon/icon-144x144.png">
+    <meta name="msapplication-config" content="https://csclubhumboldt.org/browserconfig.xml">
+    <meta name="application-name" content="gwamble">
+    <meta name="apple-mobile-web-app-title" content="gwamble">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+
+</head>
+
+<body>
+
+    <nav id="gwamble-bar" uk-navbar>
+        <h1>gwamble</h1>
+    </nav>
+
+<div class = "gwamble-post" id = "posted-gwamble">
+    <h1 id = "gwamble-subject">Subject</h1>
+    <br>
+    <button id = "gwamble-outcome-a" style= "margin-bottom:20px">Outcome A</button>
+    <button id = "gwamble-outcome-b">Outcome B</button>
+</div>
+
+</body>
+<script src="js/lib/uikit.js"></script>
+<script>
+
+var gwamble;
+
+function initSession() {
+    var session = sessionStorage.getItem('gwamble');
+    if (session) {
+        gwamble = JSON.parse(session);
+        console.log(gwamble);
+    } else {
+        gwamble = {
+            "subject": "no posted gwamble",
+            "outcome_a": "outcome a",
+            "outcome_b": "outcome b"
+        }
+    }
+
+    document.getElementById('gwamble-subject').innerHTML = gwamble.subject;
+    document.getElementById('gwamble-outcome-a').innerHTML = gwamble.outcome_a;
+    document.getElementById('gwamble-outcome-b').innerHTML = gwamble.outcome_b;
+
+
+}
+
+window.onload = function() {
+initSession();
+}
+
+</script>
+
+</html>
