@@ -20,6 +20,10 @@ body, html {
     overflow-x:hidden;
 }
 
+body {
+    background-image:linear-gradient(90deg, pink, black);
+}
+
 #gwamble-bar {
     background-color: black;
     padding: 10px;
@@ -78,6 +82,64 @@ body, html {
     font-family: 'Poppins';
     padding: 20px;
     box-sizing: border-box;
+    transition: all 0.2s;
+    transition-timing-function: ease-in-out;
+    overflow: hidden;
+    position: relative;
+}
+
+.gwamble-option button {
+    width: calc(100% - 40px);
+    border: none;
+    padding: 10px;
+    font-family: 'Righteous';
+    font-size: 20px;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 20px;
+    box-sizing: border-box;
+    background-color: pink;
 }
 
 
+
+#create-gwamble-options {
+    display:none;
+    opacity:0%;
+    pointer-events:none;
+    transition: all 0.5s;
+}
+
+#create-gwamble-options hr {
+    margin-top: 15px;
+    border-width: 2px;
+    border-radius: 100vmin;
+    border-color: pink;
+}
+
+#create-gwamble-options input[type="text"], #create-gwamble-options textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    padding: 7.5px;
+    font-size: 16px;
+    font-family: 'Poppins';
+    font-weight: 900;
+    border-radius: 5px;
+    background-color: pink;
+    color: black;
+    resize: none;
+}
+
+#create-gwamble-options textarea {
+    height: 30vmin;
+}
+
+#create-gwamble-options .small-title {
+    font-size: 16px;
+    display: block;
+    margin: 10px;
+    margin-left: 0;
+}

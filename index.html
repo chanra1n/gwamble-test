@@ -23,10 +23,24 @@
 
     <div id = "gwamble-body">
 
-    <div class = "gwamble-option">
+    <div id = "create-gwamble-container" class = "gwamble-option" onclick = "createGwamble()">
     <span>Start gwambling</span>
     <i class="ri-sticky-note-add-fill"></i>
 
+    <div id = "create-gwamble-options">
+        <hr>
+        <span class = "small-title" >Subject</span>
+        <textarea id = "create-gwamble-subject" placeholder = "..."></textarea>
+        <br>
+        <span class = "small-title" >Outcome A</span>
+        <input type = "text" placeholder = "...">
+        <br>
+        <span class = "small-title" >Outcome B</span>
+        <input type = "text" placeholder = "...">
+        <br>
+        <br>
+    <button>Post</button>
+    </div>
     </div>
 
     <div class = "gwamble-option">
@@ -37,5 +51,19 @@
     </div>
 </body>
 <script src="js/lib/uikit.js"></script>
+<script>
+
+    function createGwamble() {
+        document.getElementById('create-gwamble-container').style.height = "0";
+        document.getElementById('create-gwamble-container').offsetHeight;
+        document.getElementById('create-gwamble-container').style.height = "100%";
+        document.getElementById('create-gwamble-options').style.display = "block";
+        setTimeout(function() {
+            document.getElementById('create-gwamble-options').style.opacity = "100%";
+            document.getElementById('create-gwamble-options').style.pointerEvents = "all";
+        }, 1);
+    }
+
+</script>
 
 </html>
