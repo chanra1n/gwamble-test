@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="css/lib/uikit.css">
     <link rel="stylesheet" type="text/css" href="css/custom/index.css">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
     <link rel="manifest" href="manifest.json">
@@ -34,36 +34,36 @@
 </head>
 
 <body>
-    <nav id = "gwamble-bar" uk-navbar>
+    <nav id="gwamble-bar" uk-navbar>
         <h1>gwamble</h1>
     </nav>
 
-    <div id = "gwamble-body">
+    <div id="gwamble-body">
 
-    <div id = "create-gwamble-container" class = "gwamble-option" onclick = "createGwamble()">
-    <span class = "hidden-while-displayed" >Start gwambling</span>
-    <i id = "create-gwamble-icon" class="ri-sticky-note-add-fill hidden-while-displayed"></i>
+        <div id="create-gwamble-container" class="gwamble-option" onclick="createGwamble()">
+            <span class="hidden-while-displayed">Start gwambling</span>
+            <i id="create-gwamble-icon" class="ri-sticky-note-add-fill hidden-while-displayed"></i>
 
-    <div id = "create-gwamble-options">
-        <span class = "small-title" >Subject</span>
-        <textarea id = "create-gwamble-subject" placeholder = "..."></textarea>
-        <br>
-        <span class = "small-title" >Outcome A</span>
-        <input type = "text" placeholder = "...">
-        <br>
-        <span class = "small-title" >Outcome B</span>
-        <input type = "text" placeholder = "...">
-        <br>
-        <br>
-    <button onclick = "closeCreateGwamble()" class = "cancel">Cancel</button>
-    <button>Post</button>
-    </div>
-    </div>
+            <div id="create-gwamble-options">
+                <span class="small-title">Subject</span>
+                <textarea id="create-gwamble-subject" placeholder="..."></textarea>
+                <br>
+                <span class="small-title">Outcome A</span>
+                <input type="text" placeholder="...">
+                <br>
+                <span class="small-title">Outcome B</span>
+                <input type="text" placeholder="...">
+                <br>
+                <br>
+                <button onclick="closeCreateGwamble()" class="cancel">Cancel</button>
+                <button>Post</button>
+            </div>
+        </div>
 
-    <div id = "join-gwamble-container" class = "gwamble-option">
-    <span>Join a gwamble</span>
-    <i id = "join-gwamble-icon" class="ri-link-m"></i>
-    </div>
+        <div id="join-gwamble-container" class="gwamble-option">
+            <span>Join a gwamble</span>
+            <i id="join-gwamble-icon" class="ri-link-m"></i>
+        </div>
 
     </div>
 </body>
@@ -75,50 +75,50 @@
     var join_gwamble_is_triggered = false;
 
     function createGwamble() {
-    console.log("create gwamble");
-    const createContainer = document.getElementById('create-gwamble-container');
-    const createOptions = document.getElementById('create-gwamble-options');
-    const hiddenElements = document.getElementsByClassName('hidden-while-displayed');
-
-    // Ensure the container's height can expand
-    createContainer.style.height = "auto";
-    createOptions.style.display = "flex";
-
-    for (var i = 0; i < hiddenElements.length; i++) {
-        hiddenElements[i].style.display = "none";
-    }
-
-    setTimeout(function() {
-        createOptions.style.opacity = "1"; // Ensure opacity is set correctly
-        createOptions.style.pointerEvents = "all";
+        console.log("create gwamble");
+        const createContainer = document.getElementById('create-gwamble-container');
+        const createOptions = document.getElementById('create-gwamble-options');
+        const hiddenElements = document.getElementsByClassName('hidden-while-displayed');
         document.getElementById('join-gwamble-container').style.display = "none";
-        createContainer.onclick = null;
-    }, 1);
-    create_gwamble_is_triggered = true;
-}
 
-function closeCreateGwamble() {
-    console.log("close create gwamble");
-    const createContainer = document.getElementById('create-gwamble-container');
-    const createOptions = document.getElementById('create-gwamble-options');
-    const hiddenElements = document.getElementsByClassName('hidden-while-displayed');
-    
-    createOptions.style.opacity = "0";
-    createOptions.style.display = "none";
 
-    for (var i = 0; i < hiddenElements.length; i++) {
-        hiddenElements[i].style.display = "flex";
+        for (var i = 0; i < hiddenElements.length; i++) {
+            hiddenElements[i].style.display = "none";
+        }
+
+        setTimeout(function () {
+            createOptions.style.opacity = "1"; // Ensure opacity is set correctly
+            createOptions.style.pointerEvents = "all";
+            // Ensure the container's height can expand
+            createContainer.style.height = "auto";
+            createOptions.style.display = "flex";
+            createContainer.onclick = null;
+        }, 1);
+        create_gwamble_is_triggered = true;
     }
 
-    setTimeout(function() {
-        createContainer.classList.remove('open'); // Remove class to trigger transition
-        document.getElementById('join-gwamble-container').style.display = "flex";
-        createContainer.onclick = function() {
-            createGwamble();
-        };
-    }, 1);
-    create_gwamble_is_triggered = false;
-}
+    function closeCreateGwamble() {
+        console.log("close create gwamble");
+        const createContainer = document.getElementById('create-gwamble-container');
+        const createOptions = document.getElementById('create-gwamble-options');
+        const hiddenElements = document.getElementsByClassName('hidden-while-displayed');
+
+        createOptions.style.opacity = "0";
+        createOptions.style.display = "none";
+
+        for (var i = 0; i < hiddenElements.length; i++) {
+            hiddenElements[i].style.display = "flex";
+        }
+
+        setTimeout(function () {
+            createContainer.classList.remove('open'); // Remove class to trigger transition
+            document.getElementById('join-gwamble-container').style.display = "flex";
+            createContainer.onclick = function () {
+                createGwamble();
+            };
+        }, 1);
+        create_gwamble_is_triggered = false;
+    }
 
 
 
