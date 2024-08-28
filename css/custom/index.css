@@ -38,6 +38,7 @@ body, html {
 body {
     background-image: linear-gradient(to bottom, black, pink);
     -webkit-font-smoothing: subpixel-antialiased;
+    font-synthesis: none !important;
 }
 
 #gwamble-bar {
