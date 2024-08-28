@@ -59,9 +59,26 @@
             </div>
         </div>
 
-        <div id="join-gwamble-container" class="gwamble-option">
-            <span>Join a gwamble</span>
-            <i id="join-gwamble-icon" class="ri-link-m"></i>
+        <div id="join-gwamble-container" class="gwamble-option" onclick="joinGwamble()">
+            <span class="hidden-while-displayed">Join a gwamble</span>
+            <i id="join-gwamble-icon" class="ri-link-m hidden-while-displayed"></i>
+
+            <div id="join-gwamble-options">
+                <div class="mb-6 text-center">
+                    <div id="otp" class="flex justify-center">
+                      <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="first" maxlength="1" placeholder = "-"/>
+                      <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="second" maxlength="1" placeholder = "-" />
+                      <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="third" maxlength="1" placeholder = "-" />
+                      <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="fourth" maxlength="1" placeholder = "-"/>
+                      <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="fifth" maxlength="1" placeholder = "-" />
+                      <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="sixth" maxlength="1" placeholder = "-" />
+                    </div>
+                  </div>
+ 
+                <button onclick="closeJoinGwamble()" class="cancel">Cancel</button>
+                <button>Join</button>
+            </div>
+
         </div>
 
     </div>
@@ -118,6 +135,80 @@
         }, 1);
         create_gwamble_is_triggered = false;
     }
+
+    function joinGwamble() {
+        console.log("join gwamble");
+        const joinContainer = document.getElementById('join-gwamble-container');
+        const joinOptions = document.getElementById('join-gwamble-options');
+        const hiddenElements = document.getElementsByClassName('hidden-while-displayed');
+        document.getElementById('create-gwamble-container').style.display = "none";
+
+        for (var i = 0; i < hiddenElements.length; i++) {
+            hiddenElements[i].style.display = "none";
+        }
+
+        setTimeout(function () {
+            joinOptions.style.opacity = "1"; // Ensure opacity is set correctly
+            joinOptions.style.pointerEvents = "all";
+            // Ensure the container's height can expand
+            joinContainer.style.height = "auto";
+            joinOptions.style.display = "flex";
+            joinContainer.onclick = null;
+        }, 1);
+        join_gwamble_is_triggered = true;
+    }
+
+    function closeJoinGwamble() {
+        console.log("close join gwamble");
+        const joinContainer = document.getElementById('join-gwamble-container');
+        const joinOptions = document.getElementById('join-gwamble-options');
+        const hiddenElements = document.getElementsByClassName('hidden-while-displayed');
+
+        joinOptions.style.opacity = "0";
+        joinOptions.style.display = "none";
+
+        for (var i = 0; i < hiddenElements.length; i++) {
+            hiddenElements[i].style.display = "flex";
+        }
+
+        setTimeout(function () {
+            joinContainer.classList.remove('open'); // Remove class to trigger transition
+            document.getElementById('create-gwamble-container').style.display = "flex";
+            joinContainer.onclick = function () {
+                joinGwamble();
+            };
+        }, 1);
+        join_gwamble_is_triggered = false;
+    }
+
+
+    function OTPInput() {
+  const inputs = document.querySelectorAll('#otp > *[id]');
+  for (let i = 0; i < inputs.length; i++) {
+    inputs[i].addEventListener('keydown', function(event) {
+      if (event.key === "Backspace") {
+        inputs[i].value = '';
+        if (i !== 0)
+          inputs[i - 1].focus();
+      } else {
+        if (i === inputs.length - 1 && inputs[i].value !== '') {
+          return true;
+        } else if (event.keyCode > 47 && event.keyCode < 58) {
+          inputs[i].value = event.key;
+          if (i !== inputs.length - 1)
+            inputs[i + 1].focus();
+          event.preventDefault();
+        } else if (event.keyCode > 64 && event.keyCode < 91) {
+          inputs[i].value = String.fromCharCode(event.keyCode);
+          if (i !== inputs.length - 1)
+            inputs[i + 1].focus();
+          event.preventDefault();
+        }
+      }
+    });
+  }
+}
+OTPInput();
 
     self.addEventListener('visibilitychange', function() {
     if (document.visibilityState === 'visible') {

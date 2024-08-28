@@ -95,7 +95,7 @@ body {
     margin-right: 5px;
 }
 
-#create-gwamble-container {
+#create-gwamble-container, #join-gwamble-container {
     width: 100%;
     background-color: black;
     border-radius: 20px;
@@ -110,7 +110,7 @@ body {
     height: fit-content; /* Allow the height to fit content */
 }
 
-#create-gwamble-container.open {
+#create-gwamble-container.open, #join-gwamble-container.open {
     height: fit-content!important; /* Full height when open */
 }
 
@@ -152,7 +152,7 @@ body {
 }
 
 
-#create-gwamble-options {
+#create-gwamble-options, #join-gwamble-options {
     display: none;
     opacity: 0;
     pointer-events: none;
@@ -162,14 +162,14 @@ body {
     background-color:black!important;
 }
 
-#create-gwamble-options hr {
+#create-gwamble-options hr, #join-gwamble-options hr {
     margin-top: 15px;
     border-width: 2px;
     border-radius: 100vmin;
     border-color: pink;
 }
 
-#create-gwamble-options input[type="text"], #create-gwamble-options textarea {
+#create-gwamble-options input[type="text"], #create-gwamble-options textarea, #join-gwamble-options textarea {
     width: 100%;
     box-sizing: border-box;
     border: none;
@@ -184,7 +184,23 @@ body {
     margin-bottom: 10px;
 }
 
-#create-gwamble-options textarea {
+#join-gwamble-options input[type="text"] {
+    border: none;
+    border-radius: 5px;
+    height: 64px;
+    font-family: 'Poppins-Bold';
+    font-size: 40px;
+    margin: 5px;
+    padding: 2.5px;
+    background-color: pink;
+    color: black;
+}
+
+.text-center {
+    margin: auto;
+}
+
+#create-gwamble-options textarea, #join-gwamble-options textarea {
     height: 40vmin;
     flex-grow: 1;
     margin-bottom: 20px;
@@ -196,7 +212,7 @@ input::placeholder, textarea::placeholder {
     font-family:'Manrope';
 }
 
-#create-gwamble-options .small-title {
+#create-gwamble-options .small-title, #join-gwamble-options .small-title {
     font-size: 20px;
     display: block;
     opacity: 50%;
@@ -221,3 +237,36 @@ input::placeholder, textarea::placeholder {
     justify-content: space-between;
 }
 
+
+@import url('https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css');
+.form-control {
+  -webkit-transition: none;
+  transition: none;
+  width: 32px;
+  height: 32px;
+  text-align: center
+}
+
+.form-control:focus {
+  color: #3F4254;
+  background-color: #ffffff;
+  border-color: #884377;
+  outline: 0;
+}
+
+.form-control.form-control-solid {
+  background-color: #F3F6F9;
+  border-color: #F3F6F9;
+  color: #3F4254;
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control.form-control-solid:active,
+.form-control.form-control-solid.active,
+.form-control.form-control-solid:focus,
+.form-control.form-control-solid.focus {
+  background-color: #EBEDF3;
+  border-color: #EBEDF3;
+  color: #3F4254;
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
