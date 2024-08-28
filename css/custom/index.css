@@ -155,23 +155,24 @@ body {
     box-sizing: border-box;
     border: none;
     padding: 7.5px;
-    font-size: 16px;
+    font-size: 20px;
     font-family: 'Poppins';
     font-weight: 900;
     border-radius: 10px;
     background-color: pink;
     color: black;
-    resize: none; /* Prevents manual resizing by the user */
-    margin-bottom: 10px; /* Adds some space between inputs */
+    resize: none;
+    margin-bottom: 10px;
 }
 
 #create-gwamble-options textarea {
-    height: 30vmin;
+    height: 40vmin;
     flex-grow: 1;
+    margin-bottom: 20px;
 }
 
 #create-gwamble-options .small-title {
-    font-size: 16px;
+    font-size: 20px;
     display: block;
     opacity: 50%;
     margin-bottom: 5px; /* Adds space below the titles */
