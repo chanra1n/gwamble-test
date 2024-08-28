@@ -62,7 +62,7 @@ body {
     margin-top:7.5px;
 }
 
-#reload-icon, #download-icon {
+#reload-icon, #user-icon {
     color: black;
     float: left;
     font-size: 50px;
@@ -213,7 +213,7 @@ body {
     height: 64px;
     font-family: 'Poppins-Bold';
     font-size: 40px;
-    margin: 5px;
+    margin: 2.5px;
     padding: 2.5px;
     background-color: pink;
     color: black;
@@ -221,6 +221,7 @@ body {
 
 .text-center {
     margin: auto;
+    margin-bottom: 10px;
 }
 
 #create-gwamble-options textarea, #join-gwamble-options textarea {
@@ -292,4 +293,35 @@ input::placeholder, textarea::placeholder {
   border-color: #EBEDF3;
   color: #3F4254;
   transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input-hyphen {
+    display: inline-block;
+    font-size: 40px;
+    line-height: 0;
+    vertical-align: sub;
+}
+
+#pwa-notice {
+    background-color: black;
+    position: absolute;
+    width: 100%;
+    padding: 15px;
+    font-family: 'Poppins-Bold';
+    font-size: 17.5px;
+    color: pink;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-weight: bold;
+    margin-top: 30px;
+    text-align: center;
+    box-sizing: border-box;
+    display:none;
+}
+
+#pwa-notice .ri-share-2-fill {
+    font-size: 20px;
+    font-weight: bolder;
+    margin-left: 2.5px;
+    margin-right: 2.5px;
 }

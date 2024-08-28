@@ -6,7 +6,7 @@
   "display": "standalone",
   "orientation": "portrait",
   "scope": "/gwamble-test/",
-  "start_url": "/gwamble-test/",
+  "start_url": "/gwamble-test/?pwa=true",
   "icons": [
     {
       "src": "icon/icon-72x72.png",

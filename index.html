@@ -34,12 +34,16 @@
 </head>
 
 <body>
-    <i class="ri-loop-right-fill" onclick = "reloadPage()" id = "reload-icon"></i>
-    <i class="ri-download-fill right" id = "download-icon"></i>
+    <i class="ri-loop-right-fill" id = "reload-icon" onclick="reloadPage()"></i>
+    <i class="ri-user-4-fill right" id = "user-icon"></i>
 
     <nav id="gwamble-bar" uk-navbar>
         <h1>gwamble</h1>
     </nav>
+
+    <div id = "pwa-notice">
+    Tap <i class="ri-share-2-fill"></i> then "Add to Home Screen"
+    </div>
 
     <div id="gwamble-body">
 
@@ -72,6 +76,7 @@
                       <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="first" maxlength="1" placeholder = "-"/>
                       <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="second" maxlength="1" placeholder = "-" />
                       <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="third" maxlength="1" placeholder = "-" />
+                      <p class = "input-hyphen">-</p>
                       <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="fourth" maxlength="1" placeholder = "-"/>
                       <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="fifth" maxlength="1" placeholder = "-" />
                       <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="sixth" maxlength="1" placeholder = "-" />
@@ -85,6 +90,7 @@
         </div>
 
     </div>
+
 </body>
 <script src="js/lib/uikit.js"></script>
 <script>
@@ -211,12 +217,38 @@
     });
   }
 }
-OTPInput();
 
 function reloadPage(){
     console.log('APP resumed');
     window.location.reload();
 }
+
+function verifyPWA(){
+    // get current URL, look for ?pwa=true
+    const urlParams = new URLSearchParams(window.location.search);
+    const pwa = urlParams.get('pwa');
+    if (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true ||
+    document.referrer.includes('android-app://') ||
+    pwa === 'true' ||
+    pwa === '1' ||
+    pwa === true 
+) {
+        console.log('PWA detected');
+        document.getElementById('pwa-notice').style.display = "none";
+    } else {
+        console.log('PWA not detected');
+        document.getElementById('pwa-notice').style.display = "block";
+    }
+    
+
+}
+
+window.onload = function() {
+OTPInput();
+verifyPWA();
+};
 
 </script>
 
