@@ -19,11 +19,10 @@ body {
 #posted-gwamble h1 {
     font-family: 'Manrope', sans-serif;
     font-weight: 900;
-    font-size: 35px;
     color: pink;
     display: block;
-    margin-bottom: 10px;
-    margin-top: 20px;
+    margin-top: 10px;
+    font-size: 35px;
 }
 
 .gwamble-post p {
@@ -269,4 +268,15 @@ body {
     width: 75vw;
     height: 75vw;
     padding: 20px;
+}
+
+#gwamble-subject {
+    font-size: clamp(2rem, 4vw + 1ch, 4rem)!important;
+    overflow-wrap: break-word;
+    line-height: 1;
+    margin: 0;
+    padding: 10px;
+    white-space: normal;
+    max-width: 100%;
+    box-sizing: border-box;
 }
