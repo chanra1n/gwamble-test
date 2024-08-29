@@ -137,6 +137,7 @@ function initSession() {
 
 }
 
+
 window.onload = function() {
 initSession();
 generateQRCode();
@@ -218,12 +219,13 @@ function declareWinner(outcome) {
 
     winner_post.style.transition = "all 0.1s ease-in-out";
     winner_post.classList.add('animate__animated');
-    winner_post.style.animation = "tada 0.75s";
+    winner_post.style.animation = "tada 1s";
     winner_button.style.marginBottom = "0px";
 
 
     document.getElementsByClassName('gwamble-bottom')[0].remove();
     document.getElementById('gwamble-bar').style.pointerEvents = "none";
+    document.getElementById('gwamble-bar').style.filter = "blur(2.5px)";
     document.getElementById('gwamble-close-session').style.pointerEvents = "none";
     document.getElementById('gwamble-close-session').style.color = "#503c40";
 
