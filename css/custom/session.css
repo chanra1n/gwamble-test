@@ -305,8 +305,42 @@ body {
     backdrop-filter: blur(5px);
 }
 
-#qr-modal .uk-modal-dialog {
+.uk-modal#qr-modal .uk-modal-dialog {
     width: fit-content;
+}
+
+.uk-modal#member-modal {
+    align-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.uk-modal#member-modal .uk-modal-dialog {
+    transition: all 0.25s ease;
+    border-radius: 15px;
+    background-color: black;
+    color: pink;
+    padding: 20px;
+}
+
+.uk-modal#member-modal .uk-modal-dialog h1 {
+    color: pink;
+    font-family: 'Manrope';
+    font-weight: 900;
+}
+
+.uk-modal#member-modal .uk-modal-dialog .uk-modal-close {
+    background-color: #503c40;
+    color: pink;
+    border: none;
+    font-weight: 900;
+    font-family: 'Manrope';
+    border-radius: 10px;
+    width: 100%;
+    font-size: 16px;
+    padding: 5px;
+}
+
+.uk-modal-dialog {
     transition: all 0.25s ease;
     border-radius: 15px;
 }
@@ -321,4 +355,29 @@ body {
 
 #gwamble-copy-icon {
     margin-left:5px;
+}
+
+#member-modal-list {
+    padding-bottom: 10px;
+}
+
+
+.member-item {
+    background-color: pink;
+    color: black;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.member-item span {
+    font-weight: 900;
+    font-family: 'Righteous';
+    font-size: 20px;
+}
+
+
+.member-item i {
+margin-right:5px;
 }
