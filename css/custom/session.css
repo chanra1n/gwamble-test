@@ -168,16 +168,16 @@ body {
   .gwamble-bottom {
     width: calc(100% - 40px);
     text-align: center;
-    background-color: black;
+    background-color: red;
     margin: 20px;
     border-radius: 15px;
     padding: 20px;
     display: flex;
     flex-direction: row;
-    align-items: center; /* Ensure elements are vertically centered */
+    align-items: center;
     justify-content: space-between;
     box-sizing: border-box;
-    white-space: nowrap; /* Prevent wrapping */
+    white-space: nowrap;
   }
   
   .gwamble-bottom button {
@@ -195,10 +195,11 @@ body {
     padding-left: 15px;
     padding-right: 15px;
     border-radius: 10px;
-    background-color: #ffc0cb50;
+    background-color: blue;
     font-weight: 900;
     font-family: 'Poppins-Bold';
-    margin-right: 10px; /* Add margin for spacing */
+    margin-right: 10px;
+    width: min-content;
   }
   
   .gwamble-bottom button#gwamble-qr-code {
