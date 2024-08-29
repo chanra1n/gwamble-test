@@ -19,7 +19,7 @@ body {
 #posted-gwamble h1 {
     font-family: 'Manrope', sans-serif;
     font-weight: 900;
-    font-size: 40px;
+    font-size: 35px;
     color: pink;
     display: block;
     margin-bottom: 10px;
@@ -38,6 +38,7 @@ body {
 .gwamble-button-container {
     display: flex;
     align-items: stretch;
+    pointer-events: none;
 }
 
 .gwamble-button-container button {
