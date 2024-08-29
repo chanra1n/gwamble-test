@@ -78,7 +78,7 @@
 
 
         <div class = "gwamble-bottom">
-        <button onclick = "copyGwambleCode()" id = "gwamble-share-code"><i class="ri-file-copy-fill" style = "margin-right:10px"></i> 888-888</button>
+        <button onclick = "copyGwambleCode()" id = "gwamble-share-code"><i id = "gwamble-copy-icon" class="ri-file-copy-fill" style = "margin-right:10px"></i> 888-888</button>
         <button onclick = "UIkit.modal('#qr-modal').show()" id = "gwamble-qr-code"><i class="ri-qr-code-fill"></i></button>
         </div>
 
@@ -131,6 +131,14 @@ function copyGwambleCode() {
     var code = document.getElementById('gwamble-share-code');
     var text = code.innerHTML;
     navigator.clipboard.writeText(text);
+
+    var icon = document.getElementById('gwamble-copy-icon');
+    icon.classList.remove('ri-file-copy-fill');
+    icon.classList.add('ri-check-fill');
+    setTimeout(function() {
+        icon.classList.remove('ri-check-fill');
+        icon.classList.add('ri-file-copy-fill');
+    }, 2500);
 }
 
 function generateQRCode() {
