@@ -9,7 +9,7 @@ body {
     padding: 20px;
     margin: 20px;
     margin-top: 0px;
-    border-radius: 15px;
+    border-radius: 20px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -159,7 +159,7 @@ body {
     text-align: center;
     background-color: black;
     margin: 20px;
-    border-radius: 15px;
+    border-radius: 20px;
     padding: 20px;
     box-sizing: border-box;
     overflow: hidden;
@@ -234,7 +234,7 @@ body {
     font-size: 14px;
     border-radius: 100vmin;
     margin-right: 10px;
-    padding:2.5px;
+    padding: 1.5px;
     padding-left: 12.5px;
     padding-right: 12.5px;
 }
@@ -247,15 +247,15 @@ body {
 
 @keyframes pulse {
     0% {
-      box-shadow: 0 0 0 0 pink;
+      opacity: 0.25;
     }
     
     70% {
-      box-shadow: 0 0 0 3px transparent;
+        opacity: 1;
     }
     
     100% {
-      box-shadow: 0 0 0 0 transparent;
+        opacity: 0.25;
     }
   }
   
