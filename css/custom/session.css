@@ -473,3 +473,34 @@ margin-right:5px;
         transform: scaleX(1)
     }
 }
+
+
+#gwamble-leaderboard-mini {
+    padding: 20px;
+    position: absolute;
+    bottom: 0;
+    display:none;
+}
+
+#gwamble-leaderboard-table {
+    background-color: black;
+    margin-top: 20px;
+    padding: 20px;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    display:none;
+}
+
+
+#gwamble-leaderboard-button {
+    width: 100%;
+    background-color: #ffc0cb50;
+    color: pink;
+    font-family: 'Manrope';
+    font-weight: 900;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 20px;
+}
