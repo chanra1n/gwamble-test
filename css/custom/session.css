@@ -294,6 +294,11 @@ body {
     color: pink;
 }
 
+.winner-button i {
+    margin-right: 2.5px;
+    font-weight:900;
+}
+
 
 .uk-modal {
     align-content: center;
