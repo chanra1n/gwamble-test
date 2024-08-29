@@ -336,8 +336,9 @@ body {
     font-family: 'Manrope';
     border-radius: 10px;
     width: 100%;
-    font-size: 16px;
+    font-size: 20px;
     padding: 5px;
+    text-transform: none;
 }
 
 .uk-modal-dialog {
