@@ -300,12 +300,12 @@ body {
 }
 
 
-.uk-modal {
+.uk-modal#qr-modal {
     align-content: center;
     backdrop-filter: blur(5px);
 }
 
-.uk-modal-dialog {
+#qr-modal .uk-modal-dialog {
     width: fit-content;
     transition: all 0.25s ease;
     border-radius: 15px;
