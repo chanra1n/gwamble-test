@@ -202,8 +202,10 @@ body {
   }
   
   .gwamble-bottom button#gwamble-qr-code {
-    transform: scale(1.75);
     background-color: transparent;
+    transform-origin: center center;
+    font-size: 75px;
+    margin: -10px;
   }
   
 
