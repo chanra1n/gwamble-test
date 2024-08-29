@@ -61,7 +61,7 @@ body {
     margin-top:7.5px;
 }
 
-#reload-icon, #user-icon {
+#reload-icon, #user-icon, #loading-icon {
     color: black;
     float: left;
     font-size: 50px;
@@ -80,6 +80,12 @@ body {
         right: 0;
         float: right!important;
         margin-right: 15px!important;
+}
+
+#loading-icon {
+    width: 64px;
+    margin: 10px;
+    filter:blur(0.5px);
 }
 
 #gwamble-body {
@@ -207,7 +213,7 @@ body {
 
 #join-gwamble-options input[type="text"] {
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     height: 64px;
     font-family: 'Poppins-Bold';
     font-size: 40px;
