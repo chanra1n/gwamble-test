@@ -161,8 +161,11 @@ body {
     border-radius: 15px;
     padding: 20px;
     box-sizing: border-box;
-    overflow: hidden; /* Clear floats */
-    position: relative; /* Ensure buttons are contained */
+    overflow: hidden;
+    position: relative;
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-between; /* Distribute space between the items */
+    align-items: center; /* Center align items vertically */
 }
 
 .gwamble-bottom button#gwamble-share-code {
@@ -173,11 +176,11 @@ body {
     font-weight: 900;
     font-family: 'Poppins-Bold';
     font-size: 30px;
-    float: left;
     line-height: 1;
     border: none;
-    width: 70%;
+    flex-grow: 1; /* Allow the button to grow and take remaining space */
     text-align: center;
+    width: auto; /* Set width to auto for flexibility */
 }
 
 .gwamble-bottom button#gwamble-qr-code {
@@ -185,12 +188,13 @@ body {
     color: pink;
     font-size: 60px;
     line-height: 1;
-    float: right;
     padding: 0;
     border: none;
-    width:30%;
+    width: auto;
     text-align: right;
+    margin-left: 15px;
 }
+
 
 
 
