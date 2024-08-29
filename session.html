@@ -140,19 +140,6 @@ window.onload = function() {
 initSession();
 generateQRCode();
 writeToMemberModal('annoying-orange');
-writeToMemberModal('annoying-orange');
-writeToMemberModal('annoying-orange');
-writeToMemberModal('annoying-orange');
-writeToMemberModal('annoying-orange');
-writeToMemberModal('annoying-orange');
-writeToMemberModal('annoying-orange');
-writeToMemberModal('annoying-orange');
-writeToMemberModal('annoying-orange');
-writeToMemberModal('annoying-orange');
-writeToMemberModal('annoying-orange');
-writeToMemberModal('annoying-orange');
-writeToMemberModal('annoying-orange');
-writeToMemberModal('annoying-orange');
 }
 
 function closeSession() {
@@ -190,12 +177,23 @@ function writeToMemberModal(username) {
     <div class = "member-item">
         <i class="ri-user-4-fill"></i>
         <span>`+username+`</span>
-        <button><i class="ri-indeterminate-circle-fill"></i></button>
+        <button onclick = "kickMember('`+username+`')"><i class="ri-indeterminate-circle-fill kicker"></i></button>
     </div>
     `;
 
     var member_list = document.getElementById('member-modal-list');
     member_list.innerHTML += member_item;
+}
+
+function kickMember(username) {
+    var member_list = document.getElementById('member-modal-list');
+    var member_items = member_list.getElementsByClassName('member-item');
+    for (var i = 0; i < member_items.length; i++) {
+        var member = member_items[i];
+        if (member.getElementsByTagName('span')[0].innerHTML == username) {
+            member_list.removeChild(member);
+        }
+    }
 }
 
 </script>
