@@ -216,11 +216,10 @@ body {
 }
 
 #gwamble-bar p i {
-    margin-right:5px;
+
 }
 
 #gwamble-bar p {
-    display:contents;
 }
 
 #gwamble-bar p span {
@@ -228,6 +227,38 @@ body {
     font-family: 'Manrope';
     font-weight:900;
 }
+
+#gwamble-role {
+    background-color: #503c40;
+    color: pink;
+    font-size: 14px;
+    border-radius: 100vmin;
+    margin-right: 10px;
+    padding:2.5px;
+    padding-left: 12.5px;
+    padding-right: 12.5px;
+}
+
+#gwamble-role i {
+    animation: pulse 1s infinite;  
+    border-radius:100%; 
+    margin-right:2.5px;
+}
+
+@keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 pink;
+    }
+    
+    70% {
+      box-shadow: 0 0 0 3px transparent;
+    }
+    
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
+  }
+  
 
 #gwamble-bar button {
     position: absolute;
