@@ -150,21 +150,6 @@ body {
     font-size: 40px;
   }
   
-  .gwamble-marquee {
-    width: 100%;
-    overflow: hidden;
-    background-color: black;
-    color: pink;
-    border-radius: 5px;
-    padding: 5px;
-  }
-  
-  .gwamble-marquee marquee {
-    font-family: 'Manrope', sans-serif;
-    font-size: 16px;
-    font-weight: 900;
-    color: pink;
-  }
   .gwamble-bottom {
     width: calc(100% - 40px);
     text-align: center;
@@ -175,12 +160,11 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center; /* Ensure elements are vertically centered */
-    justify-content: space-between;
+    justify-content: space-between; /* Distribute items evenly with space between */
     box-sizing: border-box;
-    white-space: nowrap; /* Prevent wrapping */
-  }
-  
-  .gwamble-bottom button {
+}
+
+.gwamble-bottom button {
     background-color: black;
     color: pink;
     border: none;
@@ -189,23 +173,27 @@ body {
     display: flex;
     align-items: center;
     box-sizing: border-box;
-  }
-  
-  .gwamble-bottom button#gwamble-share-code {
+}
+
+.gwamble-bottom button#gwamble-share-code {
     color: pink;
-    padding-left: 15px;
-    padding-right: 15px;
     border-radius: 10px;
     background-color: #ffc0cb50;
     font-weight: 900;
     font-family: 'Poppins-Bold';
-    margin-right: 10px; /* Add margin for spacing */
-  }
-  
-  .gwamble-bottom button#gwamble-qr-code {
+    margin-right: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.gwamble-bottom button#gwamble-qr-code {
     background-color: transparent;
     transform-origin: center center;
-  }
+    font-size: 75px;
+    line-height: 0;
+    margin-left: auto; /* This aligns the button to the right */
+}
+
   
 
 
