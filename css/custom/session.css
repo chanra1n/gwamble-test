@@ -204,8 +204,6 @@ body {
   .gwamble-bottom button#gwamble-qr-code {
     transform: scale(1.75);
     background-color: transparent;
-    margin-right: 5px;
-    margin-left: 5px;
   }
   
 
