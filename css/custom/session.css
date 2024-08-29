@@ -167,8 +167,44 @@ body {
   }
 
   .gwamble-bottom {
-    display:flex;
+    width: auto;
+    text-align: center;
+    background-color: black;
+    margin: 20px;
+    border-radius: 15px;
+    padding: 20px;
+    display: flow-root;
   }
+
+
+  .gwamble-bottom button {
+    background-color: black;
+    color: pink;
+    border: none;
+    font-size: 40px;
+    font-family: 'Poppins';
+  }
+
+  .gwamble-bottom button#gwamble-share-code {
+    color: pink;
+    padding-left: 15px;
+    padding-right: 15px;
+    float: left;
+    border-radius: 10px;
+    background-color: #ffc0cb50;
+    font-weight: 900;
+    font-family: 'Poppins-Bold';
+  }
+
+  .gwamble-bottom button#gwamble-qr-code {
+    transform: scale(1.75);
+    float: right;
+    background-color: transparent;
+    margin-right: 5px;
+    margin-left: 5px;
+  }
+
+
 
 
 #gwamble-bar {
