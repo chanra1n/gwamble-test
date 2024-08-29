@@ -102,9 +102,6 @@ body {
 .gwamble-post-header span {
     font-size: 20px;
     margin-left: 5px;
-}
-
-.gwamble-post-header span b {
     font-weight:bolder;
     font-family: 'Righteous', sans-serif;
 }
