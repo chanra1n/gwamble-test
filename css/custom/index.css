@@ -157,7 +157,7 @@ body {
     justify-content: space-between; /* Space between elements */
 }
 
-.gwamble-option button {
+.gwamble-option button, .gwamble-button-bottom {
     width: 50%;
     border: none;
     padding: 10px;
@@ -172,7 +172,7 @@ body {
     opacity:100%;
 }
 
-.gwamble-option .cancel {
+.gwamble-option .cancel, .gwamble-button-bottom.cancel {
     background-color: #ffc0cb50;
     color: pink;
     border-radius: 10px 0px 0px 10px;

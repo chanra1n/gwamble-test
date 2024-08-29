@@ -37,6 +37,7 @@ body {
 .gwamble-button-container {
     display: flex;
     align-items: stretch;
+    margin-bottom:20px;
 }
 
 .gwamble-button-container button {
@@ -163,5 +164,9 @@ body {
     font-size: 16px;
     font-weight: 900;
     color: pink;
+  }
+
+  .gwamble-bottom {
+    display:flex;
   }
   
