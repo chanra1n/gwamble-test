@@ -117,8 +117,8 @@ body {
     line-height: 1;
     margin-top: 0;
     margin-left: auto;
-    order: 2;
     margin-right: 5px;
+    vertical-align: middle;
 }
 
 #create-gwamble-container, #join-gwamble-container {
