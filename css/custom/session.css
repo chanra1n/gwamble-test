@@ -279,12 +279,14 @@ body {
 }
 
 .uk-modal-dialog {
-width:fit-content;
-transition: all 0.25s ease;
+    width: fit-content;
+    transition: all 0.25s ease;
+    border-radius: 15px;
 }
 
 
 #gwamble-qr-display img {
     width: 75vw;
     height: 75vw;
+    padding: 20px;
 }
