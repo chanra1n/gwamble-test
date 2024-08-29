@@ -150,6 +150,8 @@ body {
     font-size: 40px;
   }
   
+
+
   .gwamble-bottom {
     width: calc(100% - 40px);
     text-align: center;
@@ -157,42 +159,34 @@ body {
     margin: 20px;
     border-radius: 15px;
     padding: 20px;
-    display: flex;
-    flex-direction: row;
-    align-items: center; /* Ensure elements are vertically centered */
-    justify-content: space-between; /* Distribute items evenly with space between */
     box-sizing: border-box;
-}
-
-.gwamble-bottom button {
-    background-color: black;
-    color: pink;
-    border: none;
-    font-size: 40px;
-    font-family: 'Poppins';
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
+    overflow: hidden; /* Clear floats */
+    position: relative; /* Ensure buttons are contained */
 }
 
 .gwamble-bottom button#gwamble-share-code {
-    color: pink;
-    border-radius: 10px;
     background-color: #ffc0cb50;
+    color: pink;
+    padding: 15px;
+    border-radius: 10px;
     font-weight: 900;
     font-family: 'Poppins-Bold';
-    margin-right: auto;
+    font-size: 40px;
+    float: left;
+    line-height: 1;
+    border: none;
 }
 
 .gwamble-bottom button#gwamble-qr-code {
     background-color: transparent;
-    transform-origin: center center;
-    font-size: 75px;
-    line-height: 0;
-    margin-left: auto; /* This aligns the button to the right */
+    color: pink;
+    font-size: 70px;
+    line-height: 1;
+    float: right;
+    padding: 0;
+    border: none;
 }
 
-  
 
 
 #gwamble-bar {
