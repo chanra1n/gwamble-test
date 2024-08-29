@@ -304,6 +304,7 @@ input::placeholder, textarea::placeholder {
     font-size: 40px;
     line-height: 0;
     vertical-align: sub;
+    opacity: 50%;
 }
 
 #pwa-notice {
