@@ -405,7 +405,6 @@ margin-right:5px;
 }
 
 .kicker {
-    margin-right: 5px;
-    transform: scale(1.5);
     display: inline-block;
+    font-size: 30px;
 }

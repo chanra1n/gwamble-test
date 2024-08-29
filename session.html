@@ -57,7 +57,7 @@
     <div class="gwamble-post" id="posted-gwamble">
         <div class = "gwamble-post-header">
         <i class="ri-user-4-fill"></i>
-        <span><b>annoying-orange</b></span>
+        <span id = "gwamble-poster" >annoying-orange</span>
         </div>
         <h1 onclick = "window.location.reload(true)" id="gwamble-subject">Subject</h1>
         <br>
@@ -140,6 +140,10 @@ window.onload = function() {
 initSession();
 generateQRCode();
 writeToMemberModal('annoying-orange');
+writeToMemberModal('regular-grapefruit');
+writeToMemberModal('sour-lemon');
+writeToMemberModal('bitter-lime');
+writeToMemberModal('sweet-tangerine');
 }
 
 function closeSession() {
@@ -173,11 +177,20 @@ function generateQRCode() {
 
 
 function writeToMemberModal(username) {
+
+    var role_button = `<button onclick = "kickMember('`+username+`')"><i class="ri-indeterminate-circle-fill kicker"></i></button>`;
+
+    // if the username is currently written to the gwamble-poster element,
+    // then update the role_button to be a different icon
+    if (document.getElementById('gwamble-poster').innerHTML == username) {
+        role_button = ``;
+    }
+
     var member_item = `
     <div class = "member-item">
         <i class="ri-user-4-fill"></i>
         <span>`+username+`</span>
-        <button onclick = "kickMember('`+username+`')"><i class="ri-indeterminate-circle-fill kicker"></i></button>
+        `+role_button+`
     </div>
     `;
 
