@@ -282,3 +282,9 @@ body {
 width:fit-content;
 transition: all 0.25s ease;
 }
+
+
+#gwamble-qr-display img {
+    width: 75vw;
+    height: 75vw;
+}
