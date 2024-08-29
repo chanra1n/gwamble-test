@@ -115,6 +115,11 @@ window.onload = function() {
 initSession();
 }
 
+function closeSession() {
+    sessionStorage.removeItem('gwamble');
+    window.location.replace('index.html');
+}
+
 </script>
 
 </html>
