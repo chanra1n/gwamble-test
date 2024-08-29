@@ -320,6 +320,9 @@ body {
     background-color: black;
     color: pink;
     padding: 20px;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: scroll;
 }
 
 .uk-modal#member-modal .uk-modal-dialog h1 {
@@ -339,6 +342,9 @@ body {
     font-size: 20px;
     padding: 5px;
     text-transform: none;
+    position: sticky;
+    bottom: 0;
+    outline: 25px solid black;
 }
 
 .uk-modal-dialog {
@@ -381,4 +387,15 @@ body {
 
 .member-item i {
 margin-right:5px;
+}
+
+
+.member-item button {
+    float: right;
+    display: ruby-text;
+    background-color: pink;
+    border: none;
+    font-size: 25px;
+    margin: 0px;
+    padding: 0px;
 }
