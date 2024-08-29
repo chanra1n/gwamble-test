@@ -166,18 +166,18 @@ body {
     color: pink;
   }
   .gwamble-bottom {
-    max-width: calc(100% - 40px);
+    width: calc(100% - 40px);
     text-align: center;
     background-color: black;
     margin: 20px;
     border-radius: 15px;
     padding: 20px;
-    display: inline-flex;
+    display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
+    align-items: center; /* Ensure elements are vertically centered */
+    justify-content: space-between;
     box-sizing: border-box;
-    white-space: nowrap;
+    white-space: nowrap; /* Prevent wrapping */
   }
   
   .gwamble-bottom button {
@@ -188,6 +188,7 @@ body {
     font-family: 'Poppins';
     display: flex;
     align-items: center;
+    box-sizing: border-box;
   }
   
   .gwamble-bottom button#gwamble-share-code {
