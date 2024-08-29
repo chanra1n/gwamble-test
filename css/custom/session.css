@@ -166,16 +166,16 @@ body {
     color: pink;
   }
   .gwamble-bottom {
-    width: calc(100% - 40px);
+    max-width: calc(100% - 40px);
     text-align: center;
-    background-color: red;
+    background-color: black;
     margin: 20px;
     border-radius: 15px;
     padding: 20px;
-    display: flex;
+    display: inline-flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     box-sizing: border-box;
     white-space: nowrap;
   }
@@ -195,15 +195,14 @@ body {
     padding-left: 15px;
     padding-right: 15px;
     border-radius: 10px;
-    background-color: blue;
+    background-color: #ffc0cb50;
     font-weight: 900;
     font-family: 'Poppins-Bold';
-    margin-right: 10px;
-    width: min-content;
+    margin-right: 10px; /* Add margin for spacing */
   }
   
   .gwamble-bottom button#gwamble-qr-code {
-    background-color: green;
+    background-color: transparent;
     transform-origin: center center;
     font-size: 75px;
     line-height: 0;
