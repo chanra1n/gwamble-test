@@ -23,6 +23,11 @@
     src: url('../../font/Manrope.ttf');
 }
 
+@font-face {
+    font-family: 'Chivo';
+    src: url('../../font/Chivo.ttf');
+}
+
 body, html {
     width: 100%;
     height: 100%;

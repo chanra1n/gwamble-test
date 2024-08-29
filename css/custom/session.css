@@ -484,23 +484,46 @@ margin-right:5px;
 
 #gwamble-leaderboard-table {
     background-color: black;
-    margin-top: 20px;
+    margin-top: 30px;
     padding: 20px;
     height: 100%;
     width: 100%;
     box-sizing: border-box;
-    display:none;
+    display: none;
 }
 
 
-#gwamble-leaderboard-button {
-    width: 100%;
-    background-color: #ffc0cb50;
+#gwamble-leaderboard-table .member-item button span {
+    font-family: 'Poppins-Bold';
+    background-color: black;
     color: pink;
+    padding: 2.5px;
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+
+#gwamble-leaderboard-list {
+    max-height: 35vmax;
+    overflow-y: auto;
+}
+
+.gwamble-leaderboard-button {
+    position: sticky;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding: 10px;
+    background-color: pink;
+    color: black;
+    font-size: 20px;
     font-family: 'Manrope';
     font-weight: 900;
     border: none;
-    padding: 10px;
-    border-radius: 10px;
-    font-size: 20px;
+    outline: 20px solid black;
+    height: fit-content;
 }
+

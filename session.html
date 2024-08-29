@@ -93,17 +93,10 @@
         <button onclick = "UIkit.modal('#qr-modal').show()" id = "gwamble-qr-code"><i class="ri-qr-code-fill"></i></button>
         </div>
 
-        <div class = "gwamble-bottom" id = "gwamble-leaderboard-mini">
-        <button id = "gwamble-leaderboard-button" onclick = "launchLeaderboard()">Results</button>
-        </div>
-
         <div id = "gwamble-leaderboard-table">
-
-            <div class = "member-item">
-            <i class="ri-user-4-fill"></i>
-            <span>annoying-orange</span>
+            <div id = "gwamble-leaderboard-list">
             </div>
-    
+            <button class = "gwamble-leaderboard-button">Exit</button>
         </div>
 
 
@@ -130,6 +123,7 @@
 <script>
 
 var gwamble;
+var winning_outcome;
 
 function initSession() {
     var session = sessionStorage.getItem('gwamble');
@@ -210,6 +204,34 @@ function writeToMemberModal(username) {
     member_list.innerHTML += member_item;
 }
 
+
+function writeToGwambleLeaderboardTable(username, outcome, bet) {
+    var leaderboard_table = document.getElementById('gwamble-leaderboard-list');
+    var leaderboard_row = `
+    <div class="member-item">
+        <i class="ri-user-4-fill"></i>
+        <span>`+username+`</span>
+        <button>
+        <span style = "font-family: 'Poppins-Bold'">
+        <i class="ri-coins-fill"></i>
+        `+(outcome === winning_outcome ? '+' : '-')+bet+`
+        </span>
+        </button>
+    </div>
+    `;
+
+    leaderboard_table.innerHTML += leaderboard_row;
+}
+
+function initGwambleLeaderboardTable() {
+    
+    writeToGwambleLeaderboardTable('annoying-orange', 'a', 10);
+    writeToGwambleLeaderboardTable('brave-carrot', 'b', 10);
+    writeToGwambleLeaderboardTable('burning-potato', 'a', 50);
+    writeToGwambleLeaderboardTable('loud-moron', 'b', 10);
+    writeToGwambleLeaderboardTable('best-board', 'b', 10);
+}
+
 function kickMember(username) {
     var member_list = document.getElementById('member-modal-list');
     var member_items = member_list.getElementsByClassName('member-item');
@@ -241,16 +263,17 @@ function declareWinner(outcome) {
     document.getElementById('gwamble-bar').style.pointerEvents = "none";
     document.getElementById('gwamble-bar').style.filter = "blur(2.5px)";
     document.getElementById('gwamble-close-session').style.pointerEvents = "none";
-    document.getElementById('gwamble-close-session').style.color = "#503c40";
-
-    document.getElementById('gwamble-leaderboard-mini').style.display = "block";    
+    document.getElementById('gwamble-close-session').style.color = "#503c40";   
 
     winner_button.innerHTML = "Settled!";
     winner_button.style.opacity = "0.5";
     winner_button.style.pointerEvents = "none";
 
-    document.getElementById('gwamble-leaderboard-button').style.display = "block";
+    document.getElementById('gwamble-leaderboard-table').style.display = "grid";
 
+    winning_outcome = outcome;
+
+    initGwambleLeaderboardTable();
 
 }
 
