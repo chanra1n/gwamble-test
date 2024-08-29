@@ -203,7 +203,7 @@ body {
   }
   
   .gwamble-bottom button#gwamble-qr-code {
-    background-color: transparent;
+    background-color: green;
     transform-origin: center center;
     font-size: 75px;
     line-height: 0;
