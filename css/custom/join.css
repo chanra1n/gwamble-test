@@ -1,0 +1,45 @@
+.bet-left {
+    position: absolute;
+    left: 0;
+    outline: 2px solid pink;
+    border-radius: 0px 0px 0px 5px;
+    padding-left: 7.5px;
+    padding-right: 7.5px;
+    margin-left: 10px;
+}
+
+.gwamble-button-container button {
+    font-family: 'Poppins-Bold', sans-serif;
+    background-color: pink;
+    color: black;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 10px 10px 0px 0px;
+    font-size: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.gwamble-bets {
+    font-size: 30px;
+    color: pink;
+    background-color: black;
+    border: 5px solid pink;
+    border-radius: 0px 10px 0px 0px;
+    padding: 5px;
+    font-weight: 900;
+    font-family: 'Manrope';
+    line-height: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    box-sizing: border-box;
+    padding-left: 15px;
+    padding-right: 15px;
+}

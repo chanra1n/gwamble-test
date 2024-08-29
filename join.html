@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="css/lib/uikit.css">
     <link rel="stylesheet" type="text/css" href="css/custom/index.css">
     <link rel="stylesheet" type="text/css" href="css/custom/session.css">
+    <link rel="stylesheet" type="text/css" href="css/custom/join.css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -40,7 +41,7 @@
         
 <button id="gwamble-close-session" onclick="closeSession()">
 <i class="ri-arrow-left-s-fill"></i>
-<span>Exit</span>
+<span>Leave</span>
 </button>
 
         <p id = "gwamble-role">
@@ -48,9 +49,9 @@
         <span>Active</span>
         </p>
 
-        <p onclick = "UIkit.modal('#member-modal').show()" >
+        <p>
         <i class="ri-group-2-fill"></i>
-        <span id = "gwamble-bet-member-ratio">0/0</span>
+        <span id = "gwamble-bet-member-ratio">0/2</span>
         </p>
     </nav>
 
@@ -66,22 +67,24 @@
             <button id="gwamble-outcome-a">
                 <span id="gwamble-outcome-a-text">Outcome A</span>
             </button>
-            <span id="gwamble-outcome-a-bets" class="gwamble-bets">0</span>
         </div>
 
-        <button onclick = "alert('Outcome A was declared the winner!')" class = "winner-button" id="gwamble-winner-a">
-        Declare winner
+        <button onclick = "alert('Placed bet on A!')" class = "winner-button" id="gwamble-winner-a">
+            <span class = "bet-left">BET</span>
+            <i class="ri-coins-fill"></i>
+            10
         </button>
 
         <div class="gwamble-button-container">
             <button id="gwamble-outcome-b">
                 <span id="gwamble-outcome-b-text">Outcome B</span>
             </button>
-            <span id="gwamble-outcome-b-bets" class="gwamble-bets">0</span>
         </div>
 
-        <button onclick = "alert('Outcome B was declared the winner!')" class = "winner-button" id="gwamble-winner-b" style = "margin-bottom:0px">
-        Declare winner
+        <button onclick = "alert('Placed bet on B!')" class = "winner-button" id="gwamble-winner-b" style = "margin-bottom:0px">
+            <span class = "bet-left">BET</span>
+            <i class="ri-coins-fill"></i>
+            10
         </button>
 
         </div>
@@ -96,16 +99,7 @@
         <div uk-modal id="qr-modal" onclick = "UIkit.modal('#qr-modal').hide()">
             <div class="uk-modal-dialog">
                 <div id="gwamble-qr-display"></div>
-        </div>
-
-        <div uk-modal id="member-modal">
-            <div class="uk-modal-dialog">
-                <div id = "member-modal-list">
-
-                </div>
-                <button class="uk-button uk-button-default uk-modal-close" type="button">Close</button>
             </div>
-        </div>
     
 
 </body>
@@ -174,19 +168,10 @@ function generateQRCode() {
 
 function writeToMemberModal(username) {
 
-    var role_button = `<button onclick = "kickMember('`+username+`')"><i class="ri-indeterminate-circle-fill kicker"></i></button>`;
-
-    // if the username is currently written to the gwamble-poster element,
-    // then update the role_button to be a different icon
-    if (document.getElementById('gwamble-poster').innerHTML == username) {
-        role_button = ``;
-    }
-
     var member_item = `
     <div class = "member-item">
         <i class="ri-user-4-fill"></i>
         <span>`+username+`</span>
-        `+role_button+`
     </div>
     `;
 
