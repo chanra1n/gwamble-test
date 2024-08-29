@@ -205,7 +205,7 @@ body {
     background-color: transparent;
     transform-origin: center center;
     font-size: 75px;
-    margin: -10px;
+    line-height: 0;
   }
   
 
