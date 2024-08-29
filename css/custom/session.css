@@ -165,9 +165,8 @@ body {
     font-weight: 900;
     color: pink;
   }
-
   .gwamble-bottom {
-    width: auto;
+    width: calc(100% - 40px);
     text-align: center;
     background-color: black;
     margin: 20px;
@@ -175,12 +174,12 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: row;
-    align-content: flex-end;
-    flex-wrap: wrap;
+    align-items: center; /* Ensure elements are vertically centered */
     justify-content: space-between;
+    box-sizing: border-box;
+    white-space: nowrap; /* Prevent wrapping */
   }
-
-
+  
   .gwamble-bottom button {
     background-color: black;
     color: pink;
@@ -190,27 +189,25 @@ body {
     display: flex;
     align-items: center;
   }
-
+  
   .gwamble-bottom button#gwamble-share-code {
     color: pink;
     padding-left: 15px;
     padding-right: 15px;
-    float: left;
     border-radius: 10px;
     background-color: #ffc0cb50;
     font-weight: 900;
     font-family: 'Poppins-Bold';
+    margin-right: 10px; /* Add margin for spacing */
   }
-
+  
   .gwamble-bottom button#gwamble-qr-code {
     transform: scale(1.75);
-    float: right;
     background-color: transparent;
     margin-right: 5px;
     margin-left: 5px;
   }
-
-
+  
 
 
 #gwamble-bar {
