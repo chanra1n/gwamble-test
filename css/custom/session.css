@@ -51,7 +51,7 @@ body {
     width: calc(100% - 60px);
     padding: 5px 15px;
     border: none;
-    border-radius: 10px 0px 0px 0px;
+    border-radius: 10px 0px 0px 10px;
     font-size: 25px;
     font-weight: bold;
     cursor: pointer;
@@ -71,7 +71,7 @@ body {
     color: pink;
     background-color: black;
     border: 5px solid pink;
-    border-radius: 0px 10px 0px 0px;
+    border-radius: 0px 10px 10px 0px;
     padding: 5px;
     font-weight: 900;
     font-family: 'Manrope';
