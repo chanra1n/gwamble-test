@@ -48,7 +48,7 @@ body {
     color: black;
     display: flex;
     align-items: center;
-    width: 100%;
+    width: calc(100% - 60px);
     padding: 5px 15px;
     border: none;
     border-radius: 10px 0px 0px 0px;
@@ -60,7 +60,6 @@ body {
 }
 
 .gwamble-button-container button span {
-    width: 90%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -164,9 +163,11 @@ body {
     box-sizing: border-box;
     overflow: hidden;
     position: relative;
-    display: flex; /* Use flexbox for layout */
-    justify-content: space-between; /* Distribute space between the items */
-    align-items: center; /* Center align items vertically */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
 
 .gwamble-bottom button#gwamble-share-code {
