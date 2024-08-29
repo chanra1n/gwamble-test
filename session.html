@@ -222,6 +222,10 @@ function declareWinner(outcome) {
 
     document.getElementsByClassName('gwamble-bottom')[0].remove();  
 
+    winner_button.innerHTML = "Settled!";
+    winner_button.style.opacity = "0.5";
+    winner_button.style.pointerEvents = "none";
+
 
 }
 
