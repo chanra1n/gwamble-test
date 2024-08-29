@@ -40,6 +40,7 @@ body {
     display: flex;
     align-items: stretch;
     pointer-events: none;
+    justify-content: space-between;
 }
 
 .gwamble-button-container button {
