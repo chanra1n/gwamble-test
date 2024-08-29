@@ -33,7 +33,7 @@ body, html {
     background-color: pink;
     color: black;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 body {
@@ -135,6 +135,7 @@ body {
     overflow: hidden;
     position: relative;
     height: fit-content; /* Allow the height to fit content */
+    overflow-y: auto;
 }
 
 #create-gwamble-container.open, #join-gwamble-container.open {
