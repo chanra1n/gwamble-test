@@ -23,6 +23,7 @@ body {
     display: block;
     margin-top: 10px;
     font-size: 35px;
+    margin-bottom: 0px;
 }
 
 .gwamble-post p {
@@ -171,20 +172,24 @@ body {
     border-radius: 10px;
     font-weight: 900;
     font-family: 'Poppins-Bold';
-    font-size: 40px;
+    font-size: 30px;
     float: left;
     line-height: 1;
     border: none;
+    width: 70%;
+    text-align: center;
 }
 
 .gwamble-bottom button#gwamble-qr-code {
     background-color: transparent;
     color: pink;
-    font-size: 70px;
+    font-size: 60px;
     line-height: 1;
     float: right;
     padding: 0;
     border: none;
+    width:30%;
+    text-align: right;
 }
 
 
@@ -270,13 +275,3 @@ body {
     padding: 20px;
 }
 
-#gwamble-subject {
-    font-size: clamp(2rem, 4vw + 1ch, 4rem)!important;
-    overflow-wrap: break-word;
-    line-height: 1;
-    margin: 0;
-    padding: 10px;
-    white-space: normal;
-    max-width: 100%;
-    box-sizing: border-box;
-}
