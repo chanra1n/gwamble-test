@@ -8,11 +8,12 @@ body {
     color: pink;
     padding: 20px;
     margin: 20px;
-    margin-top: 30px;
+    margin-top: 0px;
     border-radius: 15px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    margin-bottom: -10px;
 }
 
 #posted-gwamble h1 {
@@ -37,7 +38,6 @@ body {
 .gwamble-button-container {
     display: flex;
     align-items: stretch;
-    margin-bottom:20px;
 }
 
 .gwamble-button-container button {
@@ -49,7 +49,7 @@ body {
     width: 100%;
     padding: 5px 15px;
     border: none;
-    border-radius: 10px 0px 0px 10px;
+    border-radius: 10px 0px 0px 0px;
     font-size: 25px;
     font-weight: bold;
     cursor: pointer;
@@ -70,7 +70,7 @@ body {
     color: pink;
     background-color: black;
     border: 5px solid pink;
-    border-radius: 0px 10px 10px 0px;
+    border-radius: 0px 10px 0px 0px;
     padding: 5px;
     font-weight: 900;
     font-family: 'Manrope';
@@ -80,8 +80,8 @@ body {
     justify-content: center;
     height: 100%;
     box-sizing: border-box;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 
@@ -169,4 +169,65 @@ body {
   .gwamble-bottom {
     display:flex;
   }
-  
+
+
+#gwamble-bar {
+    color: black;
+    background-color: green;
+    font-size: 25px;
+    font-family: 'Manrope';
+    background-color: pink;
+    padding: 5px;
+    display: flex;
+    height: 40px;
+    justify-content: right;
+    position: sticky;
+    top: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+#gwamble-bar p i {
+    margin-right:5px;
+}
+
+#gwamble-bar p {
+    display:contents;
+}
+
+#gwamble-bar p span {
+
+    font-family: 'Manrope';
+    font-weight:900;
+}
+
+#gwamble-bar button {
+    position: absolute;
+    display: inline-block;
+    left: 0;
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    font-weight: 900;
+    font-family: 'Poppins-Bold';
+}
+
+#gwamble-bar button i {
+    color: black;
+    font-weight:900;
+}
+
+.winner-button {
+    display: block!important;
+    width: 100%!important;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    background-color: #ffc0cb50;
+    border: none;
+    padding: 10px;
+    border-radius: 0px 0px 10px 10px;
+    font-size: 20px;
+    font-family: 'Manrope';
+    font-weight: 900;
+    color: pink;
+}

@@ -37,7 +37,15 @@
 <body>
 
     <nav id="gwamble-bar" uk-navbar>
-        <h1>gwamble</h1>
+        
+<button>
+<i class="ri-arrow-left-s-fill"></i>
+<span>Close session</span>
+</button>
+        <p>
+        <i class="ri-group-2-fill"></i>
+        <span>01</span>
+        </p>
     </nav>
 
     <div class="gwamble-post" id="posted-gwamble">
@@ -55,6 +63,8 @@
             <span id="gwamble-outcome-a-bets" class="gwamble-bets">0</span>
         </div>
 
+        <button class = "winner-button" id="gwamble-winner-a">Declare winner</button>
+
         <div class="gwamble-button-container">
             <button id="gwamble-outcome-b">
                 <span id="gwamble-outcome-b-text">Outcome B</span>
@@ -62,26 +72,17 @@
             <span id="gwamble-outcome-b-bets" class="gwamble-bets">0</span>
         </div>
 
+        <button class = "winner-button" id="gwamble-winner-b" style = "margin-bottom:0px">Declare winner</button>
 
-        <div class = "gwamble-bottom">
-        <button id = "cancel-gwamble-post-button" onclick="cancelGwamble()" class="gwamble-button-bottom cancel">Cancel</button>
-        <button id = "end-gwamble-post-button" class = "gwamble-button-bottom" onclick="endGwamble()">End</button>
         </div>
 
-    </div>
 
-    <div id="gwamble-share-container">
-        <div class="gwamble-share">
-            <span></span>
-          <p id="gwamble-code">888-888</p>
-          <button id="gwamble-share-button"><i class="ri-file-copy-fill"></i></button>
+        <div class = "gwamble-bar">
+        <button id = "gwamble-share-code">888-888</button>
+        <button><i class="ri-qr-code-fill"></i></button>
         </div>
-      
-        <div class="gwamble-marquee">
-          <marquee behavior="scroll" direction="left"></marquee>
-        </div>
-      </div>
-      
+
+
     
 
 </body>
