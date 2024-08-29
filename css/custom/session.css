@@ -173,7 +173,11 @@ body {
     margin: 20px;
     border-radius: 15px;
     padding: 20px;
-    display: flow-root;
+    display: flex;
+    flex-direction: row;
+    align-content: flex-end;
+    flex-wrap: wrap;
+    justify-content: space-between;
   }
 
 
@@ -183,6 +187,8 @@ body {
     border: none;
     font-size: 40px;
     font-family: 'Poppins';
+    display: flex;
+    align-items: center;
   }
 
   .gwamble-bottom button#gwamble-share-code {
