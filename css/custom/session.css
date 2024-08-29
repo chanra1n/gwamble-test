@@ -274,3 +274,14 @@ body {
     font-weight: 900;
     color: pink;
 }
+
+
+.uk-modal {
+    align-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.uk-modal-dialog {
+width:fit-content;
+transition: all 0.25s ease;
+}

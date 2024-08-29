@@ -78,15 +78,20 @@
 
 
         <div class = "gwamble-bottom">
-        <button id = "gwamble-share-code">888-888</button>
-        <button id = "gwamble-qr-code"><i class="ri-qr-code-fill"></i></button>
+        <button onclick = "copyGwambleCode()" id = "gwamble-share-code">888-888</button>
+        <button onclick = "UIkit.modal('#qr-modal').show()" id = "gwamble-qr-code"><i class="ri-qr-code-fill"></i></button>
         </div>
 
 
+        <div uk-modal id="qr-modal" onclick = "UIkit.modal('#qr-modal').hide()">
+            <div class="uk-modal-dialog">
+                <div id="gwamble-qr-display"></div>
+            </div>
     
 
 </body>
 <script src="js/lib/uikit.js"></script>
+<script src="js/lib/qrcode.js"></script>
 <script>
 
 var gwamble;
@@ -113,11 +118,28 @@ function initSession() {
 
 window.onload = function() {
 initSession();
+generateQRCode();
 }
 
 function closeSession() {
     sessionStorage.removeItem('gwamble');
     window.location.replace('index.html');
+}
+
+function copyGwambleCode() {
+    var code = document.getElementById('gwamble-share-code');
+    var text = code.innerHTML;
+    navigator.clipboard.writeText(text);
+}
+
+function generateQRCode() {
+    var code = document.getElementById('gwamble-share-code');
+    var text = code.innerHTML;
+    var qr = new QRCode(document.getElementById("gwamble-qr-display"), {
+        text: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        width: 256,
+        height: 256,
+    });
 }
 
 </script>
