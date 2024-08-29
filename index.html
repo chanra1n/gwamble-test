@@ -86,7 +86,7 @@
                   </div>
  
                 <button onclick="closeJoinGwamble()" class="cancel">Cancel</button>
-                <button>Join</button>
+                <button onclick="joinGwambleSession()">Join</button>
             </div>
 
         </div>
@@ -294,6 +294,33 @@
                 }
             });
         });
+    }
+
+
+    function joinGwambleSession() {
+        var otp = document.getElementById('otp').querySelectorAll('input');
+        var code = "";
+        otp.forEach(input => {
+            code += input.value;
+        });
+        console.log(code);
+
+        var valid = verifyCode(code);
+
+        if (valid) {
+            window.location.href = "session.html";
+        } else {
+            alert("Invalid code.");
+            // clear the inputs
+            otp.forEach(input => {
+                input.value = "";
+            });
+        }
+
+    }
+
+    function verifyCode(code) {
+       return false;
     }
 
 

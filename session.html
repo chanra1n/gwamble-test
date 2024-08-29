@@ -84,7 +84,7 @@
 
 
         <div class = "gwamble-bottom">
-        <button onclick = "copyGwambleCode()" id = "gwamble-share-code">888-888 <i id = "gwamble-copy-icon" class="ri-file-copy-fill"></i></button>
+        <button onclick = "copyGwambleCode()" id = "gwamble-share-code" data-code = "888-888">888-888 <i id = "gwamble-copy-icon" class="ri-file-copy-fill"></i></button>
         <button onclick = "UIkit.modal('#qr-modal').show()" id = "gwamble-qr-code"><i class="ri-qr-code-fill"></i></button>
         </div>
 
@@ -135,7 +135,7 @@ function closeSession() {
 
 function copyGwambleCode() {
     var code = document.getElementById('gwamble-share-code');
-    var text = code.innerHTML;
+    var text = code.getAttribute('data-code');
     navigator.clipboard.writeText(text);
 
     var icon = document.getElementById('gwamble-copy-icon');
