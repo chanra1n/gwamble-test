@@ -22,7 +22,7 @@ body {
     color: pink;
     display: block;
     margin-top: 10px;
-    font-size: 35px;
+    font-size: 30px;
     margin-bottom: 0px;
 }
 
@@ -171,22 +171,22 @@ body {
 .gwamble-bottom button#gwamble-share-code {
     background-color: #ffc0cb50;
     color: pink;
-    padding: 15px;
+    padding: 10px;
     border-radius: 10px;
     font-weight: 900;
     font-family: 'Poppins-Bold';
-    font-size: 30px;
+    font-size: 25px;
     line-height: 1;
     border: none;
-    flex-grow: 1; /* Allow the button to grow and take remaining space */
+    flex-grow: 1;
     text-align: center;
-    width: auto; /* Set width to auto for flexibility */
+    width: auto;
 }
 
 .gwamble-bottom button#gwamble-qr-code {
     background-color: transparent;
     color: pink;
-    font-size: 60px;
+    font-size: 50px;
     line-height: 1;
     padding: 0;
     border: none;
