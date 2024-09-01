@@ -410,13 +410,9 @@ margin-right:5px;
     font-weight: 900;
     font-size: 20px;
     width: fit-content;
-    margin: 15px;
-    margin-top: 0;
-    margin-left: 0px;
+    margin: 0px;
     box-sizing: border-box;
-    margin-bottom: 0px;
-    padding-bottom: 7.5px;
-    padding-top: 7.5px;
+    padding-top: 10px;
 }
 
 #gwamble-leaderboard-list .member-item span {
@@ -441,7 +437,7 @@ margin-right:5px;
     border: none;
     font-size: 25px;
     margin: 0px;
-    padding: 7.5px;
+    padding: 10px;
     color: pink;
     width: 100%;
     box-sizing: border-box;
@@ -548,10 +544,11 @@ margin-right:5px;
 
 #gwamble-leaderboard-table h1 {
     font-size: 20px;
-    color: #503c40;
+    color: pink;
     font-family: 'Manrope';
     font-weight: 900;
     margin: 0px;
+    opacity: 50%;
 }
 
 
@@ -561,6 +558,7 @@ margin-right:5px;
     display: flex;
     flex-direction: row;
     overflow-y: hidden;
+    gap: 15px;
 }
 
 #gwamble-user-results {
@@ -596,8 +594,19 @@ margin-right:5px;
     vertical-align: middle;
     align-items: center;
     font-size: 20px;
+    padding-bottom: 2.5px;
 }
 
 .gwamble-topper span {
     font-size: 16px;
+}
+
+.gwamble-topper .topper-icon {
+    font-size: 10px;
+    background-color: pink;
+    line-height: normal;
+    padding: 2.5px;
+    border-radius: 100%;
+    color: #503c40;
+    margin-right: 7.5px!important;
 }
