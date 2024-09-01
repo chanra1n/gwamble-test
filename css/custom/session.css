@@ -412,7 +412,7 @@ margin-right:5px;
     width: fit-content;
     margin: 0px;
     box-sizing: border-box;
-    padding-top: 10px;
+    align-self: center;
 }
 
 #gwamble-leaderboard-list .member-item span {
@@ -533,7 +533,6 @@ margin-right:5px;
 #gwamble-leaderboard-table {
     background-color: black;
     padding: 20px;
-    height: calc(100vh - 328px);
     width: 100%;
     box-sizing: border-box;
     display: none;
@@ -541,6 +540,8 @@ margin-right:5px;
     gap: 15px;
     justify-content: flex-end;
     margin-top: 30px;
+    position: absolute;
+    bottom: 0;
 }
 
 
@@ -562,23 +563,23 @@ margin-right:5px;
     flex-direction: row;
     overflow-y: hidden;
     gap: 15px;
+    flex: 1;
+    align-self: center;
 }
 
 #gwamble-user-results {
     width: 100%;
-    background-color: pink;
+    background-color: transparent;
     padding: 10px;
-    color: black;
+    color: pink;
     font-weight: 900;
     font-family: 'Righteous';
     border-radius: 10px;
     box-sizing: border-box;
-    flex: 1;
     display: flex;
     flex-flow: nowrap;
     flex-direction: row;
-    align-items: stretch;
-    height: 100%;
+    border: 5px solid #503c40;
 }
 
 #gwamble-user-results .gwamble-user-icon {
