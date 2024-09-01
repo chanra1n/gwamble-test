@@ -221,7 +221,7 @@ function writeToMemberModal(username) {
     // if the username is currently written to the gwamble-poster element,
     // then update the role_button to be a different icon
     if (document.getElementById('gwamble-poster').innerHTML == username) {
-        role_button = ``;
+        role_button = `<button><i class="ri-vip-crown-fill"></i></button>`;
     }
 
     var member_item = `
