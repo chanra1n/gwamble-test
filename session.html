@@ -44,7 +44,7 @@
 <span>Exit</span>
 </button>
 
-        <p id = "gwamble-role">
+        <p id = "gwamble-role" onclick = "window.location.reload(true)">
         <i class="ri-record-circle-fill"></i>
         <span>Active</span>
         </p>
@@ -60,7 +60,7 @@
         <i class="ri-user-4-fill"></i>
         <span id = "gwamble-poster" >annoying-orange</span>
         </div>
-        <h1 onclick = "window.location.reload(true)" id="gwamble-subject">Subject</h1>
+        <h1 onclick = "toggleSubjectText()" id="gwamble-subject">Subject</h1>
         <br>
         
         <div class="gwamble-button-container" id = "outcome-a">
@@ -287,6 +287,19 @@ function declareWinner(outcome) {
     winning_outcome = outcome;
 
     initGwambleLeaderboardTable();
+
+}
+
+function toggleSubjectText(){
+    // toggle from -webkit-box to display:block.
+    // if it's one, change it to the other.
+    var subject = document.getElementById('gwamble-subject');
+
+    if (subject.style.display == "block") {
+        subject.style.display = "-webkit-box";
+    } else {
+        subject.style.display = "block";
+    }
 
 }
 
