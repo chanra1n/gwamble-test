@@ -96,15 +96,15 @@ body {
 #gwamble-body {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* Align items to the bottom initially */
+    justify-content: flex-end;
     align-items: center;
-    height: calc(100% - 60px); /* Full height minus nav bar */
+    height: calc(100% - 50px);
     background-color: pink;
     width: 100%;
     padding: 15px;
     box-sizing: border-box;
     gap: 15px;
-    overflow-y: auto; /* Allow vertical scrolling if content overflows */
+    overflow-y: auto;
 }
 
 
