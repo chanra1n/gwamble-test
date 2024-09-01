@@ -38,13 +38,13 @@ body, html {
     background-color:pink;
     color:black;
     overflow:hidden;
+    overscroll-behavior: none;
+    overflow : scroll;
 }
 
 body {
     -webkit-font-smoothing: subpixel-antialiased;
     font-synthesis: none !important;
-      overscroll-behavior: none;
-  overflow : scroll
 }
 
 #gwamble-bar {
