@@ -532,18 +532,21 @@ margin-right:5px;
 
 #gwamble-leaderboard-table {
     background-color: black;
-    margin-top: 30px;
     padding: 20px;
-    height: calc(100% - 328px);
+    height: calc(100vh - 328px);
     width: 100%;
     box-sizing: border-box;
     display: none;
     flex-direction: column;
     gap: 15px;
+    justify-content: flex-end;
+    margin-top: 30px;
 }
 
+
+
 #gwamble-leaderboard-table h1 {
-    font-size: 20px;
+    font-size: 25px;
     color: pink;
     font-family: 'Manrope';
     font-weight: 900;
@@ -563,7 +566,6 @@ margin-right:5px;
 
 #gwamble-user-results {
     width: 100%;
-    height: fit-content;
     background-color: pink;
     padding: 10px;
     color: black;
@@ -572,8 +574,80 @@ margin-right:5px;
     border-radius: 10px;
     box-sizing: border-box;
     flex: 1;
+    display: flex;
+    flex-flow: nowrap;
+    flex-direction: row;
+    align-items: stretch;
+    height: 100%;
 }
 
+#gwamble-user-results .gwamble-user-icon {
+    background-color: black;
+    color: pink;
+    padding: 5px;
+    font-size: 15px;
+    border-radius: 100%;
+    width: fit-content;
+    line-height: normal;
+}
+
+#gwamble-user-results h3 {
+    font-size: 20px;
+    font-weight: bolder;
+    font-family: 'Righteous', sans-serif;
+    margin: 0px;
+    margin-left: 5px;
+    width: fit-content;
+    display: inline-flex;
+}
+
+#gwamble-user-results .gwamble-leaderboard-button {
+    background-color: black;
+    color: pink;
+    height: 100%;
+}
+
+#gwamble-user-results p {
+    font-family: 'Manrope';
+    margin: 0px;
+    padding: 5px;
+    opacity: 50%;
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+.gwamble-header {
+    display: flex; /* Use Flexbox for horizontal alignment */
+    align-items: center; /* Align items vertically in the center */
+}
+
+.gwamble-user-icon {
+    margin-right: 10px; /* Optional: Space between the icon and the h3 */
+}
+
+.gwamble-text-left h3 {
+    margin: 0; /* Remove default margin */
+}
+
+.gwamble-text-left p {
+    margin-top: 10px; /* Add space between the h3 line and the p element */
+}
+
+.gwamble-text-left, .gwamble-text-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.gwamble-text-left {
+    padding-right: 10px;
+    flex: 2.5;
+}
+
+.gwamble-text-right {
+    padding-left: 10px;
+}
 
 .gwamble-leaderboard-button {
     width: 100%;
@@ -586,7 +660,6 @@ margin-right:5px;
     font-family: 'Manrope';
     font-weight: 900;
     border: none;
-    height: fit-content;
 }
 
 .gwamble-topper {

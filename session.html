@@ -96,11 +96,17 @@
         <div id = "gwamble-leaderboard-table">
             <h1>Results</h1>
             <div id = "gwamble-user-results">
-                <span>annoying-orange</span>
+                <div class="gwamble-text-left">
+                    <div class="gwamble-header">
+                        <i class="ri-user-4-fill gwamble-user-icon"></i>
+                        <h3>annoying-orange</h3>
+                    </div>
+                    <p>gwamble hosts do not receive payouts.</p>
+                </div>
             </div>
             <div id = "gwamble-leaderboard-list">
             </div>
-            <button class = "gwamble-leaderboard-button">Exit</button>
+            <button class = "gwamble-leaderboard-button">Close session</button>
         </div>
 
 
@@ -154,6 +160,7 @@ window.onload = function() {
 initSession();
 generateQRCode();
 writeToMemberModal('annoying-orange');
+initMemberModal();
 }
 
 function closeSession() {
@@ -230,12 +237,17 @@ function writeToGwambleLeaderboardTable(username, outcome, bet) {
 }
 
 function initGwambleLeaderboardTable() {
-    
-    writeToGwambleLeaderboardTable('annoying-orange', 'a', 10);
     writeToGwambleLeaderboardTable('brave-carrot', 'b', 10);
     writeToGwambleLeaderboardTable('burning-potato', 'a', 50);
     writeToGwambleLeaderboardTable('loud-moron', 'b', 10);
     writeToGwambleLeaderboardTable('best-board', 'b', 10);
+}
+
+function initMemberModal() {
+    writeToMemberModal('brave-carrot');
+    writeToMemberModal('burning-potato');
+    writeToMemberModal('loud-moron');
+    writeToMemberModal('best-board');
 }
 
 function kickMember(username) {
