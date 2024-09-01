@@ -29,6 +29,7 @@ body {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    line-height: 1.1;
 }
 
 .gwamble-post p {
@@ -560,6 +561,7 @@ margin-right:5px;
     font-weight: 900;
     margin: 0px;
     opacity: 50%;
+    margin-top: -5px;
 }
 
 
