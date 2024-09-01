@@ -54,7 +54,9 @@ body {
     color: black;
     display: flex;
     align-items: center;
-    width: calc(100% - 60px);
+    width: -webkit-fill-available;
+    width: -moz-available;
+    width: fill-available;
     padding: 5px 15px;
     border: none;
     border-radius: 10px 0px 0px 10px;

@@ -95,8 +95,9 @@
 
 </body>
 <script src="js/lib/uikit.js"></script>
+<script src="js/custom/fakeLogin.js"></script>
+<script src="js/custom/getActions.js"></script>
 <script>
-
 
     var create_gwamble_is_triggered = false;
     var join_gwamble_is_triggered = false;
@@ -124,8 +125,6 @@
             createContainer.onclick = null;
         }, 1);
         create_gwamble_is_triggered = true;
-
-
 
     }
 
@@ -205,7 +204,6 @@
         join_gwamble_is_triggered = false;
     }
 
-
     function OTPInput() {
   const inputs = document.querySelectorAll('#otp > *[id]');
   for (let i = 0; i < inputs.length; i++) {
@@ -262,19 +260,22 @@
 
 }
 
-
     function passGwamble() {
-        var gwamble_subject = document.getElementById('create-gwamble-subject').value;
-        var gwamble_outcome_a = document.getElementById('create-gwamble-options').querySelectorAll('input')[0].value;
-        var gwamble_outcome_b = document.getElementById('create-gwamble-options').querySelectorAll('input')[1].value;
+        var subject = document.getElementById('create-gwamble-subject').value;
+        var outcome_a = document.getElementById('create-gwamble-options').querySelectorAll('input')[0].value;
+        var outcome_b = document.getElementById('create-gwamble-options').querySelectorAll('input')[1].value;
 
-        var gwamble = {
-            "subject": gwamble_subject,
-            "outcome_a": gwamble_outcome_a,
-            "outcome_b": gwamble_outcome_b
+        var session = {
+            "owner_id": getLocalUserToken(),
+            "session_id": generateSessionID(),
+            "subject": subject,
+            "outcome_a": outcome_a,
+            "outcome_b": outcome_b,
+            "min_bet": 0,
+            "max_bet": 10,
         };
 
-        sessionStorage.setItem('gwamble', JSON.stringify(gwamble));
+        sessionStorage.setItem('gwamble', JSON.stringify(session));
         window.location.href = "session.html";
         //window.location.replace("session.html");
     }

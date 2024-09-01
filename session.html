@@ -58,7 +58,7 @@
     <div class="gwamble-post" id="posted-gwamble">
         <div class = "gwamble-post-header">
         <i class="ri-user-4-fill"></i>
-        <span id = "gwamble-poster" >annoying-orange</span>
+        <span id = "gwamble-poster" >gwamble-poster</span>
         </div>
         <h1 onclick = "toggleSubjectText()" id="gwamble-subject">Subject</h1>
         <br>
@@ -70,7 +70,7 @@
             <span id="gwamble-outcome-a-bets" class="gwamble-bets">0</span>
         </div>
 
-        <button onclick = "declareWinner('a')" class = "winner-button" id="gwamble-winner-a">
+        <button onclick = "declareWinner('A')" class = "winner-button" id="gwamble-winner-a">
         Declare winner
         </button>
 
@@ -81,7 +81,7 @@
             <span id="gwamble-outcome-b-bets" class="gwamble-bets">0</span>
         </div>
 
-        <button onclick = "declareWinner('b')" class = "winner-button" id="gwamble-winner-b" style = "margin-bottom: 0px;">
+        <button onclick = "declareWinner('B')" class = "winner-button" id="gwamble-winner-b" style = "margin-bottom: 0px;">
         Declare winner
         </button>
 
@@ -131,28 +131,48 @@
 </body>
 <script src="js/lib/uikit.js"></script>
 <script src="js/lib/qrcode.js"></script>
+<script src="js/custom/getActions.js"></script>
+<script src="js/custom/fakeSessionJoins.js"></script>
 
 <script>
 
 var gwamble;
 var winning_outcome;
 
+var amount_of_people_that_have_bet = 0;
+var amount_of_people_that_have_joined = 0;
+
+var gwamble_session = {
+    "owner_id": null,
+    "session_id": null,
+    "subject": null,
+    "outcome_a": null,
+    "outcome_b": null,
+    "min_bet": 0,
+    "max_bet": 10,
+    "status": 0,
+    "bets" : [
+    ]
+};
+
 function initSession() {
     var session = sessionStorage.getItem('gwamble');
     if (session) {
-        gwamble = JSON.parse(session);
-        console.log(gwamble);
+        gwamble_session = JSON.parse(session);
+        console.log(gwamble_session);
     } else {
-        gwamble = {
-            "subject": "no posted gwamble",
-            "outcome_a": "outcome a",
-            "outcome_b": "outcome b"
-        }
+        alert('No session found.');
+        window.location.replace('index.html');
     }
 
-    document.getElementById('gwamble-subject').innerHTML = gwamble.subject;
-    document.getElementById('gwamble-outcome-a-text').innerHTML = gwamble.outcome_a;
-    document.getElementById('gwamble-outcome-b-text').innerHTML = gwamble.outcome_b;
+    document.getElementById('gwamble-subject').innerHTML = gwamble_session.subject;
+    document.getElementById('gwamble-poster').innerHTML = getLocalUsername(gwamble_session.owner_id);
+    document.getElementById('gwamble-outcome-a-text').innerHTML = gwamble_session.outcome_a;
+    document.getElementById('gwamble-outcome-b-text').innerHTML = gwamble_session.outcome_b;
+
+    writeToMemberModal(getLocalUsername(gwamble_session.owner_id));
+
+    gwamble_session.bets = [];
 
 }
 
@@ -160,8 +180,8 @@ function initSession() {
 window.onload = function() {
 initSession();
 generateQRCode();
-writeToMemberModal('annoying-orange');
 initMemberModal();
+// fakeSessionJoinTests();
 }
 
 function closeSession() {
@@ -216,7 +236,6 @@ function writeToMemberModal(username) {
     member_list.innerHTML += member_item;
 }
 
-
 function writeToGwambleLeaderboardTable(username, outcome, bet) {
     var leaderboard_table = document.getElementById('gwamble-leaderboard-list');
     var leaderboard_row = `
@@ -238,6 +257,21 @@ function writeToGwambleLeaderboardTable(username, outcome, bet) {
 }
 
 function initGwambleLeaderboardTable() {
+
+    var bets = gwamble_session.bets;
+    var allBetsNull = bets.every(function(bet) {
+        return bet.selected_outcome === null;
+    });
+
+    if (!allBetsNull) {
+        document.getElementById('gwamble-leaderboard-list').innerHTML = '';
+
+        for (var i = 0; i < bets.length; i++) {
+            var bet = bets[i];
+            var username = getDBUsername(bet.user_id);
+            writeToGwambleLeaderboardTable(username, bet.selected_outcome, bet.bet_amount);
+        }
+    }
 }
 
 function initMemberModal() {
@@ -254,12 +288,11 @@ function kickMember(username) {
     }
 }
 
-
 function declareWinner(outcome) {
-    var winner_post = document.getElementById('outcome-'+outcome);
-    var winner_button = document.getElementById('gwamble-winner-'+outcome);
-    var loser_post = document.getElementById('outcome-'+(outcome == 'a' ? 'b' : 'a'));
-    var loser_button = document.getElementById('gwamble-winner-'+(outcome == 'a' ? 'b' : 'a'));
+    var winner_post = document.getElementById('outcome-'+outcome.toLowerCase());
+    var winner_button = document.getElementById('gwamble-winner-'+outcome.toLowerCase());
+    var loser_post = document.getElementById('outcome-'+(outcome.toLowerCase() == 'a' ? 'b' : 'a'));
+    var loser_button = document.getElementById('gwamble-winner-'+(outcome.toLowerCase() == 'a' ? 'b' : 'a'));
 
     loser_post.remove();
     loser_button.remove();
@@ -303,6 +336,49 @@ function toggleSubjectText(){
 
 }
 
+
+function updateGwambleParticipants(userID, selected_outcome, bet_amount){
+    // update the gwamble_session.bets object with the new bet
+    var new_bet = {
+        "user_id": userID,
+        "selected_outcome": selected_outcome,
+        "bet_amount": bet_amount
+    };
+
+    var existingBetIndex = gwamble_session.bets.findIndex(function(bet) {
+        return bet.user_id === userID;
+    });
+
+    if (existingBetIndex !== -1) {
+        // if the user already has a bet, update it
+        gwamble_session.bets[existingBetIndex] = new_bet;
+        console.log('user updated their bet');
+        if (gwamble_session.bets[existingBetIndex].selected_outcome !== null) {
+            amount_of_people_that_have_bet++;
+        }
+
+    } else {
+        // if the user does not have a bet, add it
+        gwamble_session.bets.push(new_bet);
+        writeToMemberModal(getDBUsername(userID));
+        amount_of_people_that_have_joined++;
+        console.log('user joined the session');
+    }
+
+    // get the number of people that have bet for "A"
+    var outcome_a_bets = gwamble_session.bets.filter(function(bet) {
+        return bet.selected_outcome === 'A';
+    }).length;
+
+    // get the number of people that have bet for "B"
+    var outcome_b_bets = gwamble_session.bets.filter(function(bet) {
+        return bet.selected_outcome === 'B';
+    }).length;
+
+    document.getElementById('gwamble-bet-member-ratio').innerHTML = amount_of_people_that_have_bet+'/'+amount_of_people_that_have_joined;
+    document.getElementById('gwamble-outcome-a-bets').innerHTML = outcome_a_bets;
+    document.getElementById('gwamble-outcome-b-bets').innerHTML = outcome_b_bets;
+}
 </script>
 
 </html>
