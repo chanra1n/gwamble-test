@@ -413,6 +413,8 @@ margin-right:5px;
     margin: 0px;
     box-sizing: border-box;
     align-self: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 #gwamble-leaderboard-list .member-item span {
