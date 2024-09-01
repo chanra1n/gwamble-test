@@ -23,7 +23,7 @@ body {
     display: block;
     margin-top: 10px;
     font-size: 27.5px;
-    margin-bottom: 15px;
+    margin-bottom: 0px;
     overflow-wrap: break-word;
     display: -webkit-box;
     -webkit-line-clamp: 3;
