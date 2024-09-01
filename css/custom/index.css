@@ -43,6 +43,8 @@ body, html {
 body {
     -webkit-font-smoothing: subpixel-antialiased;
     font-synthesis: none !important;
+      overscroll-behavior: none;
+  overflow : scroll
 }
 
 #gwamble-bar {
