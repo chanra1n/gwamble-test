@@ -213,10 +213,13 @@ function writeToGwambleLeaderboardTable(username, outcome, bet) {
     var leaderboard_table = document.getElementById('gwamble-leaderboard-list');
     var leaderboard_row = `
     <div class="member-item">
-        <span style = "padding-bottom:2.5px;">`+username+`</span>
+        <div class = "gwamble-topper">
+        <i style = "font-size:15px;" class="ri-user-4-fill"></i>
+        <span>`+username+`</span>
+        </div>
         <button>
-        <span style = "font-family: 'Poppins-Bold'">
-        <i class="ri-coins-fill"></i>
+        <i style = "font-size: 20px;vertical-align: middle;margin-right: 0px;" class="ri-coins-fill"></i>
+        <span style = "font-family: 'Poppins-Bold';display:inline;font-size:17.5px">
         `+(outcome === winning_outcome ? '+' : '-')+bet+`
         </span>
         </button>

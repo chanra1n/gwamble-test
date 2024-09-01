@@ -369,22 +369,57 @@ body {
 }
 
 
-.member-item {
+#member-modal .member-item {
     background-color: pink;
     color: black;
-    padding: 5px;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+#member-modal  .member-item span {
+    font-weight: 900;
+    font-family: 'Righteous';
+    font-size: 20px;
+}
+
+
+#member-modal  .member-item i {
+margin-right:5px;
+}
+
+
+#member-modal  .member-item button {
+    float: right;
+    display: ruby-text;
+    background-color: pink;
+    border: none;
+    font-size: 25px;
+    margin: 0px;
+    padding: 0px;
+    color:black;
+}
+
+#gwamble-leaderboard-list .member-item {
+    background-color: #ffc0cb50;
+    color: pink;
+    padding: 12.5px;
     border-radius: 10px;
     font-weight: 900;
     font-size: 20px;
-    height: fit-content;
     width: fit-content;
     margin: 15px;
     margin-top: 0;
-    margin-bottom: 0;
     margin-left: 0px;
+    box-sizing: border-box;
+    margin-bottom: 0px;
+    padding-bottom: 7.5px;
+    padding-top: 7.5px;
 }
 
-.member-item span {
+#gwamble-leaderboard-list .member-item span {
     font-weight: 900;
     font-family: 'Righteous';
     font-size: 15px;
@@ -397,23 +432,26 @@ body {
 }
 
 
-.member-item i {
+#gwamble-leaderboard-list .member-item i {
 margin-right:5px;
 }
 
 
-.member-item button {
+#gwamble-leaderboard-list .member-item button {
     border: none;
     font-size: 25px;
     margin: 0px;
-    padding: 5px;
+    padding: 7.5px;
     color: pink;
     width: 100%;
     box-sizing: border-box;
     border-radius: 10px;
     overflow: hidden;
     background-color: black;
-    background-color: black;
+    margin-top: 5px;
+    align-items: center;
+    display: flex;
+    line-height: 1;
 }
 
 .kicker {
@@ -518,29 +556,28 @@ margin-right:5px;
 
 
 #gwamble-leaderboard-list {
-    overflow-y: auto;
-    margin-left: auto;
+    overflow-x: auto;
     width: 100%;
     display: flex;
     flex-direction: row;
+    overflow-y: hidden;
 }
 
 #gwamble-user-results {
     width: 100%;
     height: fit-content;
     background-color: pink;
-    padding: 5px;
+    padding: 10px;
     color: black;
     font-weight: 900;
     font-family: 'Righteous';
     border-radius: 10px;
+    box-sizing: border-box;
+    flex: 1;
 }
 
 
 .gwamble-leaderboard-button {
-    position: sticky;
-    bottom: 20px;
-    left: 0;
     width: 100%;
     border-radius: 10px;
     box-sizing: border-box;
@@ -551,7 +588,16 @@ margin-right:5px;
     font-family: 'Manrope';
     font-weight: 900;
     border: none;
-    outline: 20px solid black;
     height: fit-content;
 }
 
+.gwamble-topper {
+    display: flex;
+    vertical-align: middle;
+    align-items: center;
+    font-size: 20px;
+}
+
+.gwamble-topper span {
+    font-size: 16px;
+}
