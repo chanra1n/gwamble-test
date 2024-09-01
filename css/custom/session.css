@@ -372,17 +372,28 @@ body {
 .member-item {
     background-color: pink;
     color: black;
-    padding: 10px;
+    padding: 5px;
     border-radius: 10px;
     font-weight: 900;
-    margin-bottom: 10px;
     font-size: 20px;
+    height: fit-content;
+    width: fit-content;
+    margin: 15px;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0px;
 }
 
 .member-item span {
     font-weight: 900;
     font-family: 'Righteous';
-    font-size: 20px;
+    font-size: 15px;
+    display: block;
+    width: 100%;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 
@@ -392,14 +403,17 @@ margin-right:5px;
 
 
 .member-item button {
-    float: right;
-    display: ruby-text;
-    background-color: pink;
     border: none;
     font-size: 25px;
     margin: 0px;
-    padding: 0px;
-    color:black;
+    padding: 5px;
+    color: pink;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: black;
+    background-color: black;
 }
 
 .kicker {
@@ -486,28 +500,42 @@ margin-right:5px;
     background-color: black;
     margin-top: 30px;
     padding: 20px;
-    height: 100%;
+    height: calc(100% - 328px);
     width: 100%;
     box-sizing: border-box;
     display: none;
+    flex-direction: column;
+    gap: 15px;
 }
 
-
-#gwamble-leaderboard-table .member-item button span {
-    font-family: 'Poppins-Bold';
-    background-color: black;
-    color: pink;
-    padding: 2.5px;
-    border-radius: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
+#gwamble-leaderboard-table h1 {
+    font-size: 20px;
+    color: #503c40;
+    font-family: 'Manrope';
+    font-weight: 900;
+    margin: 0px;
 }
 
 
 #gwamble-leaderboard-list {
-    max-height: 35vmax;
     overflow-y: auto;
+    margin-left: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
 }
+
+#gwamble-user-results {
+    width: 100%;
+    height: fit-content;
+    background-color: pink;
+    padding: 5px;
+    color: black;
+    font-weight: 900;
+    font-family: 'Righteous';
+    border-radius: 10px;
+}
+
 
 .gwamble-leaderboard-button {
     position: sticky;

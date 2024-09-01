@@ -94,6 +94,10 @@
         </div>
 
         <div id = "gwamble-leaderboard-table">
+            <h1>Results</h1>
+            <div id = "gwamble-user-results">
+                <span>annoying-orange</span>
+            </div>
             <div id = "gwamble-leaderboard-list">
             </div>
             <button class = "gwamble-leaderboard-button">Exit</button>
@@ -209,8 +213,7 @@ function writeToGwambleLeaderboardTable(username, outcome, bet) {
     var leaderboard_table = document.getElementById('gwamble-leaderboard-list');
     var leaderboard_row = `
     <div class="member-item">
-        <i class="ri-user-4-fill"></i>
-        <span>`+username+`</span>
+        <span style = "padding-bottom:2.5px;">`+username+`</span>
         <button>
         <span style = "font-family: 'Poppins-Bold'">
         <i class="ri-coins-fill"></i>
@@ -269,7 +272,7 @@ function declareWinner(outcome) {
     winner_button.style.opacity = "0.5";
     winner_button.style.pointerEvents = "none";
 
-    document.getElementById('gwamble-leaderboard-table').style.display = "grid";
+    document.getElementById('gwamble-leaderboard-table').style.display = "flex";
 
     winning_outcome = outcome;
 
