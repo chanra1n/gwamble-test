@@ -42,3 +42,11 @@ function getRandomOutcome() {
     var randomIndex = Math.floor(Math.random() * outcomes.length);
     return outcomes[randomIndex];
 }
+
+
+function initSessionTest() {
+    fakeSessionJoinTests();
+    setTimeout(() => {
+        fakeSessionBetTests();
+    }, 5000);
+}
