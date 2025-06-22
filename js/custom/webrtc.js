@@ -3,6 +3,52 @@
 let peer;
 let hostConnection; // For peers, the connection to the host
 const peerConnections = []; // For the host, all connections to peers
+let sessionData; // For peers, to store the session state
+let uiUpdateCallback; // For peers, to update the UI
+let inactivityTimer = null; // Timer to close inactive sessions
+const INACTIVITY_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * (Host only) Resets the inactivity timer. If no peers are connected,
+ * the session will be closed after a timeout.
+ */
+function resetInactivityTimer() {
+    // This function should only run on the host's machine.
+    if (sessionStorage.getItem('isHost') !== 'true') {
+        return;
+    }
+
+    // Clear any existing timer
+    if (inactivityTimer) {
+        clearTimeout(inactivityTimer);
+    }
+
+    // If there are any peers, the session is active. Do nothing.
+    if (peerConnections.length > 0) {
+        console.log(`Session is active with ${peerConnections.length} peer(s). Inactivity timer stopped.`);
+        return;
+    }
+
+    // If there are no peers, start a new timer to close the session.
+    console.log(`Session is empty. It will close in ${INACTIVITY_TIMEOUT_MS / 1000 / 60} minutes if no one joins.`);
+    inactivityTimer = setTimeout(() => {
+        // Check one last time before closing.
+        if (peerConnections.length === 0) {
+            console.log("Session timed out due to inactivity.");
+            alert("Session closed due to inactivity.");
+            
+            // The closeSession function in session.html handles cleanup and redirect.
+            if (typeof closeSession === 'function') {
+                closeSession();
+            } else {
+                // Fallback cleanup if the global function isn't found
+                if (peer) peer.destroy();
+                sessionStorage.clear();
+                window.location.replace('index.html');
+            }
+        }
+    }, INACTIVITY_TIMEOUT_MS);
+}
 
 /**
  * Initializes the host's PeerJS object, waits for it to register with the
@@ -42,6 +88,14 @@ function reestablishHostConnection() {
         return;
     }
 
+    // Host needs a persistent ID to track its own potential actions (if any)
+    // and to be consistent in the user list.
+    let persistentId = localStorage.getItem('gwamble_persistent_user_id');
+    if (!persistentId) {
+        persistentId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+        localStorage.setItem('gwamble_persistent_user_id', persistentId);
+    }
+
     if (peer) {
         peer.destroy();
     }
@@ -52,6 +106,8 @@ function reestablishHostConnection() {
         console.log('Host connection re-established with ID: ' + id);
         // Dispatch event for host to add themself to UI
         handleMessage({ type: 'host-ready', payload: { peerId: id, username: getLocalUsername() } });
+        // Start monitoring for inactivity as soon as the host is ready.
+        resetInactivityTimer();
     });
     
     peer.on('error', (err) => {
@@ -66,12 +122,22 @@ function reestablishHostConnection() {
             const session = JSON.parse(sessionStorage.getItem('gwamble'));
             conn.send({ type: 'session-data', payload: session });
             peerConnections.push(conn);
+            // A peer has joined, so the session is active. Reset the timer.
+            resetInactivityTimer();
         });
 
         conn.on('data', (data) => {
             if (data.type === 'user-reconnected') {
+                // A peer has (re)connected and announced themselves.
+                // Store their info on the connection object.
                 conn.username = data.payload.username;
-                const joinPayload = { peerId: conn.peer, username: data.payload.username };
+                conn.persistentId = data.payload.persistentId; // Store persistent ID
+
+                const joinPayload = {
+                    peerId: conn.peer,
+                    username: data.payload.username,
+                    persistentId: data.payload.persistentId // Include in broadcast
+                };
 
                 // Announce the new user to all *other* peers
                 const newUserMessage = { type: 'user-joined', payload: joinPayload };
@@ -80,11 +146,19 @@ function reestablishHostConnection() {
 
                 // Send the full list of users (including the new one) back to the new peer
                 const allUsers = peerConnections
-                    .map(p => ({ peerId: p.peer, username: p.username }))
+                    .map(p => ({
+                        peerId: p.peer,
+                        username: p.username,
+                        persistentId: p.persistentId // Send persistent IDs to new peer
+                    }))
                     .filter(p => p.username); // Only include users who have announced themselves
-                
+
                 // Add host to the list
-                allUsers.push({ peerId: peer.id, username: getLocalUsername() });
+                allUsers.push({
+                    peerId: peer.id,
+                    username: getLocalUsername(),
+                    persistentId: localStorage.getItem('gwamble_persistent_user_id') // Add host's persistent ID
+                });
 
                 conn.send({ type: 'user-list', payload: { users: allUsers } });
 
@@ -104,11 +178,20 @@ function reestablishHostConnection() {
                 peerConnections.splice(index, 1);
                 // Only broadcast if the user had fully joined (i.e., had a username)
                 if (leavingPeer.username) {
-                    const userLeftMessage = { type: 'user-left', payload: { peerId: leavingPeer.peer, username: leavingPeer.username } };
+                    const userLeftMessage = {
+                        type: 'user-left',
+                        payload: {
+                            peerId: leavingPeer.peer,
+                            username: leavingPeer.username,
+                            persistentId: leavingPeer.persistentId // Include for completeness
+                        }
+                    };
                     handleMessage(userLeftMessage);
                     broadcastMessage(userLeftMessage);
                 }
             }
+            // A peer has left. Reset the timer. If it was the last peer, the timeout will start.
+            resetInactivityTimer();
         });
     });
 }
@@ -117,21 +200,20 @@ function handleBetPlaced(betInfo) {
     let session = JSON.parse(sessionStorage.getItem('gwamble'));
     if (!session) return;
 
-    const existingBetIndex = session.bets.findIndex(b => b.user_id === betInfo.userId);
+    // Use the persistent user ID from betInfo to check for existing bets.
+    const alreadyBet = session.bets.some(b => b.user_id === betInfo.userId);
 
-    if (existingBetIndex !== -1) {
-        session.bets[existingBetIndex] = {
-            user_id: betInfo.userId,
-            selected_outcome: betInfo.outcome,
-            bet_amount: betInfo.amount
-        };
-    } else {
-        session.bets.push({
-            user_id: betInfo.userId,
-            selected_outcome: betInfo.outcome,
-            bet_amount: betInfo.amount
-        });
+    if (alreadyBet) {
+        console.warn(`User ${betInfo.userId} has already bet. Ignoring subsequent bet.`);
+        return; // IMPORTANT: Prevents multiple bets from the same user.
     }
+
+    // If no bet exists for this user, add the new bet.
+    session.bets.push({
+        user_id: betInfo.userId, // This is the persistentId
+        selected_outcome: betInfo.outcome,
+        bet_amount: betInfo.amount
+    });
 
     sessionStorage.setItem('gwamble', JSON.stringify(session));
 
@@ -141,12 +223,62 @@ function handleBetPlaced(betInfo) {
     handleMessage({ type: 'bets-updated', payload: { bets: session.bets } });
 }
 
+/**
+ * (Peer Only) Sends a bet to the host.
+ * @param {string} outcome The selected outcome ('a' or 'b').
+ */
+function sendBet(outcome) {
+    if (!hostConnection) {
+        console.error("Cannot send bet, not connected to host.");
+        return;
+    }
+
+    const persistentId = localStorage.getItem('gwamble_persistent_user_id');
+    if (!persistentId) {
+        console.error("Cannot send bet, no persistent user ID found.");
+        return;
+    }
+
+    const betInfo = {
+        userId: persistentId, // Use the persistent ID for the bet
+        outcome: outcome,
+        amount: 10 // Fixed bet amount
+    };
+
+    hostConnection.send({ type: 'bet-placed', payload: { betInfo: betInfo } });
+}
 
 /**
- * Connects a peer to a host and redirects to the session page upon success.
- * @param {string} hostId The 6-digit code of the host to connect to.
+ * (Peer Only) Disconnects from the host and cleans up the peer object.
  */
-function joinAndRedirect(hostId) {
+function disconnectFromHost() {
+    if (hostConnection) {
+        hostConnection.close();
+    }
+    if (peer) {
+        peer.destroy();
+    }
+    console.log("Disconnected from host.");
+}
+
+/**
+ * (Peer Only) Connects a peer to a host.
+ * This is called from join.html
+ * @param {string} hostId The 6-digit code of the host to connect to.
+ * @param {function} updateCallback The function to call to update the UI.
+ */
+function joinSession(hostId, updateCallback) {
+    // Explicitly clear the isHost flag to ensure this client is treated as a peer.
+    sessionStorage.removeItem('isHost');
+    uiUpdateCallback = updateCallback;
+
+    // Get or create a persistent user ID to prevent duplicate betting on reload.
+    let persistentId = localStorage.getItem('gwamble_persistent_user_id');
+    if (!persistentId) {
+        persistentId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+        localStorage.setItem('gwamble_persistent_user_id', persistentId);
+    }
+
     if (peer) {
         peer.destroy();
     }
@@ -158,22 +290,34 @@ function joinAndRedirect(hostId) {
         hostConnection = peer.connect(hostId, { reliable: true });
 
         hostConnection.on('open', () => {
-            console.log('Connection to host established. Waiting for session data...');
+            console.log('Connection to host established. Announcing myself.');
+            const username = getLocalUsername();
+            sessionStorage.setItem('myPeerId', peer.id);
+            // Send the persistent ID along with the username.
+            hostConnection.send({
+                type: 'user-reconnected',
+                payload: {
+                    username: username,
+                    persistentId: persistentId
+                }
+            });
         });
 
         hostConnection.on('data', (data) => {
-            if (data.type === 'session-data') {
-                console.log('Received session data, joining session...');
-                sessionStorage.setItem('gwamble', JSON.stringify(data.payload));
-                sessionStorage.setItem('hostPeerId', hostId);
-                sessionStorage.setItem('myPeerId', peer.id);
-                window.location.href = 'session.html';
-            }
+            console.log('Received data from host:', data);
+            handleHostMessage(data);
         });
 
         hostConnection.on('error', (err) => {
             console.error('Connection error:', err);
             alert('Failed to connect to host. The session may be full or no longer exist.');
+            window.location.href = 'index.html';
+        });
+
+        hostConnection.on('close', () => {
+            console.log('Connection to host closed.');
+            alert('The host has ended the session.');
+            sessionStorage.clear();
             window.location.href = 'index.html';
         });
     });
@@ -190,55 +334,116 @@ function joinAndRedirect(hostId) {
 }
 
 /**
- * (Peer Only) Re-establishes a connection for a peer when they load the session page.
+ * (Peer Only) Handles messages received from the host.
+ * @param {object} data The data object from the host.
  */
-function reestablishPeerConnection() {
-    const myId = sessionStorage.getItem('myPeerId');
-    const hostId = sessionStorage.getItem('hostPeerId');
+function handleHostMessage(data) {
+    const { type, payload } = data;
 
-    if (!myId || !hostId) {
-        console.error("Peer or Host ID not found in session storage.");
-        window.location.href = 'index.html';
+    // Initialize sessionData if it's the first message
+    if (!sessionData && type === 'session-data') {
+        sessionData = payload;
+    } else if (!sessionData) {
+        // If sessionData is not set yet and we receive another message type, we probably missed the initial data.
+        // We can either request it again or wait. For now, we'll just log a warning.
+        console.warn("Received message before session data was initialized. Type: ", type);
         return;
     }
 
+    switch (type) {
+        case 'session-data':
+            // Already handled, but we can merge just in case
+            sessionData = { ...sessionData, ...payload };
+            break;
+        case 'user-list':
+            sessionData.members = payload.users.map(u => ({
+                user_id: u.peerId, // Keep peerId as the primary key for UI elements
+                persistent_id: u.persistentId, // Store the persistent ID
+                username: u.username,
+                is_host: u.peerId === sessionStorage.getItem('gwamble_join_code')
+            }));
+            break;
+        case 'user-joined':
+            if (!sessionData.members.find(m => m.user_id === payload.peerId)) {
+                sessionData.members.push({
+                    user_id: payload.peerId,
+                    persistent_id: payload.persistentId, // Store the persistent ID
+                    username: payload.username,
+                    is_host: false
+                });
+            }
+            break;
+        case 'user-left':
+            sessionData.members = sessionData.members.filter(m => m.user_id !== payload.peerId);
+            break;
+        case 'bets-updated':
+            sessionData.bets = payload.bets;
+            break;
+        case 'winner-declared':
+            sessionData.winner = payload.winner;
+            // The UI callback will now handle showing the results screen
+            break;
+        case 'kicked':
+            alert('You have been kicked from the session by the host.');
+            disconnectFromHost();
+            window.location.href = 'index.html';
+            break;
+        default:
+            console.warn('Unknown message type from host:', type);
+            return; 
+    }
+
+    if (uiUpdateCallback) {
+        uiUpdateCallback(sessionData);
+    }
+}
+
+
+/**
+ * (Peer Only) Sends a bet to the host.
+ * @param {string} outcome The outcome being bet on ('a' or 'b').
+ */
+function sendBet(outcome) {
+    if (!hostConnection) {
+        console.error("Cannot send bet, not connected to host.");
+        return;
+    }
+
+    const persistentId = localStorage.getItem('gwamble_persistent_user_id');
+    if (!persistentId) {
+        console.error("Cannot send bet, no persistent user ID found.");
+        return;
+    }
+
+    const betInfo = {
+        userId: persistentId, // Use the persistent ID for the bet
+        outcome: outcome,
+        amount: 10 // Fixed bet amount
+    };
+
+    hostConnection.send({ type: 'bet-placed', payload: { betInfo: betInfo } });
+}
+
+/**
+ * (Peer Only) Disconnects from the host and cleans up the peer object.
+ */
+function disconnectFromHost() {
+    if (hostConnection) {
+        hostConnection.close();
+    }
     if (peer) {
         peer.destroy();
     }
-
-    peer = new Peer(myId);
-
-    peer.on('open', () => {
-        console.log('Re-establishing connection to host ' + hostId);
-        hostConnection = peer.connect(hostId, { reliable: true });
-        hostConnection.on('open', () => {
-            console.log('Reconnected to host.');
-            sendMessageToHost({ type: 'user-reconnected', payload: { peerId: myId, username: getLocalUsername() } });
-        });
-        hostConnection.on('data', handleMessage);
-        hostConnection.on('close', () => {
-            alert('Connection to the host has been lost.');
-            window.location.href = 'index.html';
-        });
-    });
+    console.log("Disconnected from host.");
 }
 
 /**
- * Dispatches a custom event to be handled by the session page UI.
- * @param {object} message The data received from a peer or host.
- */
-function handleMessage(message) {
-    console.log('Dispatching message to UI:', message);
-    window.dispatchEvent(new CustomEvent('gwamble-message', { detail: message }));
-}
-
-/**
- * (Host only) Sends a message to all connected peers.
- * @param {object} message The message to broadcast.
- * @param {string} [excludePeerId] - Optional peer ID to exclude from the broadcast.
+ * (Host only) Broadcasts a message to all connected peers.
+ * @param {object} message The message to send.
+ * @param {string} [excludePeerId] Optional. A peer ID to exclude from the broadcast.
  */
 function broadcastMessage(message, excludePeerId) {
-    console.log('Broadcasting message:', message);
+    console.log(`Broadcasting message to ${peerConnections.length} peers:`, message);
     peerConnections.forEach(conn => {
         if (conn.open && conn.peer !== excludePeerId) {
             conn.send(message);
@@ -247,19 +452,41 @@ function broadcastMessage(message, excludePeerId) {
 }
 
 /**
- * (Peer only) Sends a message to the host.
- * @param {object} message The message to send.
+ * (Host only) Kicks a specific peer.
+ * @param {string} peerId The ID of the peer to kick.
  */
-function sendMessageToHost(message) {
-    console.log('Sending message to host:', message);
-    if (hostConnection && hostConnection.open) {
-        hostConnection.send(message);
-    } else {
-        console.error("Cannot send message, not connected to host.");
+function kickPeerConnection(peerId) {
+    const conn = peerConnections.find(p => p.peer === peerId);
+    if (conn) {
+        console.log(`Kicking peer ${peerId}`);
+        // 1. Send a kick message to the peer so they can display a message.
+        conn.send({ type: 'kicked' });
+        
+        // 2. Close the connection after a short delay to allow message to send.
+        setTimeout(() => conn.close(), 500);
+        
+        // 3. The regular 'close' event handler will fire, which already broadcasts
+        //    the 'user-left' message, so no need to do it here.
     }
 }
 
+/**
+ * (Host only) Handles messages received from peers.
+ * This is where the host logic for updating the session state lives.
+ * It dispatches a custom event that the session.html page can listen to.
+ * @param {object} data The data object from the peer.
+ */
+function handleMessage(data) {
+    console.log("Dispatching gwamble-message event with data:", data);
+    const event = new CustomEvent('gwamble-message', { detail: data });
+    window.dispatchEvent(event);
+}
+
 window.addEventListener('beforeunload', () => {
+    // Also clear the timer when the page is closed.
+    if (inactivityTimer) {
+        clearTimeout(inactivityTimer);
+    }
     if (peer) {
         console.log('Destroying peer object.');
         peer.destroy();

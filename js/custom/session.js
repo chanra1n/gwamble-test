@@ -5,66 +5,43 @@ class GwambleSession {
         this.subject = subject;
         this.outcomeA = outcomeA;
         this.outcomeB = outcomeB;
-        this.peers = [];
-        this.bets = {}; // Using an object to map peerId to their bet
+        this.members = []; // Changed from peers to members for clarity
+        this.bets = []; // Changed from object to array to fix length/filter issues
         this.startTime = Date.now();
         this.winner = null;
     }
 
-    addPeer(peerId) {
-        if (this.peers.indexOf(peerId) === -1) {
-            this.peers.push(peerId);
+    addMember(peerId, username) {
+        if (!this.members.find(m => m.user_id === peerId)) {
+            this.members.push({ user_id: peerId, username: username, is_host: false });
         }
     }
 
-    removePeer(peerId) {
-        this.peers = this.peers.filter(p => p !== peerId);
-        delete this.bets[peerId];
+    removeMember(peerId) {
+        this.members = this.members.filter(m => m.user_id !== peerId);
     }
 
-    placeBet(peerId, outcome) {
-        // Only allow bets if the session is active and no winner has been declared
-        if (!this.winner && (Date.now() - this.startTime) < 600000) { // 10 minutes
-            this.bets[peerId] = outcome;
-            return true;
+    updateBet(userId, username, outcome, amount) {
+        const existingBetIndex = this.bets.findIndex(b => b.user_id === userId);
+        const bet = { user_id: userId, username: username, selected_outcome: outcome, bet_amount: amount };
+
+        if (existingBetIndex !== -1) {
+            this.bets[existingBetIndex] = bet;
+        } else {
+            this.bets.push(bet);
         }
-        return false;
     }
 
-    declareWinner(outcome) {
-        if (!this.winner) {
-            this.winner = outcome;
-            this.calculateWinnings();
-            return true;
-        }
-        return false;
-    }
-
-    calculateWinnings() {
-        const winningBets = [];
-        const losingBets = [];
-
-        for (const peerId in this.bets) {
-            if (this.bets[peerId] === this.winner) {
-                winningBets.push(peerId);
-            } else {
-                losingBets.push(peerId);
-            }
-        }
-
-        // For simplicity, let's say winners get 10 credits each.
-        // This can be adjusted based on your credit system logic.
-        // We'll need a way to communicate these winnings back to the users.
-    }
-
-    getStateForPeer() {
+    // Helper to get the initial state for a new peer
+    getState() {
         return {
+            hostUsername: this.hostUsername,
             subject: this.subject,
             outcomeA: this.outcomeA,
             outcomeB: this.outcomeB,
+            members: this.members,
             bets: this.bets,
-            winner: this.winner,
-            startTime: this.startTime
+            winner: this.winner
         };
     }
 }

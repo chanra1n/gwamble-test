@@ -1,50 +1,289 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Joining Gwamble...</title>
+    <title>GWAMBLE</title>
     <link rel="stylesheet" type="text/css" href="css/lib/remixicon.css">
+    <link rel="stylesheet" type="text/css" href="css/lib/uikit.css">
     <link rel="stylesheet" type="text/css" href="css/custom/index.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/custom/session.css">
+    <link rel="stylesheet" type="text/css" href="css/custom/join.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <link rel="apple-touch-icon" sizes="72x72" href="icon/icon-72x72.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="icon/icon-96x96.png">
+    <link rel="icon" type="image/png" sizes="128x128" href="icon/icon-128x128.png">
+    <link rel="icon" type="image/png" sizes="144x144" href="icon/icon-144x144.png">
+    <link rel="icon" type="image/png" sizes="152x152" href="icon/icon-152x152.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="384x384" href="icon/icon-384x384.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon/icon-512x512.png">
+    <meta name="theme-color" content="#ffc0cb">
+    <meta name="background-color" content="#ffc0cb">
+    <meta name="msapplication-TileColor" content="#ffc0cb">
+    <meta name="msapplication-TileImage" content="icon/icon-144x144.png">
+    <meta name="msapplication-config" content="https://csclubhumboldt.org/browserconfig.xml">
+    <meta name="application-name" content="gwamble">
+    <meta name="apple-mobile-web-app-title" content="gwamble">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
     <meta name="mobile-web-app-capable" content="yes">
     <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            text-align: center;
-        }
-        #loading-icon {
-            width: 64px;
-            margin: 10px;
-            filter: blur(0.5px);
-        }
-    </style>
 </head>
+
 <body>
-    <div id="gwamble-body">
-        <h1>Joining Gwamble...</h1>
-        <img src="icon/loading2.gif" id="loading-icon" alt="Loading...">
-        <p>Please wait while we connect you to the session.</p>
-        <p>If you are not redirected automatically, the session may no longer be active or the code is incorrect.</p>
-        <button onclick="window.location.href='index.html'">Back to Home</button>
-    </div>
 
-    <script src="js/custom/webrtc.js"></script>
-    <script>
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const hostId = urlParams.get('code');
+    <nav id="gwamble-bar" uk-navbar>
+        
+<button id="gwamble-close-session" onclick="closeSession()">
+<i class="ri-arrow-left-s-fill"></i>
+<span>Leave</span>
+</button>
 
-            if (hostId) {
-                // The joinAndRedirect function from webrtc.js will handle everything
-                joinAndRedirect(hostId);
-            } else {
-                alert('No join code provided.');
-                window.location.href = 'index.html';
-            }
-        };
-    </script>
+        <p id = "gwamble-role">
+        <i class="ri-record-circle-fill"></i>
+        <span>Active</span>
+        </p>
+
+        <p>
+        <i class="ri-group-2-fill"></i>
+        <span id = "gwamble-bet-member-ratio">0/0</span>
+        </p>
+    </nav>
+
+    <div class="gwamble-post" id="posted-gwamble">
+        <div class = "gwamble-post-header">
+        <i class="ri-user-4-fill"></i>
+        <span id = "gwamble-poster" ></span>
+        </div>
+        <h1 onclick = "window.location.reload(true)" id="gwamble-subject">Connecting...</h1>
+        <br>
+        
+        <div class="gwamble-button-container">
+            <button id="gwamble-outcome-a">
+                <span id="gwamble-outcome-a-text"></span>
+            </button>
+        </div>
+
+        <button onclick = "placeBet('a')" class = "winner-button" id="gwamble-winner-a">
+            <span class = "bet-left">BET</span>
+            <i class="ri-coins-fill"></i>
+            10
+        </button>
+
+        <div class="gwamble-button-container">
+            <button id="gwamble-outcome-b">
+                <span id="gwamble-outcome-b-text"></span>
+            </button>
+        </div>
+
+        <button onclick = "placeBet('b')" class = "winner-button" id="gwamble-winner-b" style = "margin-bottom:0px">
+            <span class = "bet-left">BET</span>
+            <i class="ri-coins-fill"></i>
+            10
+        </button>
+
+        </div>
+
+
+        <div class = "gwamble-bottom">
+        <button onclick = "copyGwambleCode()" id = "gwamble-share-code" data-code = ""> <i id = "gwamble-copy-icon" class="ri-file-copy-fill"></i></button>
+        <button onclick = "UIkit.modal('#qr-modal').show()" id = "gwamble-qr-code"><i class="ri-qr-code-fill"></i></button>
+        </div>
+
+
+        <div uk-modal id="qr-modal" onclick = "UIkit.modal('#qr-modal').hide()">
+            <div class="uk-modal-dialog">
+                <div id="gwamble-qr-display"></div>
+            </div>
+        </div>
+
+        <div id = "gwamble-leaderboard-table" style="display: none;">
+            <h1>Results</h1>
+            <div id = "gwamble-user-results">
+            </div>
+            <div id = "gwamble-leaderboard-list">
+            </div>
+            <button class = "gwamble-leaderboard-button" onclick = "closeSession()" >Exit Session</button>
+        </div>
+
+        <div id="message-modal" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                <h2 class="uk-modal-title">Notification</h2>
+                <p id="message-modal-text"></p>
+                <p class="uk-text-right">
+                    <button class="uk-button uk-button-primary uk-modal-close" type="button">OK</button>
+                </p>
+            </div>
+        </div>
+
 </body>
+<script src="js/lib/uikit.js"></script>
+<script src="js/lib/qrcode.js"></script>
+<script src="js/custom/users.js"></script>
+<script src="js/custom/session.js"></script>
+<script src="js/custom/webrtc.js"></script>
+
+<script>
+
+function showWinnerUI(session) {
+    const winner = session.winner;
+    const persistentId = localStorage.getItem('gwamble_persistent_user_id');
+    const myBet = session.bets.find(b => b.user_id === persistentId);
+    const didIWin = myBet?.selected_outcome === winner;
+
+    document.getElementById('posted-gwamble').style.display = 'none';
+    document.querySelector('.gwamble-bottom').style.display = 'none';
+    const resultsTable = document.getElementById('gwamble-leaderboard-table');
+    resultsTable.style.display = 'block';
+
+    const userResults = document.getElementById('gwamble-user-results');
+    if (myBet) {
+        if (didIWin) {
+            userResults.innerHTML = `<p><i class="ri-trophy-fill" style="margin-right:5px"></i> You won! Payout: 20 coins.</p>`;
+        } else {
+            userResults.innerHTML = `<p><i class="ri-close-circle-fill" style="margin-right:5px"></i> You lost. Better luck next time.</p>`;
+        }
+    } else {
+        userResults.innerHTML = `<p>You didn't place a bet.</p>`;
+    }
+
+    const leaderboardList = document.getElementById('gwamble-leaderboard-list');
+    leaderboardList.innerHTML = ''; // Clear previous results
+    session.members.forEach(member => {
+        const bet = session.bets.find(b => b.user_id === member.persistent_id);
+        const betText = bet ? `Bet on Outcome ${bet.selected_outcome.toUpperCase()}` : 'Did not bet';
+        const winnerClass = bet && bet.selected_outcome === winner ? 'winner-trophy' : '';
+
+        const memberItem = `
+            <div class="member-item">
+                <div class="gwamble-topper">
+                    <span style="font-family:'Manrope';font-size:18px">${member.username}</span>
+                    ${winnerClass ? '<i class="ri-trophy-fill"></i>' : ''}
+                </div>
+                <span style="opacity:50%;font-size:14px">${betText}</span>
+            </div>
+        `;
+        leaderboardList.innerHTML += memberItem;
+    });
+}
+
+function updateUI(session) {
+    if (!session) return;
+
+    if (session.winner) {
+        showWinnerUI(session);
+        return;
+    }
+
+    document.getElementById('gwamble-subject').innerHTML = session.subject;
+    document.getElementById('gwamble-outcome-a-text').innerHTML = session.outcomeA;
+    document.getElementById('gwamble-outcome-b-text').innerHTML = session.outcomeB;
+    document.getElementById('gwamble-poster').innerHTML = session.hostUsername;
+    
+    const code = sessionStorage.getItem('gwamble_join_code');
+    const codeButton = document.getElementById('gwamble-share-code');
+    const formattedCode = `${code.slice(0,3)}-${code.slice(3,6)}`;
+    codeButton.setAttribute('data-code', formattedCode);
+    codeButton.firstChild.nodeValue = formattedCode + ' ';
+
+    generateQRCode(code);
+
+    const memberCount = session.members ? session.members.length : 0;
+    const betCount = session.bets ? session.bets.length : 0;
+    document.getElementById('gwamble-bet-member-ratio').textContent = `${betCount}/${memberCount}`;
+
+    // Check if the current user has already placed a bet and update UI accordingly
+    const persistentId = localStorage.getItem('gwamble_persistent_user_id');
+    if (session.bets && persistentId) {
+        const myBet = session.bets.find(b => b.user_id === persistentId);
+        if (myBet) {
+            lockInBetUI(myBet.selected_outcome);
+        }
+    }
+}
+
+function showMessageModal(message) {
+    const modalText = document.getElementById('message-modal-text');
+    if (modalText) {
+        modalText.textContent = message;
+        const modal = UIkit.modal('#message-modal');
+        if (modal) {
+            modal.show();
+        }
+    }
+}
+
+function lockInBetUI(outcome) {
+    const buttonA = document.getElementById('gwamble-winner-a');
+    const buttonB = document.getElementById('gwamble-winner-b');
+    buttonA.disabled = true;
+    buttonB.disabled = true;
+    buttonA.style.opacity = '0.5';
+    buttonB.style.opacity = '0.5';
+
+    if (outcome) {
+        const selectedButton = document.getElementById(`gwamble-winner-${outcome.toLowerCase()}`);
+        if (selectedButton) {
+            selectedButton.innerHTML = '✓ Bet Placed';
+            selectedButton.style.opacity = '1';
+        }
+    }
+}
+
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const hostId = urlParams.get('code');
+
+    if (hostId) {
+        sessionStorage.setItem('gwamble_join_code', hostId);
+        sessionStorage.setItem('gwamble_role', 'peer');
+        // joinSession is in webrtc.js, it will handle connecting and receiving data.
+        // It will also call updateUI when data is received.
+        joinSession(hostId, updateUI, showMessageModal);
+    } else {
+        document.getElementById('gwamble-subject').innerHTML = "Error: No join code provided.";
+    }
+};
+
+function placeBet(outcome) {
+    // This function will be in webrtc.js to send the bet to the host
+    sendBet(outcome);
+    lockInBetUI(outcome);
+}
+
+function closeSession() {
+    // Disconnect from peerjs and cleanup
+    disconnectFromHost(); 
+    sessionStorage.clear();
+    window.location.replace('index.html');
+}
+
+function copyGwambleCode() {
+    var code = document.getElementById('gwamble-share-code').getAttribute('data-code');
+    navigator.clipboard.writeText(code);
+
+    var icon = document.getElementById('gwamble-copy-icon');
+    icon.classList.remove('ri-file-copy-fill');
+    icon.classList.add('ri-check-fill');
+    setTimeout(function() {
+        icon.classList.remove('ri-check-fill');
+        icon.classList.add('ri-file_copy_fill');
+    }, 2500);
+}
+
+function generateQRCode(code) {
+    document.getElementById("gwamble-qr-display").innerHTML = '';
+    var qr = new QRCode(document.getElementById("gwamble-qr-display"), {
+        text: code,
+        width: 256,
+        height: 256,
+    });
+}
+
+</script>
+
 </html>

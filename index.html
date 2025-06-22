@@ -228,12 +228,13 @@
 
     function passGwamble() {
         var subject = document.getElementById('create-gwamble-subject').value;
-        var outcome_a = document.getElementById('create-gwamble-options').querySelectorAll('input')[0].value;
-        var outcome_b = document.getElementById('create-gwamble-options').querySelectorAll('input')[1].value;
+        var outcomeA = document.getElementById('create-gwamble-options').querySelectorAll('input')[0].value;
+        var outcomeB = document.getElementById('create-gwamble-options').querySelectorAll('input')[1].value;
         var user = getLocalUser();
         var join_code = generateJoinCode();
 
-        var session = new GwambleSession(user.token, user.username, subject, outcome_a, outcome_b);
+        // Using camelCase properties to match the GwambleSession class
+        var session = new GwambleSession(user.token, user.username, subject, outcomeA, outcomeB);
         sessionStorage.setItem('gwamble', JSON.stringify(session));
         sessionStorage.setItem('gwamble_join_code', join_code);
         sessionStorage.setItem('gwamble_username', user.username);
@@ -284,6 +285,13 @@
     }
 
     window.onload = function() {
+        // Clear any previous session state to ensure a clean start every time.
+        sessionStorage.removeItem('gwamble');
+        sessionStorage.removeItem('gwamble_join_code');
+        sessionStorage.removeItem('isHost');
+        sessionStorage.removeItem('myPeerId');
+        sessionStorage.removeItem('hostPeerId');
+
         OTPInput();
         initCreateGwambleListeners();
     };

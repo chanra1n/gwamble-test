@@ -12,7 +12,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-    <link rel="manifest" href="https://chanra1n.github.io/gwamble-test/manifest.json">
     <link rel="apple-touch-icon" sizes="72x72" href="icon/icon-72x72.png">
     <link rel="icon" type="image/png" sizes="96x96" href="icon/icon-96x96.png">
     <link rel="icon" type="image/png" sizes="128x128" href="icon/icon-128x128.png">
@@ -71,7 +70,7 @@
             <span id="gwamble-outcome-a-bets" class="gwamble-bets">0</span>
         </div>
 
-        <button onclick = "declareWinner('A')" class = "winner-button" id="gwamble-winner-a">
+        <button onclick = "declareWinner('A')" class = "winner-button" id="gwamble-winner-a" style="display: none;">
         Declare winner
         </button>
 
@@ -82,7 +81,7 @@
             <span id="gwamble-outcome-b-bets" class="gwamble-bets">0</span>
         </div>
 
-        <button onclick = "declareWinner('B')" class = "winner-button" id="gwamble-winner-b" style = "margin-bottom: 0px;">
+        <button onclick = "declareWinner('B')" class = "winner-button" id="gwamble-winner-b" style = "margin-bottom: 0px; display: none;">
         Declare winner
         </button>
 
@@ -137,162 +136,240 @@
 
 <script>
 
-var gwamble;
-var winning_outcome;
+var gwamble_session;
 
-var amount_of_people_that_have_bet = 0;
-var amount_of_people_that_have_joined = 0;
+// NEW: This is the host-only entry point for the session page.
+window.onload = function() {
+    // 1. Verify this user is the host. If not, redirect them immediately.
+    if (sessionStorage.getItem('isHost') !== 'true') {
+        alert('This page is for the session host only.');
+        window.location.replace('index.html');
+        return; // Stop all further execution.
+    }
 
-var gwamble_session = {
-    "owner_id": null,
-    "session_id": null,
-    "subject": null,
-    "outcome_a": null,
-    "outcome_b": null,
-    "min_bet": 0,
-    "max_bet": 10,
-    "status": 0,
-    "bets" : [
-    ]
+    // 2. Verify essential session data exists.
+    const sessionData = sessionStorage.getItem('gwamble');
+    if (!sessionData) {
+        alert('FATAL: No session data found. Returning to home page.');
+        window.location.replace('index.html');
+        return;
+    }
+    gwamble_session = JSON.parse(sessionData);
+    // Ensure members and bets arrays exist, just in case.
+    if (!gwamble_session.members) gwamble_session.members = [];
+    if (!gwamble_session.bets) gwamble_session.bets = [];
+
+
+    // 3. Set up Host UI and network connection.
+    console.log("Role determined: HOST. Setting up host UI and connection.");
+    document.getElementById('gwamble-winner-a').style.display = 'block';
+    document.getElementById('gwamble-winner-b').style.display = 'block';
+    
+    // Disable betting buttons for the host
+    document.getElementById('gwamble-outcome-a').onclick = null;
+    document.getElementById('gwamble-outcome-b').onclick = null;
+    document.getElementById('gwamble-outcome-a').style.cursor = 'default';
+    document.getElementById('gwamble-outcome-b').style.cursor = 'default';
+
+    reestablishHostConnection();
+
+    // 4. Set up common UI elements.
+    setupHostUI();
+
+    // 5. Activate the global message listener.
+    window.addEventListener('gwamble-message', handleGwambleMessage);
 };
 
-function initSession() {
-    var session = sessionStorage.getItem('gwamble');
-    if (session) {
-        gwamble_session = JSON.parse(session);
-        console.log(gwamble_session);
-    } else {
-        alert('No session found.');
-        window.location.replace('index.html');
-    }
-
-    var joinCode = sessionStorage.getItem('gwamble_join_code');
-    if (joinCode) {
-        var shareCodeButton = document.getElementById('gwamble-share-code');
-        var formattedCode = joinCode.substring(0, 3) + '-' + joinCode.substring(3);
-        shareCodeButton.setAttribute('data-code', formattedCode);
-        shareCodeButton.firstChild.nodeValue = formattedCode + ' ';
-    }
-
+// Sets up the initial UI elements for the host.
+function setupHostUI() {
+    console.log("Setting up host UI elements.");
     document.getElementById('gwamble-subject').innerHTML = gwamble_session.subject;
     document.getElementById('gwamble-poster').innerHTML = gwamble_session.hostUsername;
     document.getElementById('gwamble-outcome-a-text').innerHTML = gwamble_session.outcomeA;
     document.getElementById('gwamble-outcome-b-text').innerHTML = gwamble_session.outcomeB;
 
-    writeToMemberModal(gwamble_session.hostUsername);
-
-    // Clear old bets and establish a clean state for the session
-    gwamble_session.bets = [];
-
-    // If the user is not the host, they shouldn't see the winner declaration buttons
-    if (sessionStorage.getItem('isHost') !== 'true') {
-        document.getElementById('gwamble-winner-a').style.display = 'none';
-        document.getElementById('gwamble-winner-b').style.display = 'none';
+    const joinCode = sessionStorage.getItem('gwamble_join_code');
+    if (joinCode) {
+        const shareCodeButton = document.getElementById('gwamble-share-code');
+        const formattedCode = joinCode.substring(0, 3) + '-' + joinCode.substring(3);
+        shareCodeButton.setAttribute('data-code', formattedCode);
+        shareCodeButton.firstChild.nodeValue = formattedCode + ' ';
+        generateQRCode(joinCode);
     }
 }
 
+// Host's function to declare a winner.
+function declareWinner(outcome) {
+    console.log(`Host declared winner: ${outcome}`);
+    
+    // Update local session state
+    gwamble_session.winner = outcome;
+    sessionStorage.setItem('gwamble', JSON.stringify(gwamble_session));
 
-window.onload = function() {
-    initSession();
-    generateQRCode();
+    // 1. Broadcast the winner declaration to all peers
+    broadcastMessage({ type: 'winner-declared', payload: { winner: outcome } });
 
-    if (sessionStorage.getItem('isHost') === 'true') {
-        console.log("This client is the host.");
-        reestablishHostConnection();
-    } else {
-        console.log("This client is a peer.");
-        reestablishPeerConnection();
-    }
-
-    window.addEventListener('gwamble-message', handleGwambleMessage);
+    // 2. Update the host's own UI
+    showWinnerUI(gwamble_session);
 }
 
+function showWinnerUI(session) {
+    const winner = session.winner;
+    
+    document.getElementById('posted-gwamble').style.display = 'none';
+    document.querySelector('.gwamble-bottom').style.display = 'none';
+
+    const resultsTable = document.getElementById('gwamble-leaderboard-table');
+    resultsTable.style.display = 'block';
+
+    const userResults = document.getElementById('gwamble-user-results');
+    userResults.innerHTML = `<p><i class="ri-trophy-fill" style="margin-right:5px"></i> Winner is Outcome ${winner.toUpperCase()}</p>`;
+
+    const leaderboardList = document.getElementById('gwamble-leaderboard-list');
+    leaderboardList.innerHTML = '';
+
+    if (session.bets.length === 0) {
+        leaderboardList.innerHTML = `
+            <div class="member-item" style="width:100%;opacity:50%">
+                <div class="gwamble-topper">
+                    <span style="font-family:'Manrope';font-size:18px">No bets were received.</span>
+                </div>
+            </div>`;
+        return;
+    }
+
+    session.members.forEach(member => {
+        const bet = session.bets.find(b => b.user_id === member.user_id);
+        const betText = bet ? `Bet on Outcome ${bet.selected_outcome.toUpperCase()}` : 'Did not bet';
+        const winnerClass = bet && bet.selected_outcome.toUpperCase() === winner.toUpperCase() ? 'winner-trophy' : '';
+
+        const memberItem = `
+            <div class="member-item">
+                <div class="gwamble-topper">
+                    <span style="font-family:'Manrope';font-size:18px">${member.username}</span>
+                    ${winnerClass ? '<i class="ri-trophy-fill"></i>' : ''}
+                </div>
+                <span style="opacity:50%;font-size:14px">${betText}</span>
+            </div>
+        `;
+        leaderboardList.innerHTML += memberItem;
+    });
+}
+
+// Host's function to close the session for everyone.
 function closeSession() {
-    if (sessionStorage.getItem('isHost') === 'true') {
-        broadcastMessage({ type: 'session-closed' });
-        if (peer) peer.destroy();
-    } else {
-        if (hostConnection && hostConnection.open) {
-            hostConnection.close();
-        }
-    }
+    broadcastMessage({ type: 'session-closed' });
+    if (peer) peer.destroy();
     sessionStorage.clear();
     window.location.replace('index.html');
 }
 
+// Host's function to kick a peer.
+function kickPeer(peerId, username) {
+    if (confirm(`Are you sure you want to kick ${username}?`)) {
+        console.log(`Host is kicking peer: ${peerId}`);
+        kickPeerConnection(peerId); // This function is in webrtc.js
+    }
+}
+
+// Handles all messages coming from webrtc.js
 function handleGwambleMessage(event) {
     const message = event.detail;
     console.log('Received message in UI:', message);
 
+    let sessionUpdated = false;
+
     switch (message.type) {
         case 'host-ready':
-            handleUserJoined(message.payload, true);
+            if (!gwamble_session.members.find(m => m.user_id === message.payload.peerId)) {
+                gwamble_session.members.push({ 
+                    user_id: message.payload.peerId, 
+                    username: message.payload.username, 
+                    is_host: true 
+                });
+                sessionUpdated = true;
+            }
             break;
         case 'user-joined':
-            handleUserJoined(message.payload);
+            if (!gwamble_session.members.find(m => m.user_id === message.payload.peerId)) {
+                gwamble_session.members.push({ 
+                    user_id: message.payload.peerId, 
+                    username: message.payload.username, 
+                    is_host: false 
+                });
+                sessionUpdated = true;
+            }
             break;
         case 'user-left':
-            handleUserLeft(message.payload);
-            break;
-        case 'user-list':
-            handleUserList(message.payload.users);
-            break;
-        case 'bet-update':
-            updateUIAfterBet(message.payload.betInfo);
+            const initialMemberCount = gwamble_session.members.length;
+            gwamble_session.members = gwamble_session.members.filter(m => m.user_id !== message.payload.peerId);
+            if (gwamble_session.members.length < initialMemberCount) {
+                sessionUpdated = true;
+            }
             break;
         case 'bets-updated':
-            handleBetsUpdated(message.payload.bets);
+            gwamble_session.bets = message.payload.bets;
+            updateBetDisplay();
             break;
-        case 'winner-declaration':
-            declareWinner(message.payload.outcome, false); // false to prevent re-broadcasting
-            break;
-        case 'session-closed':
-            alert('The host has closed the session.');
-            closeSession();
-            break;
+    }
+
+    if (sessionUpdated) {
+        sessionStorage.setItem('gwamble', JSON.stringify(gwamble_session));
+        redrawMemberList();
+        updateMemberCount();
     }
 }
 
-function handleUserList(users) {
-    console.log('Received user list:', users);
+// Redraws the entire member list modal from the session object.
+function redrawMemberList() {
     const memberList = document.getElementById('member-modal-list');
     memberList.innerHTML = ''; // Clear the list
-    users.forEach(user => writeToMemberModal(user.username, user.peerId));
-    amount_of_people_that_have_joined = users.length;
-    updateBetMemberRatio();
+
+    gwamble_session.members.forEach(member => {
+        let kickButtonHTML = member.is_host ? '' : `<button class="gwamble-kick-button" onclick="kickPeer('${member.user_id}', '${member.username}')"><i class="ri-door-open-fill"></i></button>`;
+
+        const memberItem = document.createElement('div');
+        memberItem.className = 'member-item';
+        memberItem.id = `member-${member.user_id}`;
+        memberItem.innerHTML = `
+            <div class="gwamble-topper">
+                <i class="ri-user-fill"></i>
+                <span>${member.username}</span>
+                ${member.is_host ? '<span class="host-tag">Host</span>' : ''}
+            </div>
+            ${kickButtonHTML}
+        `;
+        memberList.appendChild(memberItem);
+    });
 }
 
-function handleUserJoined(payload, isHost = false) {
-    // Add user to the UI
-    writeToMemberModal(payload.username, payload.peerId);
-    if (!isHost) {
-        amount_of_people_that_have_joined++;
-    }
-    updateBetMemberRatio();
+// Updates the main member count display.
+function updateMemberCount() {
+    const memberCount = gwamble_session.members ? gwamble_session.members.length : 0;
+    const betCount = gwamble_session.bets ? gwamble_session.bets.length : 0;
+    document.getElementById('gwamble-bet-member-ratio').textContent = `${betCount}/${memberCount}`;
 }
 
-function handleUserLeft(payload) {
-    // Remove user from the UI
-    kickMember(payload.username); // Changed to use username for simplicity with existing kickMember
-    amount_of_people_that_have_joined--;
-    updateBetMemberRatio();
-}
-
-function updateBetMemberRatio() {
-    document.getElementById('gwamble-bet-member-ratio').innerHTML = amount_of_people_that_have_bet+'/'+amount_of_people_that_have_joined;
-}
-
-
-function closeSession() {
-    sessionStorage.removeItem('gwamble');
-    window.location.replace('index.html');
+// Updates the bet counts displayed under each outcome.
+function updateBetDisplay() {
+    gwamble_session.bets = gwamble_session.bets || [];
+    let outcomeABets = 0;
+    let outcomeBBets = 0;
+    gwamble_session.bets.forEach(bet => {
+        if (bet.selected_outcome === 'a' || bet.selected_outcome === 'A') {
+            outcomeABets++;
+        } else if (bet.selected_outcome === 'b' || bet.selected_outcome === 'B') {
+            outcomeBBets++;
+        }
+    });
+    document.getElementById('gwamble-outcome-a-bets').textContent = outcomeABets;
+    document.getElementById('gwamble-outcome-b-bets').textContent = outcomeBBets;
+    updateMemberCount(); // Also update the main ratio
 }
 
 function copyGwambleCode() {
-    var code = document.getElementById('gwamble-share-code');
-    var text = code.getAttribute('data-code');
-    navigator.clipboard.writeText(text);
-
+    var code = document.getElementById('gwamble-share-code').getAttribute('data-code');
+    navigator.clipboard.writeText(code.replace('-', ''));
     var icon = document.getElementById('gwamble-copy-icon');
     icon.classList.remove('ri-file-copy-fill');
     icon.classList.add('ri-check-fill');
@@ -302,146 +379,13 @@ function copyGwambleCode() {
     }, 2500);
 }
 
-function generateQRCode() {
-    var joinCode = sessionStorage.getItem('gwamble_join_code');
-    if (joinCode) {
-        var url = window.location.href.replace('session.html', 'join.html?code=' + joinCode);
-        var qr = new QRCode(document.getElementById("gwamble-qr-display"), {
-            text: url,
-            width: 256,
-            height: 256,
-        });
-    }
-}
-
-
-function writeToMemberModal(username, peerId) {
-
-    var role_button = `<button onclick = "kickMember('`+username+`')"><i class="ri-indeterminate-circle-fill kicker"></i></button>`;
-
-    // if the username is currently written to the gwamble-poster element,
-    // then update the role_button to be a different icon
-    if (document.getElementById('gwamble-poster').innerHTML == username) {
-        role_button = `<button><i class="ri-vip-crown-fill"></i></button>`;
-    }
-
-    var member_item = `
-    <div class = "member-item" data-username="${username}">
-        <i class="ri-user-4-fill"></i>
-        <span>`+username+`</span>
-        `+role_button+`
-    </div>
-    `;
-
-    var member_list = document.getElementById('member-modal-list');
-    member_list.innerHTML += member_item;
-}
-
-function initMemberModal() {
-}
-
-function kickMember(username) {
-    var member_list = document.getElementById('member-modal-list');
-    var member_items = member_list.getElementsByClassName('member-item');
-    for (var i = 0; i < member_items.length; i++) {
-        var member = member_items[i];
-        if (member.getAttribute('data-username') == username) {
-            member_list.removeChild(member);
-            break; // Exit loop once member is found and removed
-        }
-    }
-}
-
-function declareWinner(outcome, broadcast = true) {
-    if (broadcast && sessionStorage.getItem('isHost') === 'true') {
-        const message = { type: 'winner-declaration', payload: { outcome: outcome } };
-        broadcastMessage(message);
-    }
-
-    var winner_post = document.getElementById('outcome-'+outcome.toLowerCase());
-    var winner_button = document.getElementById('gwamble-winner-'+outcome.toLowerCase());
-    var loser_post = document.getElementById('outcome-'+(outcome.toLowerCase() == 'a' ? 'b' : 'a'));
-    var loser_button = document.getElementById('gwamble-winner-'+(outcome.toLowerCase() == 'a' ? 'b' : 'a'));
-
-    loser_post.remove();
-    loser_button.remove();
-
-    winner_post.style.transition = "all 0.1s ease-in-out";
-    winner_post.classList.add('animate__animated');
-    winner_post.style.animation = "tada 0.75s";
-    winner_button.style.marginBottom = "0px";
-
-
-    document.getElementsByClassName('gwamble-bottom')[0].remove();
-    document.getElementById('gwamble-bar').style.pointerEvents = "none";
-    document.getElementById('gwamble-bar').style.filter = "blur(2.5px)";
-    document.getElementById('gwamble-bar').style.display = "none";
-    document.getElementById('posted-gwamble').style.marginTop = "20px";
-    document.getElementById('gwamble-close-session').style.pointerEvents = "none";
-    document.getElementById('gwamble-close-session').style.color = "#503c40";   
-
-    winner_button.innerHTML = "Settled!";
-    winner_button.style.opacity = "0.5";
-    winner_button.style.pointerEvents = "none";
-
-    document.getElementById('gwamble-leaderboard-table').style.display = "flex";
-
-    winning_outcome = outcome;
-
-    initGwambleLeaderboardTable();
-
-}
-
-function toggleSubjectText(){
-    // toggle from -webkit-box to display:block.
-    // if it's one, change it to the other.
-    var subject = document.getElementById('gwamble-subject');
-
-    if (subject.style.display == "block") {
-        subject.style.display = "-webkit-box";
-    } else {
-        subject.style.display = "block";
-    }
-
-}
-
-
-function getLocalUsername() {
-    return sessionStorage.getItem('gwamble_username') || 'Unknown User';
-}
-
-function placeBet(outcome) {
-    const myPeerId = sessionStorage.getItem('myPeerId') || (peer ? peer.id : null);
-    if (!myPeerId) {
-        console.error("Cannot place bet, no peer ID found.");
-        return;
-    }
-
-    const betInfo = {
-        userId: myPeerId,
-        username: getLocalUsername(),
-        outcome: outcome,
-        amount: 1 // Using a fixed amount as there's no UI for it
-    };
-
-    if (sessionStorage.getItem('isHost') !== 'true') {
-        sendMessageToHost({ type: 'bet-placed', payload: { betInfo } });
-    } else {
-        // Host processes its own bet and broadcasts the result
-        handleBetPlaced(betInfo);
-    }
-}
-
-function handleBetsUpdated(bets) {
-    gwamble_session.bets = bets;
-
-    const outcome_a_bets = gwamble_session.bets.filter(b => b.selected_outcome === 'A').length;
-    const outcome_b_bets = gwamble_session.bets.filter(b => b.selected_outcome === 'B').length;
-    amount_of_people_that_have_bet = gwamble_session.bets.filter(b => b.selected_outcome !== null).length;
-
-    document.getElementById('gwamble-outcome-a-bets').innerHTML = outcome_a_bets;
-    document.getElementById('gwamble-outcome-b-bets').innerHTML = outcome_b_bets;
-    updateBetMemberRatio();
+function generateQRCode(code) {
+    document.getElementById("gwamble-qr-display").innerHTML = '';
+    new QRCode(document.getElementById("gwamble-qr-display"), {
+        text: code,
+        width: 256,
+        height: 256,
+    });
 }
 
 </script>
