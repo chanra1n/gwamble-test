@@ -30,7 +30,6 @@ body {
     padding: 15px;
     color: white;
     display: flex;
-    align-items: center;
     justify-content: space-between;
     position: sticky;
     top: 0;
@@ -39,7 +38,7 @@ body {
 
 #gwamble-bar h1 {
     font-family: 'Righteous';
-    font-size: 40px;
+    font-size: 35px;
     color: white;
     margin: 0;
     line-height: normal;
@@ -49,15 +48,26 @@ body {
 }
 
 #reload-icon, #user-icon, #loading-icon {
-    color: white;
-    font-size: 36px;
+    font-size: 25px;
     line-height: normal;
     margin: 0;
     transform: scale(1);
     font-weight: 700;
-    position: relative;
     cursor: pointer;
-    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px) saturate(1.2);
+    -webkit-backdrop-filter: blur(15px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+    border-radius: 100%;
+    color: white;
+    font-family: 'Lexend';
+    padding: 10px;
+    box-sizing: border-box;
+    transition: all 0.2s;
+    transition-timing-function: ease-in-out;
+    overflow: hidden;
+    position: relative;
 }
 
 #reload-icon:hover {
@@ -82,9 +92,9 @@ body {
 #gwamble-body {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* Aligns children to the bottom */
+    justify-content: flex-end;
     align-items: center;
-    min-height: calc(100vh - 70px); /* Adjust height calculation */
+    min-height: calc(100vh - 80px);
     background-color: transparent;
     width: 100%;
     padding: 15px;
