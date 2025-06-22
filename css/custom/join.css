@@ -9,9 +9,9 @@
 }
 
 .gwamble-button-container button {
-    font-family: 'Poppins-Bold', sans-serif;
-    background-color: pink;
-    color: black;
+    font-family: 'Lexend', sans-serif;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
     display: flex;
     align-items: center;
     width: 100%;
@@ -27,13 +27,13 @@
 
 .gwamble-bets {
     font-size: 30px;
-    color: pink;
-    background-color: black;
-    border: 5px solid pink;
-    border-radius: 0px 10px 0px 0px;
+    color: white;
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0px 10px 10px 0px;
     padding: 5px;
     font-weight: 900;
-    font-family: 'Manrope';
+    font-family: 'Lexend';
     line-height: normal;
     display: flex;
     align-items: center;
@@ -42,4 +42,8 @@
     box-sizing: border-box;
     padding-left: 15px;
     padding-right: 15px;
+}
+
+#gwamble-bar {
+    max-height: 20px;
 }

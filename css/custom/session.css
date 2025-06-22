@@ -1,26 +1,6 @@
 @font-face {
-    font-family: 'Poppins';
-    src: url('../../font/poppins/Poppins-Regular.ttf');
-}
-
-@font-face {
-    font-family: 'Poppins-Bold';
-    src: url('../../font/poppins/Poppins-Bold.ttf');
-}
-
-@font-face {
-    font-family: 'Poppins-SemiBold';
-    src: url('../../font/poppins/Poppins-SemiBold.ttf');
-}
-
-@font-face {
     font-family: 'Righteous';
     src: url('../../font/righteous/Righteous-Regular.ttf');
-}
-
-@font-face {
-    font-family: 'Manrope';
-    src: url('../../font/Manrope.ttf');
 }
 
 @font-face {
@@ -32,23 +12,24 @@ body, html {
     width: 100%;
     margin: 0;
     padding: 0;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-size: 16px;
     background: linear-gradient(135deg, #d72660 0%, #a8326e 100%);
     color: white;
     overscroll-behavior: none;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-synthesis: none !important;
+    padding-bottom: 120px;
 }
 
 #gwamble-bar {
     background-color: transparent;
-    padding: 15px;
+    padding: 20px;
     color: white;
     display: flex;
     align-items: center;
@@ -57,31 +38,34 @@ body {
     top: 0;
     z-index: 10;
     font-size: 25px;
-    font-family: 'Manrope';
+    font-family: 'Lexend';
+    max-height: 20px;
+    backdrop-filter: blur(20px);
 }
 
 #gwamble-bar p, #gwamble-bar button {
     color: white;
     background: none;
     border: none;
-    font-family: 'Poppins-Bold';
+    font-family: 'Lexend';
     font-size: 20px;
     font-weight: 900;
     cursor: pointer;
 }
 
 #gwamble-bar p span, #gwamble-bar button span {
-    font-family: 'Manrope';
+    font-family: 'Lexend';
     font-weight: 900;
 }
 
 #gwamble-role {
-    background-color: rgba(80,60,64,0.7);
+    background-color: #ee6591 !important;
     color: white;
     font-size: 14px;
-    border-radius: 100vmin;
+    border-radius: 100vmin 100vmin 100vmin 0px;
     margin-right: 10px;
-    padding: 1.5px 12.5px;
+    padding: 2.5px 15px;
+    font-size: 15px!important;
 }
 
 #gwamble-role i {
@@ -97,12 +81,15 @@ body {
 }
 
 #posted-gwamble {
-    background: rgba(0,0,0,0.7);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px) saturate(1.2);
+    -webkit-backdrop-filter: blur(15px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     color: white;
     padding: 20px;
     margin: 20px;
     margin-top: 0px;
-    border-radius: 20px;
+    border-radius: 20px 20px 0px 20px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -111,24 +98,24 @@ body {
 }
 
 #posted-gwamble h1 {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Lexend', sans-serif;
     font-weight: 900;
     color: white;
-    margin-top: 10px;
+    margin-top: 5px;
     font-size: 27.5px;
     margin-bottom: 0px;
     overflow-wrap: break-word;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    line-height: 1.1;
 }
 
 .gwamble-post p {
     margin: 0px 0px 10px 0px;
     font-weight: 900;
-    font-family: 'Manrope';
+    font-family: 'Lexend';
     opacity: 0.5;
     font-size: 20px;
     color: white;
@@ -137,23 +124,22 @@ body {
 .gwamble-button-container {
     display: flex;
     align-items: stretch;
-    pointer-events: none;
     justify-content: space-between;
+    gap: 5px;
 }
 
 .gwamble-button-container button {
-    font-family: 'Poppins-Bold', sans-serif;
-    background: rgba(255,255,255,0.2);
+    font-family: 'Lexend', sans-serif;
+    background: rgba(0, 0, 0, 0.15);
     color: white;
     display: flex;
     align-items: center;
-    width: -webkit-fill-available;
-    width: -moz-available;
-    width: fill-available;
+    flex: 1;
+    min-width: 0;
     padding: 5px 15px;
     border: none;
-    border-radius: 10px 0px 0px 10px;
-    font-size: 25px;
+    border-radius: 20px 0px 0px 0px;
+    font-size: 20px;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -170,12 +156,11 @@ body {
 .gwamble-bets {
     font-size: 30px;
     color: white;
-    background: rgba(255,255,255,0.1);
-    border: 5px solid #fff;
-    border-radius: 0px 10px 10px 0px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 0px 20px 0px 0px;
     padding: 5px 15px;
     font-weight: 900;
-    font-family: 'Manrope';
+    font-family: 'Lexend';
     line-height: normal;
     display: flex;
     align-items: center;
@@ -185,15 +170,23 @@ body {
 }
 
 .gwamble-post-header {
-    opacity: 0.5;
+    background: rgba(255,255,255,0.2);
+    margin: -20px;
+    border-radius: 20px 20px 0px 0px;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    width: 100%;
+    text-align: right;
 }
 
 .gwamble-post-header i {
-    background: white;
-    color: #a8326e;
+    color: #ec6591;
     padding: 5px;
     font-size: 15px;
     border-radius: 100%;
+    background: #df3b77;
+    font-weight: 100;
+    margin-right: 2.5px;
 }
 
 .gwamble-post-header span {
@@ -201,23 +194,24 @@ body {
     margin-left: 5px;
     font-weight: bolder;
     font-family: 'Righteous', sans-serif;
-    color: white;
+    color: #df3b77;
 }
 
 .winner-button {
     display: block!important;
     width: 100%!important;
-    margin-top: 10px;
+    margin-top: 5px;
     margin-bottom: 20px;
     background: rgba(255,255,255,0.2);
     border: none;
     padding: 10px;
-    border-radius: 0px 0px 10px 10px;
-    font-size: 20px;
-    font-family: 'Manrope';
+    border-radius: 0px 0px 20px 0px;
+    font-size: 17.5px;
+    font-family: 'Lexend';
     font-weight: 900;
     color: white;
     position: relative;
+    text-transform: uppercase;
 }
 
 .winner-button i {
@@ -235,7 +229,11 @@ body {
 .gwamble-share {
     display: flex;
     align-items: center;
-    background: rgba(0,0,0,0.7);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px) saturate(1.2);
+    -webkit-backdrop-filter: blur(15px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
     border-radius: 10px;
     padding: 10px 20px;
     margin-bottom: 10px;
@@ -269,20 +267,24 @@ body {
 }
 
 .gwamble-bottom {
-    width: calc(100% - 40px);
     text-align: center;
-    background: rgba(0,0,0,0.7);
-    margin: 20px;
-    border-radius: 20px;
-    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px) saturate(1.2);
+    -webkit-backdrop-filter: blur(15px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+    border-radius: 20px 20px 20px 0px;
+    padding: 15px 20px;
     box-sizing: border-box;
     overflow: hidden;
-    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 15px;
-    padding-bottom: 15px;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    z-index: 100;
 }
 
 .gwamble-bottom button#gwamble-share-code {
@@ -291,7 +293,7 @@ body {
     padding: 10px;
     border-radius: 10px;
     font-weight: 900;
-    font-family: 'Poppins-Bold';
+    font-family: 'Lexend';
     font-size: 25px;
     line-height: 1;
     border: none;
@@ -321,7 +323,11 @@ body {
 }
 
 #gwamble-leaderboard-table {
-    background-color: black;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px) saturate(1.2);
+    -webkit-backdrop-filter: blur(15px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
     padding: 20px;
     width: 100%;
     box-sizing: border-box;
@@ -332,7 +338,6 @@ body {
     margin-top: 30px;
     position: absolute;
     bottom: 0;
-    box-shadow: 0px -5px 0px pink;
 }
 
 
@@ -340,7 +345,7 @@ body {
 #gwamble-leaderboard-table h1 {
     font-size: 25px;
     color: pink;
-    font-family: 'Manrope';
+    font-family: 'Lexend';
     font-weight: 900;
     margin: 0px;
     opacity: 50%;
@@ -361,9 +366,9 @@ body {
 
 #gwamble-user-results {
     width: 100%;
-    background-color: transparent;
+    background: rgba(0, 0, 0, 0.15);
     padding: 5px;
-    color: pink;
+    color: white;
     font-weight: 900;
     font-family: 'Righteous';
     border-radius: 10px;
@@ -371,7 +376,7 @@ body {
     display: flex;
     flex-flow: nowrap;
     flex-direction: row;
-    border: 5px solid #503c40;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     text-align: center;
 }
 
@@ -402,7 +407,7 @@ body {
 }
 
 #gwamble-user-results p {
-    font-family: 'Manrope';
+    font-family: 'Lexend';
     margin: 0px;
     padding: 5px;
     opacity: 50%;
@@ -410,3 +415,93 @@ body {
     white-space: nowrap;
     text-align: center;
 }
+
+@media (max-width: 768px) {
+    body {
+        padding-bottom: 100px;
+    }
+
+    #posted-gwamble {
+        margin: 20px;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .gwamble-bottom {
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    padding: 15px;
+    }
+
+    .gwamble-bottom button#gwamble-share-code {
+        font-size: 30px;
+    }
+
+    .gwamble-bottom button#gwamble-qr-code {
+        font-size: 40px;
+    }
+}
+
+
+.uk-modal#qr-modal {
+    align-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.uk-modal#qr-modal .uk-modal-dialog {
+    width: fit-content;
+}
+
+.uk-modal#member-modal {
+    align-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.uk-modal#member-modal .uk-modal-dialog {
+    transition: all 0.25s ease;
+    border-radius: 20px;
+    background-color: black;
+    color: pink;
+    padding: 20px;
+    max-height: 100%;
+    overflow: hidden;
+    overflow-y: scroll;
+    height: fit-content;
+}
+
+.uk-modal#member-modal .uk-modal-dialog h1 {
+    color: pink;
+    font-family: 'Manrope';
+    font-weight: 900;
+}
+
+.uk-modal#member-modal .uk-modal-dialog .uk-modal-close {
+    background-color: #503c40;
+    color: pink;
+    border: none;
+    font-weight: 900;
+    font-family: 'Manrope';
+    border-radius: 10px;
+    width: 100%;
+    font-size: 20px;
+    padding: 5px;
+    text-transform: none;
+    position: sticky;
+    bottom: 0;
+    box-shadow: 0px 0px 10px black;
+    z-index: 3;
+}
+
+.uk-modal-dialog {
+    transition: all 0.25s ease;
+    border-radius: 20px 20px 0px 20px;
+}
+
+
+#gwamble-qr-display img {
+    width: 75vw;
+    height: 75vw;
+    padding: 20px;
+}
+
