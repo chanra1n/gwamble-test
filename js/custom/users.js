@@ -11,7 +11,7 @@ function initUser() {
         var user = {
             username: username,
             token: userToken,
-            coins: 100
+            credits: 100 // Start with 100 credits
         };
         localStorage.setItem('gwambleUser', JSON.stringify(user));
         console.log('User created', user);
@@ -61,6 +61,14 @@ function updateUsername(newName) {
     let user = getLocalUser();
     if (user) {
         user.username = newName;
+        localStorage.setItem('gwambleUser', JSON.stringify(user));
+    }
+}
+
+function updateUserCredits(amount) {
+    let user = getLocalUser();
+    if (user) {
+        user.credits += amount;
         localStorage.setItem('gwambleUser', JSON.stringify(user));
     }
 }

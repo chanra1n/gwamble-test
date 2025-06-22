@@ -47,16 +47,16 @@
 
             <div id="create-gwamble-options">
                 <span class="small-title">Subject</span>
-                <textarea autocomplete = "false" id ="create-gwamble-subject" placeholder="What are we gwambling on?" maxlength="50"></textarea>
+                <textarea autocomplete="false" id="create-gwamble-subject" placeholder="What are we gwambling on?" maxlength="50"></textarea>
                 
                 <span class="small-title">Outcome A</span>
-                <input autocomplete = "false" type="text" placeholder="..." maxlength="20">
+                <input autocomplete="false" type="text" placeholder="..." maxlength="20">
  
                 <span class="small-title">Outcome B</span>
-                <input autocomplete = "false" style = "margin-bottom:20px" type="text" placeholder="..." maxlength="20">
+                <input autocomplete="false" style="margin-bottom:20px" type="text" placeholder="..." maxlength="20">
  
-                <button id = "cancel-gwamble-post-button" onclick="closeCreateGwamble()" class="cancel">Cancel</button>
-                <button id = "create-gwamble-post-button" disabled onclick="passGwamble()">Post</button>
+                <button id="cancel-gwamble-post-button" onclick="closeCreateGwamble()" class="cancel">Cancel</button>
+                <button id="create-gwamble-post-button" disabled onclick="passGwamble()">Post</button>
             </div>
         </div>
 
@@ -66,13 +66,13 @@
             <i id="join-gwamble-icon" class="ri-link-m hidden-while-displayed"></i>
 
             <div id="join-gwamble-options">
-                <span class="small-title" style = "margin-bottom:10px">Enter code</span>
+                <span class="small-title" style="margin-bottom:10px">Enter code</span>
                 <div class="mb-6 text-center">
                     <div id="otp" class="flex justify-center">
                       <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="first" maxlength="1" />
                       <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="second" maxlength="1"  />
                       <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="third" maxlength="1"  />
-                      <p class = "input-hyphen">-</p>
+                      <p class="input-hyphen">-</p>
                       <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="fourth" maxlength="1" />
                       <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="fifth" maxlength="1"  />
                       <input class="m-2 text-center form-control form-control-solid rounded focus:border-blue-400 focus:shadow-outline" type="text" id="sixth" maxlength="1"  />
@@ -90,6 +90,8 @@
 </body>
 <script src="js/lib/uikit.js"></script>
 <script src="js/custom/users.js"></script>
+<script src="js/custom/session.js"></script>
+<script src="js/custom/webrtc.js"></script>
 <script src="js/custom/getActions.js"></script>
 <script>
 
@@ -227,32 +229,17 @@
         var subject = document.getElementById('create-gwamble-subject').value;
         var outcome_a = document.getElementById('create-gwamble-options').querySelectorAll('input')[0].value;
         var outcome_b = document.getElementById('create-gwamble-options').querySelectorAll('input')[1].value;
-        var join_code = generateJoinCode();
         var user = getLocalUser();
 
-        var session = {
-            "owner_id": user.token,
-            "owner_name": user.username,
-            "session_id": generateSessionID(),
-            "join_code": join_code,
-            "subject": subject,
-            "outcome_a": outcome_a,
-            "outcome_b": outcome_b,
-            "min_bet": 0,
-            "max_bet": 10,
-            "status": 0, // 0: open, 1: closed
-            "bets": []
-        };
+        var join_code = generateJoinCode();
+        var session = new GwambleSession(user.token, subject, outcome_a, outcome_b);
+        sessionStorage.setItem(join_code, JSON.stringify(session));
+        sessionStorage.setItem('gwamble_role', 'host');
+        sessionStorage.setItem('gwamble_join_code', join_code);
 
-        localStorage.setItem(join_code, JSON.stringify(session));
-        sessionStorage.setItem('gwamble', JSON.stringify(session));
+        hostSession(session);
 
-        // Add to discoverable gwambles
-        let discoverableGwambles = JSON.parse(localStorage.getItem('discoverable_gwambles')) || [];
-        discoverableGwambles.push(session);
-        localStorage.setItem('discoverable_gwambles', JSON.stringify(discoverableGwambles));
-
-        window.location.href = "session.html";
+        window.location.href = 'session.html';
     }
 
     // let's set an even listener for the inputs and textareas inside the create-gwamble-options.
@@ -273,26 +260,19 @@
 
 
     function joinGwambleSession() {
-        var otp = document.getElementById('otp').querySelectorAll('input');
-        var code = "";
-        otp.forEach(input => {
+        const inputs = document.querySelectorAll('#otp > *[id]');
+        let code = '';
+        inputs.forEach(input => {
             code += input.value;
         });
-        console.log(code);
 
-        var valid = verifyCode(code);
-
-        if (valid) {
+        if (verifyCode(code)) {
             sessionStorage.setItem('gwamble_join_code', code);
-            window.location.href = "join.html";
+            sessionStorage.setItem('gwamble_role', 'peer');
+            window.location.href = 'join.html';
         } else {
-            alert("Invalid code.");
-            // clear the inputs
-            otp.forEach(input => {
-                input.value = "";
-            });
+            alert('Invalid session code');
         }
-
     }
 
     function verifyCode(code) {

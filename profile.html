@@ -24,6 +24,8 @@
             <div class="profile-info modular-info">
                 <label for="username-input" class="modular-label">Display Name</label>
                 <input type="text" id="username-input" class="modular-input" maxlength="20" placeholder="Enter your new username">
+                <label for="user-credits" class="modular-label">Credits</label>
+                <p id="user-credits" class="modular-input"></p>
                 <button id="save-username-button" class="modular-btn modular-btn-primary">Save</button>
                 <p class="profile-id modular-hint">Your account is private and local to this device.</p>
             </div>
@@ -36,6 +38,7 @@
             const user = getLocalUser();
             if (user) {
                 document.getElementById('username-input').value = user.username;
+                document.getElementById('user-credits').textContent = user.credits;
             }
             document.getElementById('save-username-button').addEventListener('click', () => {
                 const newUsername = document.getElementById('username-input').value.trim();
