@@ -29,6 +29,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="format-detection" content="telephone=no">
     <meta name="mobile-web-app-capable" content="yes">
+    <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
 
 </head>
 
@@ -230,16 +231,15 @@
         var outcome_a = document.getElementById('create-gwamble-options').querySelectorAll('input')[0].value;
         var outcome_b = document.getElementById('create-gwamble-options').querySelectorAll('input')[1].value;
         var user = getLocalUser();
-
         var join_code = generateJoinCode();
-        var session = new GwambleSession(user.token, subject, outcome_a, outcome_b);
-        sessionStorage.setItem(join_code, JSON.stringify(session));
-        sessionStorage.setItem('gwamble_role', 'host');
+
+        var session = new GwambleSession(user.token, user.username, subject, outcome_a, outcome_b);
+        sessionStorage.setItem('gwamble', JSON.stringify(session));
         sessionStorage.setItem('gwamble_join_code', join_code);
+        sessionStorage.setItem('gwamble_username', user.username);
 
-        hostSession(session);
-
-        window.location.href = 'session.html';
+        // Initialize the host via WebRTC and redirect upon successful connection.
+        initializeHostAndRedirect(join_code);
     }
 
     // let's set an even listener for the inputs and textareas inside the create-gwamble-options.
@@ -266,17 +266,17 @@
             code += input.value;
         });
 
-        if (verifyCode(code)) {
-            sessionStorage.setItem('gwamble_join_code', code);
-            sessionStorage.setItem('gwamble_role', 'peer');
-            window.location.href = 'join.html';
-        } else {
-            alert('Invalid session code');
-        }
+        // We can't verify the code here anymore since localStorage is not shared across browsers.
+        // We will pass the code to the join page and let the WebRTC logic handle the connection.
+        sessionStorage.setItem('gwamble_join_code', code);
+        sessionStorage.setItem('gwamble_role', 'peer');
+        window.location.href = 'join.html?code=' + code;
     }
 
     function verifyCode(code) {
-       return localStorage.getItem(code) !== null;
+       // This function is no longer reliable for cross-browser validation.
+       // The connection logic in join.html will handle invalid codes.
+       return true;
     }
 
     function generateJoinCode() {

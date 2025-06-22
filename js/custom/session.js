@@ -1,6 +1,7 @@
 class GwambleSession {
-    constructor(hostId, subject, outcomeA, outcomeB) {
+    constructor(hostId, hostUsername, subject, outcomeA, outcomeB) {
         this.hostId = hostId;
+        this.hostUsername = hostUsername;
         this.subject = subject;
         this.outcomeA = outcomeA;
         this.outcomeB = outcomeB;

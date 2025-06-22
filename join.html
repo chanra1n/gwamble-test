@@ -1,207 +1,50 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>GWAMBLE</title>
+    <title>Joining Gwamble...</title>
     <link rel="stylesheet" type="text/css" href="css/lib/remixicon.css">
-    <link rel="stylesheet" type="text/css" href="css/lib/uikit.css">
     <link rel="stylesheet" type="text/css" href="css/custom/index.css">
-    <link rel="stylesheet" type="text/css" href="css/custom/session.css">
-    <link rel="stylesheet" type="text/css" href="css/custom/join.css">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
-    <link rel="apple-touch-icon" sizes="72x72" href="icon/icon-72x72.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="icon/icon-96x96.png">
-    <link rel="icon" type="image/png" sizes="128x128" href="icon/icon-128x128.png">
-    <link rel="icon" type="image/png" sizes="144x144" href="icon/icon-144x144.png">
-    <link rel="icon" type="image/png" sizes="152x152" href="icon/icon-152x152.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="icon/icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="384x384" href="icon/icon-384x384.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="icon/icon-512x512.png">
-    <meta name="theme-color" content="#ffc0cb">
-    <meta name="background-color" content="#ffc0cb">
-    <meta name="msapplication-TileColor" content="#ffc0cb">
-    <meta name="msapplication-TileImage" content="icon/icon-144x144.png">
-    <meta name="msapplication-config" content="https://csclubhumboldt.org/browserconfig.xml">
-    <meta name="application-name" content="gwamble">
-    <meta name="apple-mobile-web-app-title" content="gwamble">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-
+    <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+        }
+        #loading-icon {
+            width: 64px;
+            margin: 10px;
+            filter: blur(0.5px);
+        }
+    </style>
 </head>
-
 <body>
+    <div id="gwamble-body">
+        <h1>Joining Gwamble...</h1>
+        <img src="icon/loading2.gif" id="loading-icon" alt="Loading...">
+        <p>Please wait while we connect you to the session.</p>
+        <p>If you are not redirected automatically, the session may no longer be active or the code is incorrect.</p>
+        <button onclick="window.location.href='index.html'">Back to Home</button>
+    </div>
 
-    <nav id="gwamble-bar" uk-navbar>
-        
-<button id="gwamble-close-session" onclick="closeSession()">
-<i class="ri-arrow-left-s-fill"></i>
-<span>Leave</span>
-</button>
+    <script src="js/custom/webrtc.js"></script>
+    <script>
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const hostId = urlParams.get('code');
 
-        <p id = "gwamble-role">
-        <i class="ri-record-circle-fill"></i>
-        <span>Active</span>
-        </p>
-
-        <p>
-        <i class="ri-group-2-fill"></i>
-        <span id = "gwamble-bet-member-ratio">0/2</span>
-        </p>
-    </nav>
-
-    <div class="gwamble-post" id="posted-gwamble">
-        <div class = "gwamble-post-header">
-        <i class="ri-user-4-fill"></i>
-        <span id = "gwamble-poster" >annoying-orange</span>
-        </div>
-        <h1 onclick = "window.location.reload(true)" id="gwamble-subject">Subject</h1>
-        <br>
-        
-        <div class="gwamble-button-container">
-            <button id="gwamble-outcome-a">
-                <span id="gwamble-outcome-a-text">Outcome A</span>
-            </button>
-        </div>
-
-        <button onclick = "placeBet('A')" class = "winner-button" id="gwamble-winner-a">
-            <span class = "bet-left">BET</span>
-            <i class="ri-coins-fill"></i>
-            10
-        </button>
-
-        <div class="gwamble-button-container">
-            <button id="gwamble-outcome-b">
-                <span id="gwamble-outcome-b-text">Outcome B</span>
-            </button>
-        </div>
-
-        <button onclick = "placeBet('B')" class = "winner-button" id="gwamble-winner-b" style = "margin-bottom:0px">
-            <span class = "bet-left">BET</span>
-            <i class="ri-coins-fill"></i>
-            10
-        </button>
-
-        </div>
-
-
-        <div class = "gwamble-bottom">
-        <button onclick = "copyGwambleCode()" id = "gwamble-share-code" data-code = "888-888">888-888 <i id = "gwamble-copy-icon" class="ri-file-copy-fill"></i></button>
-        <button onclick = "UIkit.modal('#qr-modal').show()" id = "gwamble-qr-code"><i class="ri-qr-code-fill"></i></button>
-        </div>
-
-
-        <div uk-modal id="qr-modal" onclick = "UIkit.modal('#qr-modal').hide()">
-            <div class="uk-modal-dialog">
-                <div id="gwamble-qr-display"></div>
-            </div>
-    
-
-</body>
-<script src="js/lib/uikit.js"></script>
-<script src="js/lib/qrcode.js"></script>
-<script src="js/custom/users.js"></script>
-<script src="js/custom/getActions.js"></script>
-<script>
-    var gwamble_session;
-
-    function initJoin() {
-        var join_code = sessionStorage.getItem('gwamble_join_code');
-        const urlParams = new URLSearchParams(window.location.search);
-        const codeFromURL = urlParams.get('code');
-
-        if (codeFromURL) {
-            join_code = codeFromURL;
-        }
-
-        if (join_code) {
-            gwamble_session = JSON.parse(localStorage.getItem(join_code));
-            if (gwamble_session) {
-                document.getElementById('gwamble-subject').innerHTML = gwamble_session.subject;
-                document.getElementById('gwamble-poster').innerHTML = "Hosted by: " + gwamble_session.owner_name;
-                document.getElementById('gwamble-outcome-a-text').innerHTML = gwamble_session.outcome_a;
-                document.getElementById('gwamble-outcome-b-text').innerHTML = gwamble_session.outcome_b;
-                document.getElementById('gwamble-share-code').setAttribute('data-code', gwamble_session.join_code);
-                document.getElementById('gwamble-share-code').innerHTML = gwamble_session.join_code + ' <i id = "gwamble-copy-icon" class="ri-file-copy-fill"></i>';
-
+            if (hostId) {
+                // The joinAndRedirect function from webrtc.js will handle everything
+                joinAndRedirect(hostId);
             } else {
-                alert('Session not found.');
-                window.location.replace('index.html');
+                alert('No join code provided.');
+                window.location.href = 'index.html';
             }
-        } else {
-            alert('No join code found.');
-            window.location.replace('index.html');
-        }
-    }
-
-    function placeBet(outcome) {
-        var user = getLocalUser();
-        if (!user) {
-            alert('You must be logged in to place a bet.');
-            return;
-        }
-
-        // Check if user has already bet
-        var user_bet = gwamble_session.bets.find(bet => bet.user_token === user.token);
-        if(user_bet){
-            alert('You have already placed a bet.');
-            return;
-        }
-
-        var bet = {
-            user_token: user.token,
-            username: user.username,
-            outcome: outcome,
-            amount: 10 // Hardcoded for now
         };
-
-        gwamble_session.bets.push(bet);
-        localStorage.setItem(gwamble_session.join_code, JSON.stringify(gwamble_session));
-
-        alert('Placed bet on ' + outcome + '!');
-
-        // Disable betting buttons
-        document.getElementById('gwamble-winner-a').disabled = true;
-        document.getElementById('gwamble-winner-b').disabled = true;
-    }
-
-    window.onload = function() {
-        initJoin();
-        generateQRCode(); 
-    };
-
-    function closeSession() {
-        sessionStorage.removeItem('gwamble_join_code');
-        window.location.replace('index.html');
-    }
-
-    function copyGwambleCode() {
-        var code = document.getElementById('gwamble-share-code');
-        var text = code.getAttribute('data-code');
-        navigator.clipboard.writeText(text);
-
-        var icon = document.getElementById('gwamble-copy-icon');
-        icon.classList.remove('ri-file-copy-fill');
-        icon.classList.add('ri-check-fill');
-        setTimeout(function() {
-            icon.classList.remove('ri-check-fill');
-            icon.classList.add('ri-file-copy-fill');
-        }, 1000);
-    }
-
-    function generateQRCode() {
-        var qrCode = new QRCode(document.getElementById("gwamble-qr-display"), {
-            text: window.location.origin + window.location.pathname.replace('join.html', '') + 'join.html?code=' + gwamble_session.join_code,
-            width: 256,
-            height: 256,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
-        });
-    }
-</script>
+    </script>
+</body>
 </html>
