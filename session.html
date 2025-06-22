@@ -60,7 +60,7 @@
 
     <div class="gwamble-post" id="posted-gwamble">
         <div class = "gwamble-post-header">
-        <i class="ri-user-4-fill"></i>
+        <i class="ri-user-fill"></i>
         <span id = "gwamble-poster" >gwamble-poster</span>
         </div>
         <h1 onclick = "toggleSubjectText()" id="gwamble-subject">Subject</h1>
@@ -85,7 +85,7 @@
             <span id="gwamble-outcome-b-bets" class="gwamble-bets">0</span>
         </div>
 
-        <button onclick="declareWinner('B')" class="winner-button" id="gwamble-winner-b" style="margin-bottom: 0px; display: none; border-radius: 0px 0px 0px 20px;">
+        <button onclick="declareWinner('B')" class="winner-button" id="gwamble-winner-b" style="margin-bottom: 0px; display: none; border-radius: 0px 0px 0px 10px;">
             <i class="ri-checkbox-circle-fill"></i>
             Winner
         </button>
@@ -202,7 +202,8 @@ function setupHostUI() {
         const formattedCode = joinCode.substring(0, 3) + '-' + joinCode.substring(3);
         shareCodeButton.setAttribute('data-code', formattedCode);
         shareCodeButton.firstChild.nodeValue = formattedCode + ' ';
-        generateQRCode(joinCode);
+        const codeWithLink = window.location.origin + '/join.html?code=' + joinCode;
+        generateQRCode(codeWithLink);
     }
 }
 
@@ -356,18 +357,21 @@ function redrawMemberList() {
     memberList.innerHTML = ''; // Clear the list
 
     gwamble_session.members.forEach(member => {
-        let kickButtonHTML = member.is_host ? '' : `<button class="gwamble-kick-button" onclick="kickPeer('${member.user_id}', '${member.username}')"><i class="ri-door-open-fill"></i></button>`;
-
         const memberItem = document.createElement('div');
         memberItem.className = 'member-item';
         memberItem.id = `member-${member.user_id}`;
+
+        let rightSideContent = '';
+        if (member.is_host) {
+            rightSideContent = '<i class="ri-vip-crown-fill host-icon"></i>';
+        } else {
+            rightSideContent = `<button class="gwamble-kick-button" onclick="kickPeer('${member.user_id}', '${member.username}')"><i class="ri-indeterminate-circle-fill"></i></button>`;
+        }
+
         memberItem.innerHTML = `
-            <div class="gwamble-topper">
-                <i class="ri-user-fill"></i>
-                <span>${member.username}</span>
-                ${member.is_host ? '<span class="host-tag">Host</span>' : ''}
-            </div>
-            ${kickButtonHTML}
+            <i class="ri-user-fill"></i>
+            <span class="member-username">${member.username}</span>
+            ${rightSideContent}
         `;
         memberList.appendChild(memberItem);
     });

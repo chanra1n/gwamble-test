@@ -6,7 +6,7 @@ const peerConnections = []; // For the host, all connections to peers
 let sessionData; // For peers, to store the session state
 let uiUpdateCallback; // For peers, to update the UI
 let inactivityTimer = null; // Timer to close inactive sessions
-const INACTIVITY_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+const INACTIVITY_TIMEOUT_MS = 10 * 60 * 1000; // 5 minutes
 
 /**
  * (Host only) Resets the inactivity timer. If no peers are connected,
