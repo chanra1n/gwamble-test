@@ -17,12 +17,15 @@ body, html {
     background: linear-gradient(135deg, #d72660 0%, #a8326e 100%);
     color: white;
     overscroll-behavior: none;
-    height: 100dvh;
+    height: 100%;
 }
 
 body {
     -webkit-font-smoothing: subpixel-antialiased;
     font-synthesis: none !important;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 #gwamble-bar {
@@ -94,7 +97,7 @@ body {
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
-    min-height: calc(100vh - 80px);
+    flex-grow: 1;
     background-color: transparent;
     width: 100%;
     padding: 15px;
