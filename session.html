@@ -108,12 +108,15 @@
             <div id = "gwamble-leaderboard-list">
                 <div class="member-item" style = "width:100%;opacity:50%">
                     <div class = "gwamble-topper">
-                    <span style = "font-family:'Manrope';font-size:18px">No bets were received.</span>
+                    <span style = "font-family:'Lexend';font-size:18px">No bets were received.</span>
                     </div>
                    
                 </div>
             </div>
-            <button class = "gwamble-leaderboard-button" onclick = "closeSession()" >Close session</button>
+            <button class = "gwamble-leaderboard-button" onclick = "closeSession()" >
+        <i class="ri-close-fill"></i>
+            Close session
+        </button>
         </div>
 
 
@@ -219,46 +222,68 @@ function declareWinner(outcome) {
 }
 
 function showWinnerUI(session) {
-    const winner = session.winner;
-    
-    document.getElementById('posted-gwamble').style.display = 'none';
+    const winner = session.winner.toUpperCase();
+
+    // Disable further actions
+    document.getElementById('gwamble-winner-a').style.display = 'none';
+    document.getElementById('gwamble-winner-b').style.display = 'none';
     document.querySelector('.gwamble-bottom').style.display = 'none';
 
-    const resultsTable = document.getElementById('gwamble-leaderboard-table');
-    resultsTable.style.display = 'block';
+    // Animate outcomes
+    const outcomeA_element = document.getElementById('outcome-a');
+    const outcomeB_element = document.getElementById('outcome-b');
 
-    const userResults = document.getElementById('gwamble-user-results');
-    userResults.innerHTML = `<p><i class="ri-trophy-fill" style="margin-right:5px"></i> Winner is Outcome ${winner.toUpperCase()}</p>`;
-
-    const leaderboardList = document.getElementById('gwamble-leaderboard-list');
-    leaderboardList.innerHTML = '';
-
-    if (session.bets.length === 0) {
-        leaderboardList.innerHTML = `
-            <div class="member-item" style="width:100%;opacity:50%">
-                <div class="gwamble-topper">
-                    <span style="font-family:'Manrope';font-size:18px">No bets were received.</span>
-                </div>
-            </div>`;
-        return;
+    if (winner === 'A') {
+        outcomeA_element.classList.add('winning-outcome');
+        outcomeB_element.classList.add('losing-outcome');
+    } else {
+        outcomeB_element.classList.add('winning-outcome');
+        outcomeA_element.classList.add('losing-outcome');
     }
 
-    session.members.forEach(member => {
-        const bet = session.bets.find(b => b.user_id === member.user_id);
-        const betText = bet ? `Bet on Outcome ${bet.selected_outcome.toUpperCase()}` : 'Did not bet';
-        const winnerClass = bet && bet.selected_outcome.toUpperCase() === winner.toUpperCase() ? 'winner-trophy' : '';
+    // Show leaderboard after a delay
+    setTimeout(() => {
+        document.getElementById('posted-gwamble').classList.add('results-active');
+        const resultsTable = document.getElementById('gwamble-leaderboard-table');
+        resultsTable.style.display = 'flex';
 
-        const memberItem = `
-            <div class="member-item">
-                <div class="gwamble-topper">
-                    <span style="font-family:'Manrope';font-size:18px">${member.username}</span>
-                    ${winnerClass ? '<i class="ri-trophy-fill"></i>' : ''}
+        document.getElementById('gwamble-user-results').style.display = 'none';
+
+        const leaderboardList = document.getElementById('gwamble-leaderboard-list');
+        leaderboardList.innerHTML = '';
+
+        if (session.bets.length === 0) {
+            resultsTable.querySelector('h1').style.display = 'none';
+            leaderboardList.innerHTML = `
+                <div class="member-item" style="width:100%;opacity:50%">
+                    <div class="gwamble-topper">
+                        <span style="font-family:'Lexend';font-size:18px">No bets were received.</span>
+                    </div>
+                </div>`;
+            return;
+        }
+
+        // Calculate total pot and payout per winner
+        const totalPot = session.bets.length * 10; // Assuming 10 coins per bet
+        const winners = session.bets.filter(b => b.selected_outcome.toUpperCase() === winner);
+        const payout = winners.length > 0 ? totalPot / winners.length : 0;
+
+        session.members.forEach(member => {
+            const bet = session.bets.find(b => b.user_id === member.user_id);
+            const isWinner = bet && bet.selected_outcome.toUpperCase() === winner;
+            const memberItem = `
+                <div class="member-item ${isWinner ? 'is-winner' : ''}">
+                    <div class="gwamble-topper">
+                        <span>${member.username}</span>
+                        ${isWinner ? '<i class="ri-trophy-fill winner-trophy"></i>' : ''}
+                    </div>
+                    <span style="opacity:50%;font-size:14px">${bet ? `Bet on ${bet.selected_outcome.toUpperCase()}` : 'No bet'}</span>
+                    ${isWinner ? `<div class="payout">+${payout.toFixed(2)} coins</div>` : ''}
                 </div>
-                <span style="opacity:50%;font-size:14px">${betText}</span>
-            </div>
-        `;
-        leaderboardList.innerHTML += memberItem;
-    });
+            `;
+            leaderboardList.innerHTML += memberItem;
+        });
+    }, 2000); // 2-second delay for animation
 }
 
 // Host's function to close the session for everyone.
@@ -380,7 +405,7 @@ function copyGwambleCode() {
     icon.classList.add('ri-check-fill');
     setTimeout(function() {
         icon.classList.remove('ri-check-fill');
-        icon.classList.add('ri-file-copy-fill');
+        icon.classList.add('ri-file_COPY-fill');
     }, 2500);
 }
 

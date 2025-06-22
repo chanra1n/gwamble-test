@@ -24,7 +24,6 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-synthesis: none !important;
-    padding-bottom: 120px;
 }
 
 #gwamble-bar {
@@ -126,6 +125,8 @@ body {
     align-items: stretch;
     justify-content: space-between;
     gap: 5px;
+    border-radius: 20px 20px 0px 0px;
+    overflow: hidden;
 }
 
 .gwamble-button-container button {
@@ -262,8 +263,14 @@ body {
     background: rgba(255,255,255,0.1);
 }
 
-#gwamble-share-button i, #gwamble-link-button i {
+#gwamble-share-button i, #gwamble-link-button i, .gwamble-leaderboard-button i {
     font-size: 40px;
+}
+
+.gwamble-leaderboard-button i {
+    font-size: 25px;
+    font-weight: 900;
+    margin-right: 10px;
 }
 
 .gwamble-bottom {
@@ -322,22 +329,28 @@ body {
     display:none;
 }
 
+#posted-gwamble.results-active {
+    filter: blur(4px);
+    transition: filter 0.3s ease-in-out;
+}
+
 #gwamble-leaderboard-table {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(15px) saturate(1.2);
-    -webkit-backdrop-filter: blur(15px) saturate(1.2);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
     padding: 20px;
-    width: 100%;
     box-sizing: border-box;
     display: none;
     flex-direction: column;
     gap: 15px;
-    justify-content: flex-end;
-    margin-top: 30px;
     position: absolute;
-    bottom: 0;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    z-index: 101;
+    border-radius: 20px;
 }
 
 
@@ -380,6 +393,39 @@ body {
     text-align: center;
 }
 
+.winner-trophy {
+    color: #ffd700;
+}
+
+.member-item {
+    background: rgba(0,0,0,0.15);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    min-width: 150px;
+    transition: all 0.3s ease;
+}
+
+.member-item.is-winner {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+}
+
+.member-item .gwamble-topper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.payout {
+    color: #a8ffc5;
+    font-weight: bold;
+    font-size: 12px;
+}
+
 #gwamble-user-results .gwamble-user-icon {
     background-color: black;
     color: pink;
@@ -416,10 +462,35 @@ body {
     text-align: center;
 }
 
-@media (max-width: 768px) {
-    body {
-        padding-bottom: 100px;
+.winning-outcome {
+    animation: winner-animation 1s ease-in-out 0.5s forwards;
+    z-index: 2;
+}
+
+.losing-outcome {
+    animation: loser-animation 0.5s ease-in-out forwards;
+    z-index: 1;
+}
+
+@keyframes winner-animation {
+    50% {
+        transform: scale(1.1);
     }
+    100% {
+        transform: scale(1.05);
+        box-shadow: 0 0 40px rgba(255, 255, 255, 0.8);
+    }
+}
+
+@keyframes loser-animation {
+    100% {
+        opacity: 0.2;
+        transform: scale(0.9);
+    }
+}
+
+
+@media (max-width: 768px) {
 
     #posted-gwamble {
         margin: 20px;
@@ -472,16 +543,16 @@ body {
 
 .uk-modal#member-modal .uk-modal-dialog h1 {
     color: pink;
-    font-family: 'Manrope';
-    font-weight: 900;
+    font-family: 'Lexend', sans-serif;
+    font-weight: 700;
 }
 
 .uk-modal#member-modal .uk-modal-dialog .uk-modal-close {
     background-color: #503c40;
     color: pink;
     border: none;
-    font-weight: 900;
-    font-family: 'Manrope';
+    font-weight: 700;
+    font-family: 'Lexend', sans-serif;
     border-radius: 10px;
     width: 100%;
     font-size: 20px;
@@ -505,3 +576,28 @@ body {
     padding: 20px;
 }
 
+
+
+.gwamble-leaderboard-button {
+    width: 100%;
+    border-radius: 20px;
+    box-sizing: border-box;
+    padding: 20px;
+    font-size: 20px;
+    font-family: 'Lexend', sans-serif;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: 900;
+    border: none;
+    text-transform: uppercase;
+}
+
+#gwamble-user-results .gwamble-leaderboard-button {
+    height: 100%;
+    text-transform: uppercase;
+}
