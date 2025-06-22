@@ -37,7 +37,7 @@ body, html {
     background: linear-gradient(135deg, #d72660 0%, #a8326e 100%);
     color: white;
     overscroll-behavior: none;
-    height: 100vh;
+    height: 100dvh;
 }
 
 body {
