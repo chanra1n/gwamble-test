@@ -30,17 +30,14 @@
 
 body, html {
     width: 100%;
-    height: 100%;
     margin: 0;
     padding: 0;
     font-family: 'Poppins', sans-serif;
     font-size: 16px;
-    background-color:pink;
-    color:black;
-    overflow:hidden;
+    background: linear-gradient(135deg, #d72660 0%, #a8326e 100%);
+    color: white;
     overscroll-behavior: none;
-    overflow : scroll;
-    position:fixed;
+    height: 100vh;
 }
 
 body {
@@ -49,45 +46,51 @@ body {
 }
 
 #gwamble-bar {
-    background-color: pink;
-    padding: 5px;
-    color: pink;
+    background-color: transparent;
+    padding: 15px;
+    color: white;
     display: flex;
     align-items: center;
-    height: 40px;
-    justify-content: center;
-    position:sticky;
-    top:0;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 #gwamble-bar h1 {
     font-family: 'Righteous';
     font-size: 40px;
-    color: black;
-    margin: auto;
+    color: white;
+    margin: 0;
     line-height: normal;
-    margin-top:7.5px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 #reload-icon, #user-icon, #loading-icon {
-    color: black;
-    float: left;
-    font-size: 50px;
-    position: absolute;
-    left: 0;
-    top: 0;
+    color: white;
+    font-size: 36px;
     line-height: normal;
-    margin: 15px;
-    transform: scale(0.75);
+    margin: 0;
+    transform: scale(1);
     font-weight: 900;
-    z-index: 2;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
-    .right {
-        left: auto!important;
-        right: 0;
-        float: right!important;
-        margin-right: 15px!important;
+#reload-icon:hover {
+    transform: scale(1.1) rotate(-360deg);
+}
+
+#user-icon:hover {
+    transform: scale(1.2);
+}
+
+#reload-icon:active, #user-icon:active {
+    transform: scale(0.9);
+    transition-duration: 0.1s;
 }
 
 #loading-icon {
@@ -99,21 +102,22 @@ body {
 #gwamble-body {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: flex-end; /* Aligns children to the bottom */
     align-items: center;
-    height: calc(100% - 50px);
-    background-color: pink;
+    min-height: calc(100vh - 70px); /* Adjust height calculation */
+    background-color: transparent;
     width: 100%;
     padding: 15px;
     box-sizing: border-box;
     gap: 15px;
     overflow-y: auto;
+    transition: all 0.3s ease;
 }
 
 
 #gwamble-body span {
     font-family: 'Manrope';
-    color: pink;
+    color: white;
     font-size: 25px;
     margin: 0;
     flex-grow: 0;
@@ -131,9 +135,13 @@ body {
 
 #create-gwamble-container, #join-gwamble-container {
     width: 100%;
-    background-color: black;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px) saturate(1.2);
+    -webkit-backdrop-filter: blur(15px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
     border-radius: 20px;
-    color: pink;
+    color: white;
     font-family: 'Poppins';
     padding: 20px;
     box-sizing: border-box;
@@ -150,19 +158,25 @@ body {
 
 
 .gwamble-option {
-    background-color: black;
+    background: rgba(0, 0, 0, 0.15);
     border-radius: 20px;
     width: 100%;
-    color: pink;
+    color: white;
     font-family: 'Poppins';
     padding: 20px;
     box-sizing: border-box;
+    transition: all 0.5s;
+    transition-timing-function: ease-in-out;
     overflow: hidden;
     position: relative;
-    height: auto; /* Ensure height is auto for dynamic content adjustment */
-    display: flex; /* Flexbox to align contents correctly */
-    align-items: center; /* Center align vertically */
-    justify-content: space-between; /* Space between elements */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.gwamble-option:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
 .gwamble-option button, .gwamble-button-bottom {
@@ -173,35 +187,34 @@ body {
     font-size: 25px;
     border-radius: 0px 10px 10px 0px;
     box-sizing: border-box;
-    background-color: pink;
+    background: rgba(255, 255, 255, 0.2);
     margin-top: 10px; /* Adds some space between the button and previous elements */
-    color:black;
+    color:white;
     font-weight:900;
-    opacity:100%;
 }
 
 .gwamble-option .cancel, .gwamble-button-bottom.cancel {
-    background-color: #ffc0cb50;
-    color: pink;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
     border-radius: 10px 0px 0px 10px;
 }
 
 
 #create-gwamble-options, #join-gwamble-options {
     display: none;
-    opacity: 0;
     pointer-events: none;
     align-items: end;
     flex-wrap: wrap;
     height: fit-content;
-    background-color:black!important;
+    background-color:transparent!important;
+    transition: transform 0.25s ease;
 }
 
 #create-gwamble-options hr, #join-gwamble-options hr {
     margin-top: 15px;
     border-width: 2px;
     border-radius: 100vmin;
-    border-color: pink;
+    border-color: rgba(255, 255, 255, 0.5);
 }
 
 #create-gwamble-options input[type="text"], #create-gwamble-options textarea, #join-gwamble-options textarea {
@@ -213,8 +226,8 @@ body {
     font-family: 'Manrope';
     font-weight: 900;
     border-radius: 10px;
-    background-color: pink;
-    color: black;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
     resize: none;
     margin-bottom: 10px;
     overflow: hidden;
@@ -229,8 +242,8 @@ body {
     font-size: 40px;
     margin: 2.5px;
     padding: 2.5px;
-    background-color: pink;
-    color: black;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
 }
 
 .text-center {
@@ -245,7 +258,7 @@ body {
 }
 
 input::placeholder, textarea::placeholder {
-    color: #00000050;
+    color: rgba(255, 255, 255, 0.5);
     font-weight: 900;
     font-family:'Manrope';
 }
@@ -259,10 +272,10 @@ input::placeholder, textarea::placeholder {
 
 
 .gwamble-option {
-    background-color: black;
+    background: rgba(0, 0, 0, 0.15);
     border-radius: 20px;
     width: 100%;
-    color: pink;
+    color: white;
     font-family: 'Poppins';
     padding: 20px;
     box-sizing: border-box;
@@ -288,7 +301,7 @@ input::placeholder, textarea::placeholder {
 .form-control:focus {
   color: #3F4254;
   background-color: #ffffff;
-  border-color: #884377;
+  border-color: #a0aec0;
   outline: 0;
 }
 
@@ -315,32 +328,63 @@ input::placeholder, textarea::placeholder {
     line-height: 0;
     vertical-align: sub;
     opacity: 50%;
+    transition: all 0.3s ease;
 }
 
-#pwa-notice {
-    background-color: black;
-    position: absolute;
-    width: 100%;
-    padding: 15px;
-    font-family: 'Poppins-Bold';
-    font-size: 17.5px;
-    color: pink;
-    padding-left: 15px;
-    padding-right: 15px;
-    font-weight: bold;
-    margin-top: 30px;
-    text-align: center;
-    box-sizing: border-box;
-    display:none;
+#otp input:focus {
+    border-color: #a0aec0;
+    box-shadow: 0 0 0 3px rgba(160, 174, 192, 0.3);
+    transition: all 0.2s ease-in-out;
 }
 
-#pwa-notice .ri-share-2-fill {
-    font-size: 20px;
-    font-weight: bolder;
-    margin-left: 2.5px;
-    margin-right: 2.5px;
+/* --- Fluid & Performant UI Animations --- */
+
+/* Apply hardware acceleration hint for smoother animations */
+.gwamble-option, #gwamble-body, button {
+  will-change: transform, box-shadow, max-height;
 }
 
-button:disabled {
-    opacity: 50%;
+/* Set the initial collapsed state for the main option containers */
+.gwamble-option {
+    max-height: 80px; /* Height of the container when closed */
+    overflow-y: hidden;
+}
+
+/* Base transition for all interactive elements, now including max-height */
+.gwamble-option, button, .gwamble-button-bottom {
+  transition: transform 0.5s cubic-bezier(0.68, -0.6, 0.32, 1.6),
+              box-shadow 0.5s cubic-bezier(0.68, -0.6, 0.32, 1.6),
+              max-height 0.7s cubic-bezier(0.77, 0, 0.175, 1); /* Animate the height change */
+}
+
+/* Smooth scaling on hover */
+.gwamble-option:hover, button:hover, .gwamble-button-bottom:hover {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+
+/* Quick, responsive press-down effect */
+.gwamble-option:active, button:active, .gwamble-button-bottom:active {
+  transform: scale(0.97);
+  transition-duration: 0.1s;
+}
+
+/* Use :has() to detect when the inner options are displayed and expand the container */
+#create-gwamble-container:has(#create-gwamble-options[style*="display: flex"]),
+#join-gwamble-container:has(#join-gwamble-options[style*="display: flex"]) {
+    max-height: 100vh; /* Set a large height to expand to */
+}
+
+/* Remove old/conflicting animation rules */
+.gwamble-option, #gwamble-body, .small-title, #create-gwamble-subject, #create-gwamble-options input, #otp input {
+  animation: none !important;
+}
+
+#create-gwamble-options, #join-gwamble-options {
+    transition: none;
+}
+
+/* Ensure smooth font rendering */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }

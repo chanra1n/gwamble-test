@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GWAMBLE - Profile</title>
+    <link rel="stylesheet" type="text/css" href="css/lib/remixicon.css">
+    <link rel="stylesheet" type="text/css" href="css/custom/index.css">
+    <link rel="stylesheet" type="text/css" href="css/custom/session.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+</head>
+<body>
+    <nav id="gwamble-bar" uk-navbar>
+        <button id="gwamble-close-session" onclick="window.location.href='index.html'">
+            <i class="ri-arrow-left-s-fill"></i>
+            <span>Back</span>
+        </button>
+        <h1>Profile</h1>
+    </nav>
+
+    <div id="gwamble-body">
+        <div class="profile-card modular-card">
+            <div class="profile-avatar modular-avatar">
+                <i class="ri-user-4-fill"></i>
+            </div>
+            <div class="profile-info modular-info">
+                <label for="username-input" class="modular-label">Display Name</label>
+                <input type="text" id="username-input" class="modular-input" maxlength="20" placeholder="Enter your new username">
+                <button id="save-username-button" class="modular-btn modular-btn-primary">Save</button>
+                <p class="profile-id modular-hint">Your account is private and local to this device.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/custom/users.js"></script>
+    <script>
+        function initProfile() {
+            const user = getLocalUser();
+            if (user) {
+                document.getElementById('username-input').value = user.username;
+            }
+            document.getElementById('save-username-button').addEventListener('click', () => {
+                const newUsername = document.getElementById('username-input').value.trim();
+                if (newUsername.length > 0) {
+                    updateUsername(newUsername);
+                    alert('Display name updated!');
+                }
+            });
+        }
+        window.onload = initProfile;
+    </script>
+</body>
+</html>

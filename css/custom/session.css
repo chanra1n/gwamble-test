@@ -1,11 +1,104 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../../font/poppins/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins-Bold';
+    src: url('../../font/poppins/Poppins-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins-SemiBold';
+    src: url('../../font/poppins/Poppins-SemiBold.ttf');
+}
+
+@font-face {
+    font-family: 'Righteous';
+    src: url('../../font/righteous/Righteous-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Manrope';
+    src: url('../../font/Manrope.ttf');
+}
+
+@font-face {
+    font-family: 'Chivo';
+    src: url('../../font/Chivo.ttf');
+}
+
+body, html {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    background: linear-gradient(135deg, #d72660 0%, #a8326e 100%);
+    color: white;
+    overscroll-behavior: none;
+    height: 100vh;
+}
+
 body {
-    background-color: pink;
-    background-image: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-synthesis: none !important;
+}
+
+#gwamble-bar {
+    background-color: transparent;
+    padding: 15px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-size: 25px;
+    font-family: 'Manrope';
+}
+
+#gwamble-bar p, #gwamble-bar button {
+    color: white;
+    background: none;
+    border: none;
+    font-family: 'Poppins-Bold';
+    font-size: 20px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+#gwamble-bar p span, #gwamble-bar button span {
+    font-family: 'Manrope';
+    font-weight: 900;
+}
+
+#gwamble-role {
+    background-color: rgba(80,60,64,0.7);
+    color: white;
+    font-size: 14px;
+    border-radius: 100vmin;
+    margin-right: 10px;
+    padding: 1.5px 12.5px;
+}
+
+#gwamble-role i {
+    animation: pulse 1s infinite;  
+    border-radius:100%; 
+    margin-right:2.5px;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.25; }
+    70% { opacity: 1; }
+    100% { opacity: 0.25; }
 }
 
 #posted-gwamble {
-    background-color: black;
-    color: pink;
+    background: rgba(0,0,0,0.7);
+    color: white;
     padding: 20px;
     margin: 20px;
     margin-top: 0px;
@@ -14,13 +107,13 @@ body {
     flex-direction: column;
     justify-content: flex-end;
     margin-bottom: -10px;
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.15);
 }
 
 #posted-gwamble h1 {
     font-family: 'Manrope', sans-serif;
     font-weight: 900;
-    color: pink;
-    display: block;
+    color: white;
     margin-top: 10px;
     font-size: 27.5px;
     margin-bottom: 0px;
@@ -33,12 +126,12 @@ body {
 }
 
 .gwamble-post p {
-    margin: 0px;
-    margin-bottom: 10px;
+    margin: 0px 0px 10px 0px;
     font-weight: 900;
     font-family: 'Manrope';
-    opacity: 50%;
+    opacity: 0.5;
     font-size: 20px;
+    color: white;
 }
 
 .gwamble-button-container {
@@ -50,8 +143,8 @@ body {
 
 .gwamble-button-container button {
     font-family: 'Poppins-Bold', sans-serif;
-    background-color: pink;
-    color: black;
+    background: rgba(255,255,255,0.2);
+    color: white;
     display: flex;
     align-items: center;
     width: -webkit-fill-available;
@@ -76,11 +169,11 @@ body {
 
 .gwamble-bets {
     font-size: 30px;
-    color: pink;
-    background-color: black;
-    border: 5px solid pink;
+    color: white;
+    background: rgba(255,255,255,0.1);
+    border: 5px solid #fff;
     border-radius: 0px 10px 10px 0px;
-    padding: 5px;
+    padding: 5px 15px;
     font-weight: 900;
     font-family: 'Manrope';
     line-height: normal;
@@ -89,18 +182,15 @@ body {
     justify-content: center;
     height: 100%;
     box-sizing: border-box;
-    padding-left: 15px;
-    padding-right: 15px;
 }
 
-
 .gwamble-post-header {
-    opacity: 50%;
+    opacity: 0.5;
 }
 
 .gwamble-post-header i {
-    background-color: pink;
-    color: black;
+    background: white;
+    color: #a8326e;
     padding: 5px;
     font-size: 15px;
     border-radius: 100%;
@@ -109,8 +199,30 @@ body {
 .gwamble-post-header span {
     font-size: 20px;
     margin-left: 5px;
-    font-weight:bolder;
+    font-weight: bolder;
     font-family: 'Righteous', sans-serif;
+    color: white;
+}
+
+.winner-button {
+    display: block!important;
+    width: 100%!important;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    padding: 10px;
+    border-radius: 0px 0px 10px 10px;
+    font-size: 20px;
+    font-family: 'Manrope';
+    font-weight: 900;
+    color: white;
+    position: relative;
+}
+
+.winner-button i {
+    margin-right: 2.5px;
+    font-weight:900;
 }
 
 #gwamble-share-container {
@@ -118,30 +230,30 @@ body {
     flex-direction: column;
     margin-top: 20px;
     padding:20px;
-  }
-  
-  .gwamble-share {
+}
+
+.gwamble-share {
     display: flex;
     align-items: center;
-    background-color: black;
+    background: rgba(0,0,0,0.7);
     border-radius: 10px;
     padding: 10px 20px;
     margin-bottom: 10px;
     width: 100%;
     box-sizing: border-box;
-  }
-  
-  #gwamble-code {
+}
+
+#gwamble-code {
     font-family: monospace;
     font-size: 40px;
     font-weight: 900;
-    color: pink;
+    color: white;
     margin: 0;
     padding-right: 10px;
-  }
-  
-  #gwamble-share-button, #gwamble-link-button {
-    color: pink;
+}
+
+#gwamble-share-button, #gwamble-link-button {
+    color: white;
     border: none;
     border-radius: 5px;
     padding: 5px 10px;
@@ -149,19 +261,17 @@ body {
     transition: background-color 0.3s ease;
     display: flex;
     align-items: center;
-    background-color: black;
-  }
+    background: rgba(255,255,255,0.1);
+}
 
-  #gwamble-share-button i, #gwamble-link-button i {
+#gwamble-share-button i, #gwamble-link-button i {
     font-size: 40px;
-  }
-  
+}
 
-
-  .gwamble-bottom {
+.gwamble-bottom {
     width: calc(100% - 40px);
     text-align: center;
-    background-color: black;
+    background: rgba(0,0,0,0.7);
     margin: 20px;
     border-radius: 20px;
     padding: 20px;
@@ -176,8 +286,8 @@ body {
 }
 
 .gwamble-bottom button#gwamble-share-code {
-    background-color: #ffc0cb50;
-    color: pink;
+    background: rgba(255,255,255,0.2);
+    color: white;
     padding: 10px;
     border-radius: 10px;
     font-weight: 900;
@@ -191,8 +301,8 @@ body {
 }
 
 .gwamble-bottom button#gwamble-qr-code {
-    background-color: transparent;
-    color: pink;
+    background: transparent;
+    color: white;
     font-size: 50px;
     line-height: 1;
     padding: 0;
@@ -200,335 +310,6 @@ body {
     width: auto;
     text-align: right;
     margin-left: 15px;
-}
-
-
-
-
-#gwamble-bar {
-    color: black;
-    background-color: green;
-    font-size: 25px;
-    font-family: 'Manrope';
-    background-color: pink;
-    padding: 5px;
-    display: flex;
-    height: 40px;
-    justify-content: right;
-    position: sticky;
-    top: 0;
-    padding-left: 15px;
-    padding-right: 15px;
-}
-
-#gwamble-bar p i {
-
-}
-
-#gwamble-bar p {
-}
-
-#gwamble-bar p span {
-
-    font-family: 'Manrope';
-    font-weight:900;
-}
-
-#gwamble-role {
-    background-color: #503c40;
-    color: pink;
-    font-size: 14px;
-    border-radius: 100vmin;
-    margin-right: 10px;
-    padding: 1.5px;
-    padding-left: 12.5px;
-    padding-right: 12.5px;
-}
-
-#gwamble-role i {
-    animation: pulse 1s infinite;  
-    border-radius:100%; 
-    margin-right:2.5px;
-}
-
-@keyframes pulse {
-    0% {
-      opacity: 0.25;
-    }
-    
-    70% {
-        opacity: 1;
-    }
-    
-    100% {
-        opacity: 0.25;
-    }
-  }
-  
-
-#gwamble-bar button {
-    position: absolute;
-    display: inline-block;
-    left: 0;
-    background-color: transparent;
-    border: none;
-    font-size: 20px;
-    font-weight: 900;
-    color:black;
-    font-family: 'Poppins-Bold';
-}
-
-#gwamble-bar button i {
-    color: black;
-    font-weight:900;
-}
-
-.winner-button {
-    display: block!important;
-    width: 100%!important;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    background-color: #ffc0cb50;
-    border: none;
-    padding: 10px;
-    border-radius: 0px 0px 10px 10px;
-    font-size: 20px;
-    font-family: 'Manrope';
-    font-weight: 900;
-    color: pink;
-    position: relative;
-}
-
-.winner-button i {
-    margin-right: 2.5px;
-    font-weight:900;
-}
-
-
-.uk-modal#qr-modal {
-    align-content: center;
-    backdrop-filter: blur(5px);
-}
-
-.uk-modal#qr-modal .uk-modal-dialog {
-    width: fit-content;
-}
-
-.uk-modal#member-modal {
-    align-content: center;
-    backdrop-filter: blur(5px);
-}
-
-.uk-modal#member-modal .uk-modal-dialog {
-    transition: all 0.25s ease;
-    border-radius: 15px;
-    background-color: black;
-    color: pink;
-    padding: 20px;
-    max-height: 100%;
-    overflow: hidden;
-    overflow-y: scroll;
-    height: fit-content;
-}
-
-.uk-modal#member-modal .uk-modal-dialog h1 {
-    color: pink;
-    font-family: 'Manrope';
-    font-weight: 900;
-}
-
-.uk-modal#member-modal .uk-modal-dialog .uk-modal-close {
-    background-color: #503c40;
-    color: pink;
-    border: none;
-    font-weight: 900;
-    font-family: 'Manrope';
-    border-radius: 10px;
-    width: 100%;
-    font-size: 20px;
-    padding: 5px;
-    text-transform: none;
-    position: sticky;
-    bottom: 0;
-    box-shadow: 0px 0px 10px black;
-    z-index: 3;
-}
-
-.uk-modal-dialog {
-    transition: all 0.25s ease;
-    border-radius: 15px;
-}
-
-
-#gwamble-qr-display img {
-    width: 75vw;
-    height: 75vw;
-    padding: 20px;
-}
-
-
-#gwamble-copy-icon {
-    margin-left:5px;
-}
-
-#member-modal-list {
-    padding-bottom: 10px;
-}
-
-
-#member-modal .member-item {
-    background-color: pink;
-    color: black;
-    padding: 10px;
-    border-radius: 10px;
-    font-weight: 900;
-    margin-bottom: 10px;
-    font-size: 20px;
-}
-
-#member-modal  .member-item span {
-    font-weight: 900;
-    font-family: 'Righteous';
-    font-size: 20px;
-}
-
-
-#member-modal  .member-item i {
-margin-right:5px;
-}
-
-
-#member-modal  .member-item button {
-    float: right;
-    display: ruby-text;
-    background-color: pink;
-    border: none;
-    font-size: 25px;
-    margin: 0px;
-    padding: 0px;
-    color:black;
-}
-
-#gwamble-leaderboard-list .member-item {
-    background-color: #ffc0cb50;
-    color: pink;
-    padding: 12.5px;
-    border-radius: 10px;
-    font-weight: 900;
-    font-size: 20px;
-    width: fit-content;
-    margin: 0px;
-    box-sizing: border-box;
-    align-self: center;
-    padding-top: 10px;
-    padding-bottom: 10px;
-}
-
-#gwamble-leaderboard-list .member-item span {
-    font-weight: 900;
-    font-family: 'Righteous';
-    font-size: 15px;
-    display: block;
-    width: 100%;
-    text-align: center;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-
-#gwamble-leaderboard-list .member-item i {
-margin-right:5px;
-}
-
-
-#gwamble-leaderboard-list .member-item button {
-    border: none;
-    font-size: 25px;
-    margin: 0px;
-    padding: 10px;
-    color: pink;
-    width: 100%;
-    box-sizing: border-box;
-    border-radius: 10px;
-    overflow: hidden;
-    background-color: black;
-    margin-top: 5px;
-    align-items: center;
-    display: flex;
-    line-height: 1;
-}
-
-.kicker {
-    display: inline-block;
-    font-size: 30px;
-}
-
-
-@-webkit-keyframes tada {
-    0% {
-        -webkit-transform: scaleX(1);
-        transform: scaleX(1)
-    }
-
-    10%,
-    20% {
-        -webkit-transform: scale3d(.9, .9, .9) rotate(-3deg);
-        transform: scale3d(.9, .9, .9) rotate(-3deg)
-    }
-
-    30%,
-    50%,
-    70%,
-    90% {
-        -webkit-transform: scale3d(1.05, 1.05, 1.05) rotate(3deg);
-        transform: scale3d(1.05, 1.05, 1.05) rotate(3deg)
-    }
-
-    40%,
-    60%,
-    80% {
-        -webkit-transform: scale3d(1.05, 1.05, 1.05) rotate(-3deg);
-        transform: scale3d(1.05, 1.05, 1.05) rotate(-3deg)
-    }
-
-    to {
-        -webkit-transform: scaleX(1);
-        transform: scaleX(1)
-    }
-}
-
-@keyframes tada {
-    0% {
-        -webkit-transform: scaleX(1);
-        transform: scaleX(1)
-    }
-
-    10%,
-    20% {
-        -webkit-transform: scale3d(.9, .9, .9) rotate(-3deg);
-        transform: scale3d(.9, .9, .9) rotate(-3deg)
-    }
-
-    30%,
-    50%,
-    70%,
-    90% {
-        -webkit-transform: scale3d(1.05, 1.05, 1.05) rotate(3deg);
-        transform: scale3d(1.05, 1.05, 1.05) rotate(3deg)
-    }
-
-    40%,
-    60%,
-    80% {
-        -webkit-transform: scale3d(1.05, 1.05, 1.05) rotate(-3deg);
-        transform: scale3d(1.05, 1.05, 1.05) rotate(-3deg)
-    }
-
-    to {
-        -webkit-transform: scaleX(1);
-        transform: scaleX(1)
-    }
 }
 
 
@@ -628,72 +409,4 @@ margin-right:5px;
     font-size: 18px;
     white-space: nowrap;
     text-align: center;
-}
-
-.gwamble-header {
-    display: flex; /* Use Flexbox for horizontal alignment */
-    align-items: center; /* Align items vertically in the center */
-}
-
-.gwamble-user-icon {
-    margin-right: 10px; /* Optional: Space between the icon and the h3 */
-}
-
-.gwamble-text-left h3 {
-    margin: 0; /* Remove default margin */
-}
-
-.gwamble-text-left p {
-    margin-top: 10px; /* Add space between the h3 line and the p element */
-}
-
-.gwamble-text-left, .gwamble-text-right {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.gwamble-text-left {
-    padding-right: 10px;
-    flex: 2.5;
-}
-
-.gwamble-text-right {
-    padding-left: 10px;
-}
-
-.gwamble-leaderboard-button {
-    width: 100%;
-    border-radius: 10px;
-    box-sizing: border-box;
-    padding: 10px;
-    background-color: pink;
-    color: black;
-    font-size: 20px;
-    font-family: 'Manrope';
-    font-weight: 900;
-    border: none;
-}
-
-.gwamble-topper {
-    display: flex;
-    vertical-align: middle;
-    align-items: center;
-    font-size: 20px;
-    padding-bottom: 2.5px;
-}
-
-.gwamble-topper span {
-    font-size: 16px;
-}
-
-.gwamble-topper .topper-icon {
-    font-size: 10px;
-    background-color: pink;
-    line-height: normal;
-    padding: 2.5px;
-    border-radius: 100%;
-    color: #503c40;
-    margin-right: 7.5px!important;
 }

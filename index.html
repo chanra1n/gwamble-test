@@ -10,7 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-    <link rel="manifest" href="https://chanra1n.github.io/gwamble-test/manifest.json">
     <link rel="apple-touch-icon" sizes="72x72" href="icon/icon-72x72.png">
     <link rel="icon" type="image/png" sizes="96x96" href="icon/icon-96x96.png">
     <link rel="icon" type="image/png" sizes="128x128" href="icon/icon-128x128.png">
@@ -34,16 +33,11 @@
 </head>
 
 <body>
-    <i class="ri-loop-right-fill" id = "reload-icon" onclick="reloadPage()"></i>
-    <i class="ri-user-4-fill right" id = "user-icon"></i>
-
     <nav id="gwamble-bar" uk-navbar>
+        <i class="ri-loop-right-fill" id="reload-icon" onclick="reloadPage()"></i>
         <h1>gwamble</h1>
+        <i class="ri-user-4-fill profile-icon" id="user-icon" onclick="window.location.href='profile.html'"></i>
     </nav>
-
-    <div id = "pwa-notice">
-    Tap <i class="ri-share-2-fill"></i> then "Add to Home Screen"
-    </div>
 
     <div id="gwamble-body">
 
@@ -95,13 +89,12 @@
 
 </body>
 <script src="js/lib/uikit.js"></script>
-<script src="js/custom/fakeLogin.js"></script>
+<script src="js/custom/users.js"></script>
 <script src="js/custom/getActions.js"></script>
 <script>
 
     var create_gwamble_is_triggered = false;
     var join_gwamble_is_triggered = false;
-    var is_pwa = false;
 
     function createGwamble() {
         console.log("create gwamble");
@@ -109,7 +102,6 @@
         const createOptions = document.getElementById('create-gwamble-options');
         const hiddenElements = document.getElementsByClassName('hidden-while-displayed');
         document.getElementById('join-gwamble-container').style.display = "none";
-        document.getElementById('pwa-notice').style.display = "none";
 
 
         for (var i = 0; i < hiddenElements.length; i++) {
@@ -150,11 +142,6 @@
             createContainer.onclick = function () {
                 createGwamble();
             };
-            if (is_pwa){
-                document.getElementById('pwa-notice').style.display = "none";
-            } else {
-                document.getElementById('pwa-notice').style.display = "block";
-            }
         }, 1);
         create_gwamble_is_triggered = false;
     }
@@ -236,48 +223,36 @@
     window.location.reload();
 }
 
-    function verifyPWA(){
-    // get current URL, look for ?pwa=true
-    const urlParams = new URLSearchParams(window.location.search);
-    const pwa = urlParams.get('pwa');
-    if (
-    window.matchMedia('(display-mode: standalone)').matches ||
-    window.navigator.standalone === true ||
-    document.referrer.includes('android-app://') ||
-    pwa === 'true' ||
-    pwa === '1' ||
-    pwa === true 
-) {
-        console.log('PWA detected');
-        document.getElementById('pwa-notice').style.display = "none";
-        is_pwa = true;
-    } else {
-        console.log('PWA not detected');
-        document.getElementById('pwa-notice').style.display = "block";
-        is_pwa = false;
-    }
-    
-
-}
-
     function passGwamble() {
         var subject = document.getElementById('create-gwamble-subject').value;
         var outcome_a = document.getElementById('create-gwamble-options').querySelectorAll('input')[0].value;
         var outcome_b = document.getElementById('create-gwamble-options').querySelectorAll('input')[1].value;
+        var join_code = generateJoinCode();
+        var user = getLocalUser();
 
         var session = {
-            "owner_id": getLocalUserToken(),
+            "owner_id": user.token,
+            "owner_name": user.username,
             "session_id": generateSessionID(),
+            "join_code": join_code,
             "subject": subject,
             "outcome_a": outcome_a,
             "outcome_b": outcome_b,
             "min_bet": 0,
             "max_bet": 10,
+            "status": 0, // 0: open, 1: closed
+            "bets": []
         };
 
+        localStorage.setItem(join_code, JSON.stringify(session));
         sessionStorage.setItem('gwamble', JSON.stringify(session));
+
+        // Add to discoverable gwambles
+        let discoverableGwambles = JSON.parse(localStorage.getItem('discoverable_gwambles')) || [];
+        discoverableGwambles.push(session);
+        localStorage.setItem('discoverable_gwambles', JSON.stringify(discoverableGwambles));
+
         window.location.href = "session.html";
-        //window.location.replace("session.html");
     }
 
     // let's set an even listener for the inputs and textareas inside the create-gwamble-options.
@@ -289,13 +264,9 @@
         const createGwamblePostButton = document.getElementById('create-gwamble-post-button');
 
         createGwambleOptions.querySelectorAll('input, textarea').forEach(input => {
-            input.addEventListener('change', function () {
-                const allInputsHaveValues = Array.from(createGwambleOptions.querySelectorAll('input, textarea')).every(input => input.value);
-                if (allInputsHaveValues) {
-                    createGwamblePostButton.disabled = false;
-                } else {
-                    createGwamblePostButton.disabled = true;
-                }
+            input.addEventListener('input', function () {
+                const allInputsHaveValues = Array.from(createGwambleOptions.querySelectorAll('input, textarea')).every(input => input.value.trim());
+                createGwamblePostButton.disabled = !allInputsHaveValues;
             });
         });
     }
@@ -312,6 +283,7 @@
         var valid = verifyCode(code);
 
         if (valid) {
+            sessionStorage.setItem('gwamble_join_code', code);
             window.location.href = "join.html";
         } else {
             alert("Invalid code.");
@@ -324,12 +296,14 @@
     }
 
     function verifyCode(code) {
-       return true;
+       return localStorage.getItem(code) !== null;
     }
 
+    function generateJoinCode() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+    }
 
     window.onload = function() {
-        verifyPWA();
         OTPInput();
         initCreateGwambleListeners();
     };

@@ -12,7 +12,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-    <link rel="manifest" href="https://chanra1n.github.io/gwamble-test/manifest.json">
     <link rel="apple-touch-icon" sizes="72x72" href="icon/icon-72x72.png">
     <link rel="icon" type="image/png" sizes="96x96" href="icon/icon-96x96.png">
     <link rel="icon" type="image/png" sizes="128x128" href="icon/icon-128x128.png">
@@ -69,7 +68,7 @@
             </button>
         </div>
 
-        <button onclick = "alert('Placed bet on A!')" class = "winner-button" id="gwamble-winner-a">
+        <button onclick = "placeBet('A')" class = "winner-button" id="gwamble-winner-a">
             <span class = "bet-left">BET</span>
             <i class="ri-coins-fill"></i>
             10
@@ -81,7 +80,7 @@
             </button>
         </div>
 
-        <button onclick = "alert('Placed bet on B!')" class = "winner-button" id="gwamble-winner-b" style = "margin-bottom:0px">
+        <button onclick = "placeBet('B')" class = "winner-button" id="gwamble-winner-b" style = "margin-bottom:0px">
             <span class = "bet-left">BET</span>
             <i class="ri-coins-fill"></i>
             10
@@ -105,92 +104,104 @@
 </body>
 <script src="js/lib/uikit.js"></script>
 <script src="js/lib/qrcode.js"></script>
-
+<script src="js/custom/users.js"></script>
+<script src="js/custom/getActions.js"></script>
 <script>
+    var gwamble_session;
 
-var gwamble;
+    function initJoin() {
+        var join_code = sessionStorage.getItem('gwamble_join_code');
+        const urlParams = new URLSearchParams(window.location.search);
+        const codeFromURL = urlParams.get('code');
 
-function initSession() {
-    var session = sessionStorage.getItem('gwamble');
-    if (session) {
-        gwamble = JSON.parse(session);
-        console.log(gwamble);
-    } else {
-        gwamble = {
-            "subject": "no posted gwamble",
-            "outcome_a": "outcome a",
-            "outcome_b": "outcome b"
+        if (codeFromURL) {
+            join_code = codeFromURL;
+        }
+
+        if (join_code) {
+            gwamble_session = JSON.parse(localStorage.getItem(join_code));
+            if (gwamble_session) {
+                document.getElementById('gwamble-subject').innerHTML = gwamble_session.subject;
+                document.getElementById('gwamble-poster').innerHTML = "Hosted by: " + gwamble_session.owner_name;
+                document.getElementById('gwamble-outcome-a-text').innerHTML = gwamble_session.outcome_a;
+                document.getElementById('gwamble-outcome-b-text').innerHTML = gwamble_session.outcome_b;
+                document.getElementById('gwamble-share-code').setAttribute('data-code', gwamble_session.join_code);
+                document.getElementById('gwamble-share-code').innerHTML = gwamble_session.join_code + ' <i id = "gwamble-copy-icon" class="ri-file-copy-fill"></i>';
+
+            } else {
+                alert('Session not found.');
+                window.location.replace('index.html');
+            }
+        } else {
+            alert('No join code found.');
+            window.location.replace('index.html');
         }
     }
 
-    document.getElementById('gwamble-subject').innerHTML = gwamble.subject;
-    document.getElementById('gwamble-outcome-a-text').innerHTML = gwamble.outcome_a;
-    document.getElementById('gwamble-outcome-b-text').innerHTML = gwamble.outcome_b;
-
-
-}
-
-window.onload = function() {
-initSession();
-generateQRCode();
-writeToMemberModal('annoying-orange');
-}
-
-function closeSession() {
-    sessionStorage.removeItem('gwamble');
-    window.location.replace('index.html');
-}
-
-function copyGwambleCode() {
-    var code = document.getElementById('gwamble-share-code');
-    var text = code.getAttribute('data-code');
-    navigator.clipboard.writeText(text);
-
-    var icon = document.getElementById('gwamble-copy-icon');
-    icon.classList.remove('ri-file-copy-fill');
-    icon.classList.add('ri-check-fill');
-    setTimeout(function() {
-        icon.classList.remove('ri-check-fill');
-        icon.classList.add('ri-file-copy-fill');
-    }, 2500);
-}
-
-function generateQRCode() {
-    var code = document.getElementById('gwamble-share-code');
-    var text = code.innerHTML;
-    var qr = new QRCode(document.getElementById("gwamble-qr-display"), {
-        text: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        width: 256,
-        height: 256,
-    });
-}
-
-
-function writeToMemberModal(username) {
-
-    var member_item = `
-    <div class = "member-item">
-        <i class="ri-user-4-fill"></i>
-        <span>`+username+`</span>
-    </div>
-    `;
-
-    var member_list = document.getElementById('member-modal-list');
-    member_list.innerHTML += member_item;
-}
-
-function kickMember(username) {
-    var member_list = document.getElementById('member-modal-list');
-    var member_items = member_list.getElementsByClassName('member-item');
-    for (var i = 0; i < member_items.length; i++) {
-        var member = member_items[i];
-        if (member.getElementsByTagName('span')[0].innerHTML == username) {
-            member_list.removeChild(member);
+    function placeBet(outcome) {
+        var user = getLocalUser();
+        if (!user) {
+            alert('You must be logged in to place a bet.');
+            return;
         }
+
+        // Check if user has already bet
+        var user_bet = gwamble_session.bets.find(bet => bet.user_token === user.token);
+        if(user_bet){
+            alert('You have already placed a bet.');
+            return;
+        }
+
+        var bet = {
+            user_token: user.token,
+            username: user.username,
+            outcome: outcome,
+            amount: 10 // Hardcoded for now
+        };
+
+        gwamble_session.bets.push(bet);
+        localStorage.setItem(gwamble_session.join_code, JSON.stringify(gwamble_session));
+
+        alert('Placed bet on ' + outcome + '!');
+
+        // Disable betting buttons
+        document.getElementById('gwamble-winner-a').disabled = true;
+        document.getElementById('gwamble-winner-b').disabled = true;
     }
-}
 
+    window.onload = function() {
+        initJoin();
+        generateQRCode(); 
+    };
 
+    function closeSession() {
+        sessionStorage.removeItem('gwamble_join_code');
+        window.location.replace('index.html');
+    }
+
+    function copyGwambleCode() {
+        var code = document.getElementById('gwamble-share-code');
+        var text = code.getAttribute('data-code');
+        navigator.clipboard.writeText(text);
+
+        var icon = document.getElementById('gwamble-copy-icon');
+        icon.classList.remove('ri-file-copy-fill');
+        icon.classList.add('ri-check-fill');
+        setTimeout(function() {
+            icon.classList.remove('ri-check-fill');
+            icon.classList.add('ri-file-copy-fill');
+        }, 1000);
+    }
+
+    function generateQRCode() {
+        var qrCode = new QRCode(document.getElementById("gwamble-qr-display"), {
+            text: window.location.origin + window.location.pathname.replace('join.html', '') + 'join.html?code=' + gwamble_session.join_code,
+            width: 256,
+            height: 256,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+    }
 </script>
-
 </html>
