@@ -142,7 +142,8 @@ body {
     transition-timing-function: ease-in-out;
     overflow: hidden;
     position: relative;
-    height: fit-content; /* Allow the height to fit content */
+    height: fit-content;
+    overflow-y: scroll;
 }
 
 #create-gwamble-container.open, #join-gwamble-container.open {
@@ -264,10 +265,10 @@ input::placeholder, textarea::placeholder {
 }
 
 #create-gwamble-options .small-title, #join-gwamble-options .small-title {
-    font-size: 20px;
+    font-size: 15px;
     display: block;
     opacity: 50%;
-    margin-bottom: 5px; /* Adds space below the titles */
+    margin-bottom: 5px;
 }
 
 
