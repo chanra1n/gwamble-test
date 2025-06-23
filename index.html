@@ -59,8 +59,16 @@
                 <span class="small-title">Outcome B</span>
                 <input autocomplete="false" style="margin-bottom:20px" type="text" placeholder="..." maxlength="20">
  
-                <button id="cancel-gwamble-post-button" onclick="closeCreateGwamble()" class="cancel">Cancel</button>
-                <button id="create-gwamble-post-button" disabled onclick="passGwamble()">Post</button>
+                <div class = "button-group">
+
+                <button id="cancel-gwamble-post-button" onclick="closeCreateGwamble()" class="cancel">
+                <i class="ri-close-fill"></i>
+                </button>
+                <button id="create-gwamble-post-button" disabled onclick="passGwamble()">
+                <i class="ri-check-fill"></i>    
+                <span>Post</span>
+                </div>
+            </button>
             </div>
         </div>
 
@@ -83,8 +91,15 @@
                     </div>
                   </div>
  
-                <button onclick="closeJoinGwamble()" class="cancel">Cancel</button>
-                <button onclick="joinGwambleSession()">Join</button>
+            <div class = "button-group">
+
+                <button onclick="closeJoinGwamble()" class="cancel">
+                <i class="ri-close-fill"></i>
+                </button>
+                <button onclick="joinGwambleSession()">
+                    <i class="ri-check-fill"></i>
+                    <span>Join</span>
+                </button>
             </div>
 
         </div>
