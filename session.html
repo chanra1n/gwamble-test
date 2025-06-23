@@ -225,68 +225,75 @@ function declareWinner(outcome) {
 }
 
 function showWinnerUI(session) {
-    const winner = session.winner.toUpperCase();
+    const outcome = session.winner.toUpperCase();
+    
+    const winner_post = document.getElementById('outcome-'+outcome.toLowerCase());
+    const winner_button = document.getElementById('gwamble-winner-'+outcome.toLowerCase());
+    const loser_post = document.getElementById('outcome-'+(outcome.toLowerCase() === 'a' ? 'b' : 'a'));
+    const loser_button = document.getElementById('gwamble-winner-'+(outcome.toLowerCase() === 'a' ? 'b' : 'a'));
 
-    // Disable further actions
-    document.getElementById('gwamble-winner-a').style.display = 'none';
-    document.getElementById('gwamble-winner-b').style.display = 'none';
-    document.querySelector('.gwamble-bottom').style.display = 'none';
+    if (loser_post) loser_post.remove();
+    if (loser_button) loser_button.remove();
 
-    // Animate outcomes
-    const outcomeA_element = document.getElementById('outcome-a');
-    const outcomeB_element = document.getElementById('outcome-b');
-
-    if (winner === 'A') {
-        outcomeA_element.classList.add('winning-outcome');
-        outcomeB_element.classList.add('losing-outcome');
-    } else {
-        outcomeB_element.classList.add('winning-outcome');
-        outcomeA_element.classList.add('losing-outcome');
+    if (winner_post) {
+        winner_post.classList.add('animate__animated', 'animate__tada');
+    }
+    if (winner_button) {
+        winner_button.style.marginBottom = "0px";
+        winner_button.innerHTML = "Settled!";
+        winner_button.style.opacity = "0.5";
+        winner_button.style.pointerEvents = "none";
     }
 
-    // Show leaderboard after a delay
-    setTimeout(() => {
-        document.getElementById('posted-gwamble').classList.add('results-active');
-        const resultsTable = document.getElementById('gwamble-leaderboard-table');
-        resultsTable.style.display = 'flex';
+    const bottomBar = document.querySelector('.gwamble-bottom');
+    if (bottomBar) bottomBar.remove();
+    
+    const topBar = document.getElementById('gwamble-bar');
+    if (topBar) {
+        topBar.style.display = "none";
+    }
+    
+    const postedGwamble = document.getElementById('posted-gwamble');
+    if (postedGwamble) postedGwamble.style.marginTop = "20px";
 
-        document.getElementById('gwamble-user-results').style.display = 'none';
+    const leaderboardTable = document.getElementById('gwamble-leaderboard-table');
+    leaderboardTable.style.display = "flex";
 
-        const leaderboardList = document.getElementById('gwamble-leaderboard-list');
-        leaderboardList.innerHTML = '';
+    // Populate leaderboard
+    const leaderboardList = document.getElementById('gwamble-leaderboard-list');
+    leaderboardList.innerHTML = '';
 
-        if (session.bets.length === 0) {
-            resultsTable.querySelector('h1').style.display = 'none';
-            leaderboardList.innerHTML = `
-                <div class="member-item" style="width:100%;opacity:50%">
-                    <div class="gwamble-topper">
-                        <span style="font-family:'Lexend';font-size:18px">No bets were received.</span>
-                    </div>
-                </div>`;
-            return;
-        }
+    // Host doesn't see win/loss message, just results
+    document.getElementById('gwamble-user-results').style.display = 'none';
 
-        // Calculate total pot and payout per winner
-        const totalPot = session.bets.length * 10; // Assuming 10 coins per bet
-        const winners = session.bets.filter(b => b.selected_outcome.toUpperCase() === winner);
-        const payout = winners.length > 0 ? totalPot / winners.length : 0;
-
-        session.members.forEach(member => {
-            const bet = session.bets.find(b => b.user_id === member.user_id);
-            const isWinner = bet && bet.selected_outcome.toUpperCase() === winner;
-            const memberItem = `
-                <div class="member-item ${isWinner ? 'is-winner' : ''}">
-                    <div class="gwamble-topper">
-                        <span>${member.username}</span>
-                        ${isWinner ? '<i class="ri-trophy-fill winner-trophy"></i>' : ''}
-                    </div>
-                    <span style="opacity:50%;font-size:14px">${bet ? `Bet on ${bet.selected_outcome.toUpperCase()}` : 'No bet'}</span>
-                    ${isWinner ? `<div class="payout">+${payout.toFixed(2)} coins</div>` : ''}
+    if (!session.bets || session.bets.length === 0) {
+        leaderboardTable.querySelector('h1').style.display = 'none';
+        leaderboardList.innerHTML = `
+            <div class="member-item" style="width:100%;opacity:50%">
+                <div class="gwamble-topper">
+                    <span style="font-family:'Lexend';font-size:18px">No bets were received.</span>
                 </div>
-            `;
-            leaderboardList.innerHTML += memberItem;
-        });
-    }, 2000); // 2-second delay for animation
+            </div>`;
+        return;
+    }
+
+    session.members.forEach(member => {
+        const bet = session.bets.find(b => b.user_id === member.persistent_id || b.user_id === member.user_id);
+        const isWinner = bet && bet.selected_outcome.toUpperCase() === outcome;
+        const winnerClass = isWinner ? 'winner-trophy' : '';
+        const betText = bet ? `Bet on Outcome ${bet.selected_outcome.toUpperCase()}` : 'Did not bet';
+
+        const memberItem = `
+            <div class="member-item">
+                <div class="gwamble-topper">
+                    <span style="font-family:'Manrope';font-size:18px">${member.username}</span>
+                    ${winnerClass ? '<i class="ri-trophy-fill"></i>' : ''}
+                </div>
+                <span style="opacity:50%;font-size:14px">${betText}</span>
+            </div>
+        `;
+        leaderboardList.innerHTML += memberItem;
+    });
 }
 
 // Host's function to close the session for everyone.

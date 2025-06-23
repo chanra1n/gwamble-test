@@ -5,6 +5,7 @@
     <title>GWAMBLE</title>
     <link rel="stylesheet" type="text/css" href="css/lib/remixicon.css">
     <link rel="stylesheet" type="text/css" href="css/lib/uikit.css">
+    <link rel="stylesheet" type="text/css" href="css/lib/animate.css">
     <link rel="stylesheet" type="text/css" href="css/custom/index.css">
     <link rel="stylesheet" type="text/css" href="css/custom/session.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,8 +63,9 @@
         <span id = "gwamble-poster" ></span>
         </div>
         <h1 onclick = "window.location.reload(true)" id="gwamble-subject">Connecting...</h1>
+        <br>
         
-        <div class="gwamble-button-container">
+        <div class="gwamble-button-container" id="outcome-a">
             <button id="gwamble-outcome-a">
                 <span id="gwamble-outcome-a-text"></span>
             </button>
@@ -75,7 +77,7 @@
             10
         </button>
 
-        <div class="gwamble-button-container">
+        <div class="gwamble-button-container" id="outcome-b">
             <button id="gwamble-outcome-b">
                 <span id="gwamble-outcome-b-text"></span>
             </button>
@@ -131,15 +133,37 @@
 <script>
 
 function showWinnerUI(session) {
-    const winner = session.winner;
+    const outcome = session.winner.toUpperCase();
     const persistentId = localStorage.getItem('gwamble_persistent_user_id');
     const myBet = session.bets.find(b => b.user_id === persistentId);
-    const didIWin = myBet?.selected_outcome === winner;
+    const didIWin = myBet?.selected_outcome.toUpperCase() === outcome;
 
-    document.getElementById('posted-gwamble').style.display = 'none';
-    document.querySelector('.gwamble-bottom').style.display = 'none';
+    const winner_post = document.getElementById('outcome-'+outcome.toLowerCase());
+    const winner_button = document.getElementById('gwamble-winner-'+outcome.toLowerCase());
+    const loser_post = document.getElementById('outcome-'+(outcome.toLowerCase() === 'a' ? 'b' : 'a'));
+    const loser_button = document.getElementById('gwamble-winner-'+(outcome.toLowerCase() === 'a' ? 'b' : 'a'));
+
+    if(loser_post) loser_post.remove();
+    if(loser_button) loser_button.remove();
+
+    if(winner_post) {
+        winner_post.classList.add('animate__animated', 'animate__tada');
+    }
+    if(winner_button) {
+        winner_button.style.marginBottom = "0px";
+    }
+
+    const bottomBar = document.querySelector('.gwamble-bottom');
+    if (bottomBar) bottomBar.remove();
+    
+    const topBar = document.getElementById('gwamble-bar');
+    if(topBar) topBar.style.display = "none";
+
+    const postedGwamble = document.getElementById('posted-gwamble');
+    if(postedGwamble) postedGwamble.style.marginTop = "20px";
+
     const resultsTable = document.getElementById('gwamble-leaderboard-table');
-    resultsTable.style.display = 'block';
+    resultsTable.style.display = 'flex';
 
     const userResults = document.getElementById('gwamble-user-results');
     if (myBet) {
@@ -157,7 +181,7 @@ function showWinnerUI(session) {
     session.members.forEach(member => {
         const bet = session.bets.find(b => b.user_id === member.persistent_id);
         const betText = bet ? `Bet on Outcome ${bet.selected_outcome.toUpperCase()}` : 'Did not bet';
-        const winnerClass = bet && bet.selected_outcome === winner ? 'winner-trophy' : '';
+        const winnerClass = bet && bet.selected_outcome.toUpperCase() === outcome ? 'winner-trophy' : '';
 
         const memberItem = `
             <div class="member-item">
