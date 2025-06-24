@@ -127,7 +127,7 @@ body {
     align-items: center;
     flex: 1;
     min-width: 0;
-    padding: 12.5px 20px;
+    padding: 10px 20px;
     border: none;
     border-radius: 15px 15px 0px 0px;
     font-size: 25px;
@@ -224,7 +224,7 @@ body {
     margin-bottom: 20px;
     background: rgba(255,255,255,0.2);
     border: none;
-    padding: 12.5px;
+    padding: 10px 20px;
     border-radius: 0px 0px 15px 15px;
     font-size: 20px;
     font-family: 'Lexend';
@@ -232,8 +232,9 @@ body {
     color: white;
     position: relative;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
     gap: 10px;
+    padding-right: 10px;
 }
 
 .winner-button i {

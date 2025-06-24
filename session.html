@@ -36,6 +36,19 @@
     <meta name="mobile-web-app-capable" content="yes">
     <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
 
+    <style>
+        .winner-button .bet-right {
+    background-color: rgba(255,255,255,0.2);
+    color: white;
+    padding: 0px 20px;
+    border-radius: 100vmin;
+    font-size: 20px;
+    align-content: center;
+    font-weight: 900;
+        }
+    </style>
+
+
 </head>
 
 <body>
@@ -73,8 +86,12 @@
         </div>
 
         <button onclick = "declareWinner('A')" class = "winner-button" id="gwamble-winner-a" style="display: none;">
-        <i class="ri-check-fill"></i>
+        <div class="bet-left">
         Settle
+        </div>
+        <div class="bet-right">
+        <i class="ri-check-fill"></i>
+        </div>
         </button>
 
         <div class="gwamble-button-container" id = "outcome-b">
@@ -85,8 +102,12 @@
         </div>
 
         <button onclick="declareWinner('B')" class="winner-button" id="gwamble-winner-b" style="margin-bottom: 0px; display: none; border-radius: 0px 0px 15px 15px">
-        <i class="ri-check-fill"></i>
+        <div class="bet-left">
         Settle
+        </div>
+        <div class="bet-right">
+        <i class="ri-check-fill"></i>
+        </div>
         </button>
 
         </div>
@@ -172,8 +193,8 @@ window.onload = function() {
 
     // 3. Set up Host UI and network connection.
     console.log("Role determined: HOST. Setting up host UI and connection.");
-    document.getElementById('gwamble-winner-a').style.display = 'block';
-    document.getElementById('gwamble-winner-b').style.display = 'block';
+    document.getElementById('gwamble-winner-a').style.display = 'flex';
+    document.getElementById('gwamble-winner-b').style.display = 'flex';
     
     // Disable betting buttons for the host
     document.getElementById('gwamble-outcome-a').onclick = null;
@@ -240,7 +261,16 @@ function showWinnerUI(session) {
     }
     if (winner_button) {
         winner_button.style.marginBottom = "0px";
-        winner_button.innerHTML = "<i class='ri-check-double-fill'></i> Settled!";
+        winner_button.innerHTML = `
+        
+        <div class="bet-left">
+        Settled!
+        </div>
+        <div class="bet-right">
+        <i class="ri-check-double-fill"></i>
+        </div>
+        
+        `;
         winner_button.style.opacity = "0.5";
         winner_button.style.pointerEvents = "none";
     }
