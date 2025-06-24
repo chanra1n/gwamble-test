@@ -251,7 +251,7 @@ body {
 }
 
 #create-gwamble-options textarea, #join-gwamble-options textarea {
-    height: 40vmin;
+    height: 33vmin;
     flex-grow: 1;
     margin-bottom: 20px;
 }
