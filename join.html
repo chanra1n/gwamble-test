@@ -136,67 +136,100 @@
 <script>
 
 function showWinnerUI(session) {
-    const outcome = session.winner.toUpperCase();
+    // Only show net gain/loss for each user who bet, not which outcome they bet on
     const persistentId = localStorage.getItem('gwamble_persistent_user_id');
-    const myBet = session.bets.find(b => b.user_id === persistentId);
-    const didIWin = myBet?.selected_outcome.toUpperCase() === outcome;
-
-    const winner_post = document.getElementById('outcome-'+outcome.toLowerCase());
-    const winner_button = document.getElementById('gwamble-winner-'+outcome.toLowerCase());
-    const loser_post = document.getElementById('outcome-'+(outcome.toLowerCase() === 'a' ? 'b' : 'a'));
-    const loser_button = document.getElementById('gwamble-winner-'+(outcome.toLowerCase() === 'a' ? 'b' : 'a'));
-
-    if(loser_post) loser_post.remove();
-    if(loser_button) loser_button.remove();
-
-    if(winner_post) {
-        winner_post.classList.add('animate__animated', 'animate__tada');
-    }
-    if(winner_button) {
-        winner_button.style.marginBottom = "0px";
-    }
-
-    const bottomBar = document.querySelector('.gwamble-bottom');
-    if (bottomBar) bottomBar.remove();
-    
-    const topBar = document.getElementById('gwamble-bar');
-    if(topBar) topBar.style.display = "none";
-
-    const postedGwamble = document.getElementById('posted-gwamble');
-    if(postedGwamble) postedGwamble.style.marginTop = "20px";
-
-    const resultsTable = document.getElementById('gwamble-leaderboard-table');
-    resultsTable.style.display = 'flex';
-
-    const userResults = document.getElementById('gwamble-user-results');
-    if (myBet) {
-        if (didIWin) {
-            userResults.innerHTML = `<p><i class="ri-trophy-fill" style="margin-right:5px"></i> You won! Payout: 20 coins.</p>`;
-        } else {
-            userResults.innerHTML = `<p><i class="ri-close-circle-fill" style="margin-right:5px"></i> You lost. Better luck next time.</p>`;
-        }
-    } else {
-        userResults.innerHTML = `<p>You didn't place a bet.</p>`;
-    }
-
+    const leaderboardTable = document.getElementById('gwamble-leaderboard-table');
+    leaderboardTable.style.display = 'flex';
     const leaderboardList = document.getElementById('gwamble-leaderboard-list');
-    leaderboardList.innerHTML = ''; // Clear previous results
-    session.members.forEach(member => {
-        const bet = session.bets.find(b => b.user_id === member.persistent_id);
-        const betText = bet ? `Bet on Outcome ${bet.selected_outcome.toUpperCase()}` : 'Did not bet';
-        const winnerClass = bet && bet.selected_outcome.toUpperCase() === outcome ? 'winner-trophy' : '';
+    leaderboardList.innerHTML = '';
 
-        const memberItem = `
-            <div class="member-item">
+    // Show results for each user who bet using creditChange
+    session.bets.forEach(bet => {
+        const member = session.members.find(m => m.user_id === bet.user_id);
+        if (!member) return;
+        
+        // Use the creditChange if available, otherwise calculate from credits
+        let net = member.creditChange;
+        if (net === undefined) {
+            // Fallback: assume they lost 10 if they're a loser, won something if winner
+            const isWinner = bet.selected_outcome.toLowerCase() === session.winner.toLowerCase();
+            net = isWinner ? 10 : -10; // Simplified fallback
+        }
+        
+        console.log(`User ${member.username}: creditChange = ${net}`);
+        
+        // IF THIS IS ME, FORCE UPDATE MY LOCALSTORAGE WITH FINAL CREDITS
+        if (bet.user_id === persistentId) {
+            let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
+            const currentCredits = user.credits || 90;
+            const finalCredits = member.credits || (currentCredits + net);
+            user.credits = finalCredits;
+            localStorage.setItem('gwambleUser', JSON.stringify(user));
+            console.log(`FORCE UPDATED MY CREDITS: ${currentCredits} -> ${finalCredits}`);
+            console.log('Final localStorage:', localStorage.getItem('gwambleUser'));
+        }
+        
+        let netText = '';
+        let netClass = '';
+        if (net > 0) {
+            netText = `+${net}`;
+            netClass = 'gwamble-net-gain';
+        } else if (net < 0) {
+            netText = `${net}`;
+            netClass = 'gwamble-net-loss';
+        } else {
+            netText = '0';
+            netClass = 'gwamble-net-loss';
+        }
+        
+        leaderboardList.innerHTML += `
+            <div class="member-item gwamble-result-row${bet.user_id === persistentId ? ' gwamble-result-me' : ''}">
                 <div class="gwamble-topper">
-                    <span style="font-family:'Manrope';font-size:18px">${member.username}</span>
-                    ${winnerClass ? '<i class="ri-trophy-fill"></i>' : ''}
+                    <span class="gwamble-result-username">${member.username}${bet.user_id === persistentId ? ' (You)' : ''}</span>
+                    <span class="${netClass}">${netText}</span>
                 </div>
-                <span style="opacity:50%;font-size:14px">${betText}</span>
             </div>
         `;
-        leaderboardList.innerHTML += memberItem;
     });
+
+    // Show your own result at the top if you bet
+    const myBet = session.bets.find(b => b.user_id === persistentId);
+    if (myBet) {
+        const member = session.members.find(m => m.user_id === persistentId);
+        let net = member ? member.creditChange : undefined;
+        if (net === undefined) {
+            const isWinner = myBet.selected_outcome.toLowerCase() === session.winner.toLowerCase();
+            net = isWinner ? 10 : -10;
+        }
+        
+        let msg = '';
+        if (net > 0) {
+            msg = `<p><i class="ri-trophy-fill" style="margin-right:5px"></i> You won! Gain: <span class='gwamble-net-gain'>+${net}</span></p>`;
+        } else if (net < 0) {
+            msg = `<p><i class="ri-close-circle-fill" style="margin-right:5px"></i> You lost. Loss: <span class='gwamble-net-loss'>${net}</span></p>`;
+        } else {
+            msg = `<p><i class="ri-close-circle-fill" style="margin-right:5px"></i> You lost. Loss: <span class='gwamble-net-loss'>0</span></p>`;
+        }
+        document.getElementById('gwamble-user-results').innerHTML = msg;
+    } else {
+        document.getElementById('gwamble-user-results').innerHTML = `<p>You didn't place a bet.</p>`;
+    }
+
+    // Hide all outcome/bet UI
+    const outcomeA = document.getElementById('outcome-a');
+    const outcomeB = document.getElementById('outcome-b');
+    if (outcomeA) outcomeA.remove();
+    if (outcomeB) outcomeB.remove();
+    const winnerA = document.getElementById('gwamble-winner-a');
+    const winnerB = document.getElementById('gwamble-winner-b');
+    if (winnerA) winnerA.remove();
+    if (winnerB) winnerB.remove();
+    const bottomBar = document.querySelector('.gwamble-bottom');
+    if (bottomBar) bottomBar.remove();
+    const topBar = document.getElementById('gwamble-bar');
+    if (topBar) topBar.style.display = "none";
+    const postedGwamble = document.getElementById('posted-gwamble');
+    if (postedGwamble) postedGwamble.style.marginTop = "20px";
 }
 
 function updateUI(session) {
@@ -291,6 +324,25 @@ window.onload = function() {
 };
 
 function placeBet(outcome) {
+    console.log('placeBet called with outcome:', outcome);
+    
+    // FORCE IMMEDIATE CREDIT DEDUCTION HERE TOO
+    let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
+    const currentCredits = user.credits || 100;
+    
+    console.log('Current credits before bet:', currentCredits);
+    
+    if (currentCredits < 10) {
+        alert("Not enough credits to bet");
+        return;
+    }
+    
+    // Deduct credits immediately
+    user.credits = Math.max(currentCredits - 10, 10);
+    localStorage.setItem('gwambleUser', JSON.stringify(user));
+    console.log(`PLACEBELT: Deducted 10 credits. ${currentCredits} -> ${user.credits}`);
+    console.log('Updated localStorage:', localStorage.getItem('gwambleUser'));
+    
     // This function will be in webrtc.js to send the bet to the host
     sendBet(outcome);
     lockInBetUI(outcome);
@@ -312,7 +364,7 @@ function copyGwambleCode() {
     icon.classList.add('ri-check-fill');
     setTimeout(function() {
         icon.classList.remove('ri-check-fill');
-        icon.classList.add('ri-file-copy-fill');
+        icon.classList.add('ri-file_COPY-fill');
     }, 2500);
 }
 

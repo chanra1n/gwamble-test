@@ -250,7 +250,7 @@ body {
 #join-gwamble-options input[type="number"] {
     border: none;
     border-radius: 10px;
-    height: 80px;
+    height: 65px;
     width: 100%;
     flex: 1;
     font-family: 'Lexend';

@@ -5,21 +5,16 @@ function initUser() {
         return;
     }
 
-    var username = prompt("Welcome to Gwamble! Please enter your username:");
-    if (username) {
-        var userToken = generateUserToken();
-        var user = {
-            username: username,
-            token: userToken,
-            credits: 100 // Start with 100 credits
-        };
-        localStorage.setItem('gwambleUser', JSON.stringify(user));
-        console.log('User created', user);
-    } else {
-        // handle case where user cancels prompt
-        showModalMessage("You need a username to play!");
-        initUser();
-    }
+    // Auto-generate username: user-XXXXXX (random 6 digits)
+    var username = `user-${Math.floor(100000 + Math.random() * 900000)}`;
+    var userToken = generateUserToken();
+    var userObj = {
+        username: username,
+        token: userToken,
+        credits: 100 // Start with 100 credits
+    };
+    localStorage.setItem('gwambleUser', JSON.stringify(userObj));
+    console.log('User created', userObj);
 }
 
 function generateUserToken() {

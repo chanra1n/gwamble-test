@@ -8,26 +8,33 @@ body {
 }
 
 #gwamble-body {
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: stretch;
     padding: 20px;
+    height: 100%;
 }
 
 .profile-card {
     /* Consistent glassmorphism from index.css */
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(15px) saturate(1.2);
-    -webkit-backdrop-filter: blur(15px) saturate(1.2);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
-    border-radius: 20px;
-    padding: 30px;
-    max-width: 420px;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    max-width: 100%;
     width: 100%;
+    height: 100%;
     box-sizing: border-box;
     text-align: center;
     /* Using the established bounce animation */
-    animation: bounce-in 0.5s cubic-bezier(0.25, 0.8, 0.25, 1.25) forwards;
+    animation: none;
+}
+
+#gwamble-bar h1 {
+    font-family: 'Lexend', sans-serif;
+    font-size: 24px;
 }
 
 .profile-avatar {
@@ -44,30 +51,66 @@ body {
     display: inline-block;
 }
 
-.profile-info {
-    margin-top: -40px; /* Pull info up to compensate for avatar transform */
-    margin-bottom: 25px;
+.credits-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-top: 25px;
 }
 
-.profile-info .username {
-    font-family: 'Righteous', sans-serif;
-    font-size: 34px;
-    color: #fff;
-    margin: 0 0 5px 0;
+.credits-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.1); /* match create-gwamble menu */
+    backdrop-filter: blur(15px) saturate(1.2);
+    -webkit-backdrop-filter: blur(15px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+    border-radius: 15px;
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    padding: 10px 24px;
+    transition: all 0.2s;
 }
 
-.profile-info .credits {
-    font-family: 'Lexend', sans-serif;
-    font-size: 18px;
-    color: rgba(255, 255, 255, 0.7);
-    margin: 0 0 30px 0;
+.credits-display i {
+    font-size: 28px;
+    color: #ffb6d5; /* playful pink, matches app accent */
+    filter: drop-shadow(0 0 6px rgba(255, 111, 174, 0.15));
+}
+
+.credits-display span {
+    color: white;
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: 0.5px;
+}
+
+.credits-container .small-title {
+    font-size: 15px;
+    opacity: .5;
+    font-weight: 500;
+    color: #ffb6d5;
+    margin-top: 2px;
 }
 
 .profile-edit {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin-bottom: 20px;
+    gap: 0px;
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.1); /* match create-gwamble menu */
+    backdrop-filter: blur(15px) saturate(1.2);
+    -webkit-backdrop-filter: blur(15px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+    border-radius: 15px;
+    padding: 20px;
+    color: white;
+    transition: all 0.2s;
 }
 
 .input-group {
@@ -79,10 +122,10 @@ body {
 .input-group .small-title {
     font-size: 15px;
     display: block;
-    opacity: 0.6;
-    margin-bottom: 8px;
+    opacity: .5;
+    margin-bottom: 5px;
     font-weight: 500;
-    padding-left: 5px;
+    padding-left: 0;
 }
 
 /* Adopting the input style from index.css */
@@ -91,22 +134,25 @@ body {
     box-sizing: border-box;
     border: none;
     padding: 15px;
-    font-size: 18px;
+    font-size: 25px;
     font-family: 'Lexend', sans-serif;
     font-weight: 700;
-    border-radius: 15px;
-    background: rgba(0, 0, 0, 0.15);
+    border-radius: 15px 15px 0px 0px;
+    background: rgba(255, 255, 255, 0.15);
     color: white;
     transition: box-shadow 0.2s ease;
-}
-
-.input-group input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    outline: none;
 }
 
 .input-group input:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0 2px #ffb6d5;
+}
+
+#save-username-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 5px;
 }
 
 /* Adopting the button style from index.css */
@@ -116,10 +162,10 @@ body {
     padding: 12px;
     font-family: 'Lexend';
     font-size: 20px;
-    border-radius: 15px;
+    border-radius: 0px 0px 15px 15px;
     box-sizing: border-box;
     background: rgba(255, 255, 255, 0.2);
-    margin-top: 5px;
+    margin-top: 0px;
     color: white;
     font-weight: 900;
     cursor: pointer;
@@ -127,7 +173,7 @@ body {
 }
 
 #save-username-button.gwamble-button-bottom:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 182, 213, 0.2);
 }
 
 #save-username-button.gwamble-button-bottom:active {
@@ -141,21 +187,36 @@ body {
     color: rgba(255, 255, 255, 0.5);
 }
 
+#save-username-button i {
+    font-size: 20px;
+}
+
+#save-username-button span {
+    font-size: 20px;
+    font-weight: 700;
+    margin-left: 2.5px;
+}
+
 .save-notification {
-    color: #fff;
-    font-family: 'Lexend', sans-serif;
-    height: 20px;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.5s ease-in-out;
+    margin-top: 15px;
+    color: #4CAF50;
     font-weight: 500;
-    margin-top: -10px;
-    margin-bottom: 10px;
+    text-align: center;
+    width: 100%;
+    display: block;
 }
 
 .profile-id {
+    margin-top: 25px;
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.5);
-    margin-top: 15px;
+    opacity: 0.6;
+    text-align: center;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    line-height: 1.5;
 }
 
 /* Re-using keyframes from index.css */

@@ -177,52 +177,60 @@ function reestablishHostConnection() {
 
     peer.on('connection', (conn) => {
         console.log(`New connection from ${conn.peer}`);
-        
         conn.on('open', () => {
             console.log('Connection opened. Sending session data.');
             const session = JSON.parse(sessionStorage.getItem('gwamble'));
             conn.send({ type: 'session-data', payload: session });
+            // --- FIX: Always use persistentId for members ---
+            // Find or add member by persistentId
+            if (conn.persistentId) {
+                let sessionObj = JSON.parse(sessionStorage.getItem('gwamble'));
+                if (sessionObj) {
+                    let exists = sessionObj.members.find(m => m.user_id === conn.persistentId);
+                    if (!exists) {
+                        sessionObj.members.push({ user_id: conn.persistentId, username: conn.username, is_host: false });
+                        sessionStorage.setItem('gwamble', JSON.stringify(sessionObj));
+                    }
+                }
+            }
             peerConnections.push(conn);
-            // A peer has joined, so the session is active. Reset the timer.
             resetInactivityTimer();
         });
-
         conn.on('data', (data) => {
             if (data.type === 'user-reconnected') {
-                // A peer has (re)connected and announced themselves.
-                // Store their info on the connection object.
                 conn.username = data.payload.username;
-                conn.persistentId = data.payload.persistentId; // Store persistent ID
-
+                conn.persistentId = data.payload.persistentId;
+                // --- FIX: Always use persistentId for members ---
+                let sessionObj = JSON.parse(sessionStorage.getItem('gwamble'));
+                if (sessionObj) {
+                    let exists = sessionObj.members.find(m => m.user_id === conn.persistentId);
+                    if (!exists) {
+                        sessionObj.members.push({ user_id: conn.persistentId, username: conn.username, is_host: false });
+                        sessionStorage.setItem('gwamble', JSON.stringify(sessionObj));
+                    }
+                }
                 const joinPayload = {
-                    peerId: conn.peer,
+                    peerId: conn.persistentId, // Use persistentId
                     username: data.payload.username,
-                    persistentId: data.payload.persistentId // Include in broadcast
+                    persistentId: data.payload.persistentId
                 };
-
-                // Announce the new user to all *other* peers
                 const newUserMessage = { type: 'user-joined', payload: joinPayload };
-                broadcastMessage(newUserMessage, conn.peer); // Exclude the new peer
-                handleMessage(newUserMessage); // Host updates its own UI
-
+                broadcastMessage(newUserMessage, conn.peer);
+                handleMessage(newUserMessage);
                 // Send the full list of users (including the new one) back to the new peer
                 const allUsers = peerConnections
                     .map(p => ({
-                        peerId: p.peer,
+                        peerId: p.persistentId || p.peer,
                         username: p.username,
-                        persistentId: p.persistentId // Send persistent IDs to new peer
+                        persistentId: p.persistentId || p.peer
                     }))
-                    .filter(p => p.username); // Only include users who have announced themselves
-
-                // Add host to the list
+                    .filter(p => p.username);
                 allUsers.push({
-                    peerId: peer.id,
+                    peerId: localStorage.getItem('gwamble_persistent_user_id'),
                     username: getLocalUsername(),
-                    persistentId: localStorage.getItem('gwamble_persistent_user_id') // Add host's persistent ID
+                    persistentId: localStorage.getItem('gwamble_persistent_user_id')
                 });
-
                 conn.send({ type: 'user-list', payload: { users: allUsers } });
-
             } else if (data.type === 'bet-placed') {
                 handleBetPlaced(data.payload.betInfo);
             } else {
@@ -269,6 +277,16 @@ function handleBetPlaced(betInfo) {
         return; // IMPORTANT: Prevents multiple bets from the same user.
     }
 
+    // If host is placing a bet, deduct credits immediately
+    const hostId = localStorage.getItem('gwamble_persistent_user_id');
+    if (betInfo.userId === hostId) {
+        let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
+        const currentCredits = user.credits || 100;
+        user.credits = Math.max(currentCredits - 10, 10);
+        localStorage.setItem('gwambleUser', JSON.stringify(user));
+        console.log(`HOST BET PLACED: Deducted 10 credits. ${currentCredits} -> ${user.credits}`);
+    }
+
     // If no bet exists for this user, add the new bet.
     session.bets.push({
         user_id: betInfo.userId, // This is the persistentId
@@ -284,11 +302,79 @@ function handleBetPlaced(betInfo) {
     handleMessage({ type: 'bets-updated', payload: { bets: session.bets } });
 }
 
+// --- CREDIT DISTRIBUTION LOGIC ---
+/**
+ * Distribute credits at the end of a session.
+ * @param {string} winningOutcome - The outcome that won (e.g. 'a' or 'b')
+ * @param {Array} bets - Array of bet objects {user_id, username, selected_outcome, bet_amount}
+ * @param {Object} userCredits - Map of user_id to current credits
+ * @returns {Object} updatedCredits - Map of user_id to new credits
+ */
+function distributeCredits(winningOutcome, bets, userCredits) {
+    const MIN_CREDITS = 10;
+    const BET_AMOUNT = 10;
+    const MAX_SESSION_GAIN = 100;
+    
+    // Track the changes for each user
+    let creditChanges = {};
+    
+    // Initialize changes to 0 for all bettors
+    bets.forEach(bet => {
+        creditChanges[bet.user_id] = 0;
+    });
+    
+    // Separate winners and losers
+    const winners = bets.filter(b => b.selected_outcome.toLowerCase() === winningOutcome.toLowerCase());
+    const losers = bets.filter(b => b.selected_outcome.toLowerCase() !== winningOutcome.toLowerCase());
+    
+    console.log('Winners:', winners.length, 'Losers:', losers.length);
+    
+    // Calculate total pool from losers (they already lost 10 when betting)
+    let totalPool = losers.length * BET_AMOUNT;
+    
+    // Mark losers as having lost 10 (they already lost this when betting)
+    losers.forEach(loser => {
+        creditChanges[loser.user_id] = -BET_AMOUNT;
+        console.log(`Loser ${loser.user_id}: lost ${BET_AMOUNT} (already deducted when betting)`);
+    });
+    
+    // WINNERS GET THEIR BET BACK + SHARE OF POOL
+    if (winners.length > 0) {
+        if (totalPool > 0) {
+            // There are losers - winners get refund + share of losing pool
+            const sharePerWinner = Math.floor(totalPool / winners.length);
+            winners.forEach(winner => {
+                const currentCredits = userCredits[winner.user_id] || 90; // They already lost 10 when betting
+                let gain = BET_AMOUNT + sharePerWinner; // Get bet back + share
+                gain = Math.min(gain, MAX_SESSION_GAIN); // Cap gain per session
+                userCredits[winner.user_id] = currentCredits + gain;
+                creditChanges[winner.user_id] = gain;
+                console.log(`Winner ${winner.user_id}: ${currentCredits} -> ${currentCredits + gain} (gained ${gain})`);
+            });
+        } else {
+            // No losers (solo winner or all winners) - just refund their bet
+            winners.forEach(winner => {
+                const currentCredits = userCredits[winner.user_id] || 90; // They already lost 10 when betting
+                const refund = BET_AMOUNT; // Just get their bet back
+                userCredits[winner.user_id] = currentCredits + refund;
+                creditChanges[winner.user_id] = refund;
+                console.log(`Solo Winner ${winner.user_id}: ${currentCredits} -> ${currentCredits + refund} (refunded ${refund})`);
+            });
+        }
+    }
+    
+    // Store the changes in userCredits object for easy access
+    userCredits._changes = creditChanges;
+    return userCredits;
+}
+
 /**
  * (Peer Only) Sends a bet to the host.
  * @param {string} outcome The selected outcome ('a' or 'b').
  */
 function sendBet(outcome) {
+    console.log('sendBet called with outcome:', outcome);
+    
     if (!hostConnection) {
         console.error("Cannot send bet, not connected to host.");
         return;
@@ -300,13 +386,16 @@ function sendBet(outcome) {
         return;
     }
 
+    console.log('sendBet: About to send bet to host');
+
     const betInfo = {
-        userId: persistentId, // Use the persistent ID for the bet
+        userId: persistentId,
         outcome: outcome,
-        amount: 10 // Fixed bet amount
+        amount: 10
     };
 
     hostConnection.send({ type: 'bet-placed', payload: { betInfo: betInfo } });
+    console.log('sendBet: Bet sent to host');
 }
 
 /**
@@ -442,12 +531,97 @@ function handleHostMessage(data) {
             break;
         case 'winner-declared':
             sessionData.winner = payload.winner;
-            // The UI callback will now handle showing the results screen
+            // --- NEW: CREDIT DISTRIBUTION ---
+            if (sessionStorage.getItem('isHost') === 'true') {
+                let session = JSON.parse(sessionStorage.getItem('gwamble'));
+                if (!session) break;
+                
+                // Get current credits for all users who bet (use actual localStorage values)
+                let userCredits = {};
+                session.bets.forEach(bet => {
+                    // Use actual current credits from localStorage for this user
+                    const myId = localStorage.getItem('gwamble_persistent_user_id');
+                    if (bet.user_id === myId) {
+                        let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
+                        userCredits[bet.user_id] = user.credits || 90; // They already bet 10
+                    } else {
+                        let member = session.members.find(m => m.user_id === bet.user_id);
+                        userCredits[bet.user_id] = (member && member.credits !== undefined) ? member.credits : 90;
+                    }
+                });
+                
+                console.log('Before distribution:', userCredits);
+                
+                // Distribute credits and get changes
+                const result = distributeCredits(payload.winner, session.bets, userCredits);
+                const creditChanges = result._changes;
+                
+                console.log('After distribution:', userCredits);
+                console.log('Credit changes:', creditChanges);
+                
+                // Update credits in session.members AND localStorage immediately for host
+                session.members.forEach(m => {
+                    if (userCredits[m.user_id] !== undefined) {
+                        m.credits = userCredits[m.user_id];
+                        // If this is the host's own user, update localStorage immediately
+                        const hostId = localStorage.getItem('gwamble_persistent_user_id');
+                        if (m.user_id === hostId) {
+                            console.log(`HOST UPDATING OWN CREDITS: ${userCredits[m.user_id]} for user ${hostId}`);
+                            let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
+                            user.credits = userCredits[m.user_id];
+                            localStorage.setItem('gwambleUser', JSON.stringify(user));
+                            console.log('Host updated localStorage:', localStorage.getItem('gwambleUser'));
+                        }
+                    }
+                });
+                
+                sessionStorage.setItem('gwamble', JSON.stringify(session));
+                
+                // Broadcast updated credits with changes to all peers
+                broadcastMessage({ 
+                    type: 'credits-updated', 
+                    payload: { 
+                        userCredits, 
+                        creditChanges 
+                    } 
+                });
+                handleMessage({ 
+                    type: 'credits-updated', 
+                    payload: { 
+                        userCredits, 
+                        creditChanges 
+                    } 
+                });
+            }
             break;
-        case 'kicked':
-            showModalMessage('You have been kicked.');
-            disconnectFromHost();
-            window.location.href = 'index.html';
+        case 'credits-updated':
+            // Update local credits for all users and localStorage
+            if (sessionData && sessionData.members) {
+                Object.entries(payload.userCredits).forEach(([user_id, credits]) => {
+                    let m = sessionData.members.find(m => m.user_id === user_id);
+                    if (m) {
+                        m.credits = credits;
+                        // Store the credit change for this user
+                        if (payload.creditChanges && payload.creditChanges[user_id] !== undefined) {
+                            m.creditChange = payload.creditChanges[user_id];
+                        }
+                    }
+                    // If this is me, update my localStorage too
+                    const myId = localStorage.getItem('gwamble_persistent_user_id');
+                    if (user_id === myId) {
+                        console.log(`UPDATING MY CREDITS: ${credits} for user ${myId}`);
+                        let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
+                        user.credits = credits;
+                        localStorage.setItem('gwambleUser', JSON.stringify(user));
+                        console.log('Updated localStorage:', localStorage.getItem('gwambleUser'));
+                        
+                        // FORCE UPDATE PROFILE PAGE IF IT EXISTS
+                        if (typeof updateCreditsDisplay === 'function') {
+                            updateCreditsDisplay();
+                        }
+                    }
+                });
+            }
             break;
         default:
             console.warn('Unknown message type from host:', type);
@@ -541,6 +715,15 @@ function handleMessage(data) {
     console.log("Dispatching gwamble-message event with data:", data);
     const event = new CustomEvent('gwamble-message', { detail: data });
     window.dispatchEvent(event);
+}
+
+// Show a modal message (UIkit or fallback to alert)
+function showModalMessage(msg) {
+    if (window.UIkit && UIkit.modal) {
+        UIkit.modal.alert(`<div style='font-family:Lexend;font-size:20px;text-align:center;'>${msg}</div>`);
+    } else {
+        alert(msg);
+    }
 }
 
 window.addEventListener('beforeunload', () => {

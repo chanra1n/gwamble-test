@@ -247,7 +247,6 @@ function declareWinner(outcome) {
 
 function showWinnerUI(session) {
     const outcome = session.winner.toUpperCase();
-    
     const winner_post = document.getElementById('outcome-'+outcome.toLowerCase());
     const winner_button = document.getElementById('gwamble-winner-'+outcome.toLowerCase());
     const loser_post = document.getElementById('outcome-'+(outcome.toLowerCase() === 'a' ? 'b' : 'a'));
@@ -255,47 +254,29 @@ function showWinnerUI(session) {
 
     if (loser_post) loser_post.remove();
     if (loser_button) loser_button.remove();
-
-    if (winner_post) {
-        winner_post.classList.add('animate__animated', 'animate__tada');
-    }
+    if (winner_post) winner_post.classList.add('animate__animated', 'animate__tada');
     if (winner_button) {
         winner_button.style.marginBottom = "0px";
         winner_button.innerHTML = `
-        
-        <div class="bet-left">
-        Settled!
-        </div>
-        <div class="bet-right">
-        <i class="ri-check-double-fill"></i>
-        </div>
-        
+        <div class="bet-left">Settled!</div>
+        <div class="bet-right"><i class="ri-check-double-fill"></i></div>
         `;
         winner_button.style.opacity = "0.5";
         winner_button.style.pointerEvents = "none";
     }
-
     const bottomBar = document.querySelector('.gwamble-bottom');
     if (bottomBar) bottomBar.remove();
-    
     const topBar = document.getElementById('gwamble-bar');
-    if (topBar) {
-        topBar.style.display = "none";
-    }
-    
+    if (topBar) topBar.style.display = "none";
     const postedGwamble = document.getElementById('posted-gwamble');
     if (postedGwamble) postedGwamble.style.marginTop = "20px";
-
     const leaderboardTable = document.getElementById('gwamble-leaderboard-table');
     leaderboardTable.style.display = "flex";
-
-    // Populate leaderboard
+    // Hide the old user results section
+    document.getElementById('gwamble-user-results').style.display = 'none';
+    // Populate leaderboard with net credit changes
     const leaderboardList = document.getElementById('gwamble-leaderboard-list');
     leaderboardList.innerHTML = '';
-
-    // Host doesn't see win/loss message, just results
-    document.getElementById('gwamble-user-results').style.display = 'none';
-
     if (!session.bets || session.bets.length === 0) {
         leaderboardTable.querySelector('h1').style.display = 'none';
         leaderboardList.innerHTML = `
@@ -306,23 +287,41 @@ function showWinnerUI(session) {
             </div>`;
         return;
     }
-
-    session.members.forEach(member => {
-        const bet = session.bets.find(b => b.user_id === member.persistent_id || b.user_id === member.user_id);
-        const isWinner = bet && bet.selected_outcome.toUpperCase() === outcome;
-        const winnerClass = isWinner ? 'winner-trophy' : '';
-        const betText = bet ? `Bet on Outcome ${bet.selected_outcome.toUpperCase()}` : 'Did not bet';
-
-        const memberItem = `
-            <div class="member-item">
+    
+    // Only show users who bet using creditChange
+    session.bets.forEach(bet => {
+        const member = session.members.find(m => m.user_id === bet.user_id);
+        if (!member) return;
+        
+        // Use the creditChange if available
+        let net = member.creditChange;
+        if (net === undefined) {
+            // Fallback: assume they lost 10 if they're a loser, won something if winner
+            const isWinner = bet.selected_outcome.toLowerCase() === session.winner.toLowerCase();
+            net = isWinner ? 10 : -10;
+        }
+        
+        let netText = '';
+        let netClass = '';
+        if (net > 0) {
+            netText = `+${net}`;
+            netClass = 'gwamble-net-gain';
+        } else if (net < 0) {
+            netText = `${net}`;
+            netClass = 'gwamble-net-loss';
+        } else {
+            netText = '0';
+            netClass = 'gwamble-net-loss';
+        }
+        
+        leaderboardList.innerHTML += `
+            <div class="member-item gwamble-result-row">
                 <div class="gwamble-topper">
-                    <span style="font-family:'Manrope';font-size:18px">${member.username}</span>
-                    ${winnerClass ? '<i class="ri-trophy-fill"></i>' : ''}
+                    <span class="gwamble-result-username">${member.username}</span>
+                    <span class="${netClass}">${netText}</span>
                 </div>
-                <span style="opacity:50%;font-size:14px">${betText}</span>
             </div>
         `;
-        leaderboardList.innerHTML += memberItem;
     });
 }
 

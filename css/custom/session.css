@@ -770,3 +770,51 @@ body {
         opacity: 1;
     }
 }
+
+.gwamble-result-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.08);
+    border-radius: 15px;
+    margin-bottom: 10px;
+    padding: 15px 20px;
+    font-family: 'Lexend', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 2px 12px 0 rgba(255, 111, 174, 0.10);
+}
+.gwamble-result-username {
+    font-family: 'Lexend', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-right: 10px;
+}
+.gwamble-net-gain {
+    color: #7fffad;
+    font-weight: 900;
+    font-size: 22px;
+    margin-left: 10px;
+    background: rgba(127,255,173,0.12);
+    border-radius: 100vmin;
+    padding: 4px 16px;
+    letter-spacing: 1px;
+}
+.gwamble-net-loss {
+    color: #ff7f7f;
+    font-weight: 900;
+    font-size: 22px;
+    margin-left: 10px;
+    background: rgba(255,127,127,0.12);
+    border-radius: 100vmin;
+    padding: 4px 16px;
+    letter-spacing: 1px;
+}
+
+.gwamble-result-me {
+    border: 2px solid #7fffad;
+    background: rgba(127,255,173,0.08);
+    box-shadow: 0 0 0 2px #7fffad33;
+}
