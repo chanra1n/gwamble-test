@@ -1,0 +1,171 @@
+/* Profile Page - Consistent with App Style */
+
+/* Using fonts established in the main app */
+body {
+    font-family: 'Lexend', 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #d72660 0%, #a8326e 100%);
+    color: white;
+}
+
+#gwamble-body {
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.profile-card {
+    /* Consistent glassmorphism from index.css */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px) saturate(1.2);
+    -webkit-backdrop-filter: blur(15px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 420px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    /* Using the established bounce animation */
+    animation: bounce-in 0.5s cubic-bezier(0.25, 0.8, 0.25, 1.25) forwards;
+}
+
+.profile-avatar {
+    margin-bottom: 20px;
+}
+
+.profile-avatar i {
+    font-size: 64px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    padding: 20px;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: inline-block;
+}
+
+.profile-info {
+    margin-top: -40px; /* Pull info up to compensate for avatar transform */
+    margin-bottom: 25px;
+}
+
+.profile-info .username {
+    font-family: 'Righteous', sans-serif;
+    font-size: 34px;
+    color: #fff;
+    margin: 0 0 5px 0;
+}
+
+.profile-info .credits {
+    font-family: 'Lexend', sans-serif;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0 0 30px 0;
+}
+
+.profile-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    width: 100%;
+    text-align: left;
+}
+
+/* Adopting the .small-title style from index.css */
+.input-group .small-title {
+    font-size: 15px;
+    display: block;
+    opacity: 0.6;
+    margin-bottom: 8px;
+    font-weight: 500;
+    padding-left: 5px;
+}
+
+/* Adopting the input style from index.css */
+.input-group input {
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    padding: 15px;
+    font-size: 18px;
+    font-family: 'Lexend', sans-serif;
+    font-weight: 700;
+    border-radius: 15px;
+    background: rgba(0, 0, 0, 0.15);
+    color: white;
+    transition: box-shadow 0.2s ease;
+}
+
+.input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.input-group input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+/* Adopting the button style from index.css */
+#save-username-button.gwamble-button-bottom {
+    width: 100%;
+    border: none;
+    padding: 12px;
+    font-family: 'Lexend';
+    font-size: 20px;
+    border-radius: 15px;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.2);
+    margin-top: 5px;
+    color: white;
+    font-weight: 900;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+#save-username-button.gwamble-button-bottom:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+#save-username-button.gwamble-button-bottom:active {
+    transform: scale(0.98);
+}
+
+#save-username-button.gwamble-button-bottom:disabled {
+    background: rgba(0, 0, 0, 0.1);
+    opacity: 0.5;
+    pointer-events: none;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.save-notification {
+    color: #fff;
+    font-family: 'Lexend', sans-serif;
+    height: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-weight: 500;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.profile-id {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 15px;
+}
+
+/* Re-using keyframes from index.css */
+@keyframes bounce-in {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

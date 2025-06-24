@@ -47,7 +47,7 @@ body {
     top: 0;
     z-index: 10;
     opacity: 0; /* Set initial opacity to 0 */
-    animation: slide-in-down 0.6s cubic-bezier(0.68, -0.7, 0.265, 1.7) forwards;
+    animation: slide-in-down 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.25) forwards;
     animation-delay: 0.1s;
 }
 
@@ -121,7 +121,7 @@ body {
     font-size: 25px;
     margin: 0;
     flex-grow: 0;
-    font-weight: 900;
+    font-weight: 700;
 }
 
 #gwamble-body i {
@@ -149,7 +149,7 @@ body {
     position: relative;
     height: fit-content;
     overflow-y: scroll;
-    animation: bounce-in-no-opacity 0.5s cubic-bezier(0.68, -0.7, 0.265, 1.7) forwards;
+    animation: bounce-in-no-opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.25) forwards;
     animation-delay: 0s;
 }
 
@@ -393,8 +393,8 @@ input::placeholder, textarea::placeholder {
 #create-gwamble-container,
 #join-gwamble-container,
 .gwamble-option, button, .gwamble-button-bottom {
-  transition: transform 0.5s cubic-bezier(0.68, -0.7, 0.265, 1.7),
-              box-shadow 0.5s cubic-bezier(0.68, -0.7, 0.265, 1.7),
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.25),
+              box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.25),
               max-height 0.2s ease-in-out; /* Animate the height change */
 }
 
@@ -454,7 +454,7 @@ body {
 }
 
 .uk-modal-dialog {
-    transition: all 0.33s cubic-bezier(0.68, -0.7, 0.265, 1.7);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1.25);
     border-radius: 20px;
     background: #bf3266;
     color: #ffb6d5;

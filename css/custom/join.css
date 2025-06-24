@@ -47,19 +47,19 @@
 #gwamble-bar {
     max-height: 20px;
     opacity: 0; /* Set initial opacity to 0 */
-    animation: slide-in-down 0.6s cubic-bezier(0.68, -0.7, 0.265, 1.7) forwards;
+    animation: slide-in-down 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.25) forwards;
     animation-delay: 0.1s;
 }
 
 #posted-gwamble {
     opacity: 0; /* Set initial opacity to 0 */
-    animation: bounce-in 0.6s cubic-bezier(0.68, -0.7, 0.265, 1.7) forwards;
+    animation: bounce-in 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.25) forwards;
     animation-delay: 0.2s; /* Delay to start after the nav bar */
 }
 
 .gwamble-bottom {
     opacity: 0; /* Set initial opacity to 0 */
-    animation: slide-in-up 0.6s cubic-bezier(0.68, -0.7, 0.265, 1.7) forwards;
+    animation: slide-in-up 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.25) forwards;
     animation-delay: 0.4s; /* Delay to start after the main content */
 }
 

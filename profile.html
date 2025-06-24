@@ -2,9 +2,13 @@
 <html>
 <head>
     <title>GWAMBLE - Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/lib/remixicon.css">
     <link rel="stylesheet" type="text/css" href="css/custom/index.css">
     <link rel="stylesheet" type="text/css" href="css/custom/session.css">
+    <link rel="stylesheet" type="text/css" href="css/custom/profile.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 </head>
 <body>
@@ -17,18 +21,25 @@
     </nav>
 
     <div id="gwamble-body">
-        <div class="profile-card modular-card">
-            <div class="profile-avatar modular-avatar">
-                <i class="ri-user-4-fill"></i>
+        <div class="profile-card">
+            <div class="profile-avatar">
+                <i class="ri-user-smile-line"></i>
             </div>
-            <div class="profile-info modular-info">
-                <label for="username-input" class="modular-label">Display Name</label>
-                <input type="text" id="username-input" class="modular-input" maxlength="20" placeholder="Enter your new username">
-                <label for="user-credits" class="modular-label">Credits</label>
-                <p id="user-credits" class="modular-input"></p>
-                <button id="save-username-button" class="modular-btn modular-btn-primary">Save</button>
-                <p class="profile-id modular-hint">Your account is private and local to this device.</p>
+            <div class="profile-info">
+                <h2 id="username-display" class="username"></h2>
+                <p id="user-credits" class="credits"></p>
             </div>
+            <div class="profile-edit">
+                <div class="input-group">
+                    <label for="username-input" class="small-title">Display Name</label>
+                    <input type="text" id="username-input" maxlength="20">
+                </div>
+                <button id="save-username-button" class="gwamble-button-bottom" disabled>
+                    Save Changes
+                </button>
+            </div>
+             <span id="save-notification" class="save-notification"></span>
+            <p class="profile-id">Your account is private and local to this device.</p>
         </div>
     </div>
 
@@ -36,15 +47,36 @@
     <script>
         function initProfile() {
             const user = getLocalUser();
+            const usernameDisplay = document.getElementById('username-display');
+            const usernameInput = document.getElementById('username-input');
+            const userCredits = document.getElementById('user-credits');
+            const saveButton = document.getElementById('save-username-button');
+            const saveNotification = document.getElementById('save-notification');
+
             if (user) {
-                document.getElementById('username-input').value = user.username;
-                document.getElementById('user-credits').textContent = user.credits;
+                usernameDisplay.textContent = user.username;
+                usernameInput.value = user.username;
+                userCredits.textContent = `${user.credits} Credits`;
             }
-            document.getElementById('save-username-button').addEventListener('click', () => {
-                const newUsername = document.getElementById('username-input').value.trim();
-                if (newUsername.length > 0) {
+
+            usernameInput.addEventListener('input', () => {
+                const newUsername = usernameInput.value.trim();
+                const currentUsername = user.username;
+                saveButton.disabled = newUsername === '' || newUsername === currentUsername;
+            });
+
+            saveButton.addEventListener('click', () => {
+                const newUsername = usernameInput.value.trim();
+                if (newUsername.length > 0 && newUsername !== user.username) {
                     updateUsername(newUsername);
-                    showModalMessage('Display name updated!');
+                    user.username = newUsername; // Update local copy for UI state
+                    usernameDisplay.textContent = newUsername;
+                    saveButton.disabled = true;
+                    saveNotification.textContent = 'Username updated!';
+                    saveNotification.style.opacity = 1;
+                    setTimeout(() => {
+                        saveNotification.style.opacity = 0;
+                    }, 2000);
                 }
             });
         }

@@ -31,7 +31,7 @@ body {
     max-height: 20px;
     backdrop-filter: blur(20px);
     opacity: 0;
-    animation: slide-in-down 0.6s cubic-bezier(0.68, -0.7, 0.265, 1.7) 0.1s forwards;
+    animation: slide-in-down 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards;
 }
 
 #gwamble-bar p, #gwamble-bar button {
@@ -88,7 +88,7 @@ body {
     box-shadow: 0 8px 32px 0 rgba(0,0,0,0.15);
     overflow: hidden;
     opacity: 0;
-    animation: bounce-in 0.6s cubic-bezier(0.68, -0.7, 0.265, 1.7) 0.2s forwards;
+    animation: bounce-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
 }
 
 #posted-gwamble h1 {
@@ -328,7 +328,7 @@ body {
     right: 20px;
     z-index: 100;
     opacity: 0;
-    animation: slide-in-up 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s forwards;
+    animation: slide-in-up 0.6s cubic-bezier(0.25, 1, 0.5, 1) 0.3s forwards;
 }
 
 .gwamble-bottom button#gwamble-share-code {
@@ -751,7 +751,7 @@ body {
 
 @keyframes bounce-in {
     from {
-        transform: scale(0.5);
+        transform: scale(0.9);
         opacity: 0;
     }
     to {
