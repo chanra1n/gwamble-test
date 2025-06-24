@@ -249,6 +249,17 @@ body {
     min-width: 0;
 }
 
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+.ri-loader-4-fill {
+  animation: spin 1s linear infinite;
+}
+.ri-loader-4-fill[style*="spin"], .ri-loader-4-fill.spinner {
+  animation: spin 1s linear infinite !important;
+  display: inline-block;
+}
+
 .text-center {
     margin: auto;
     margin-bottom: 10px;

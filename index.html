@@ -218,28 +218,47 @@
     function OTPInput() {
   const inputs = document.querySelectorAll('#otp > *[id]');
   for (let i = 0; i < inputs.length; i++) {
+    inputs[i].setAttribute('inputmode', 'numeric');
+    inputs[i].setAttribute('maxlength', '1');
     inputs[i].addEventListener('keydown', function(event) {
       if (event.key === "Backspace") {
         inputs[i].value = '';
         if (i !== 0)
           inputs[i - 1].focus();
+      } else if (event.key.length === 1 && !/\d/.test(event.key)) {
+        event.preventDefault();
       } else {
         if (i === inputs.length - 1 && inputs[i].value !== '') {
           return true;
-        } else if (event.keyCode > 47 && event.keyCode < 58) {
+        } else if (/\d/.test(event.key)) {
           inputs[i].value = event.key;
-          if (i !== inputs.length - 1)
-            inputs[i + 1].focus();
-          event.preventDefault();
-        } else if (event.keyCode > 64 && event.keyCode < 91) {
-          inputs[i].value = String.fromCharCode(event.keyCode);
           if (i !== inputs.length - 1)
             inputs[i + 1].focus();
           event.preventDefault();
         }
       }
     });
+    inputs[i].addEventListener('input', function(event) {
+      // Only allow one digit
+      this.value = this.value.replace(/[^\d]/g, '').slice(0, 1);
+      if (this.value && i < inputs.length - 1) {
+        inputs[i + 1].focus();
+      }
+    });
   }
+  // Paste event for the whole OTP container
+  document.getElementById('otp').addEventListener('paste', function(e) {
+    e.preventDefault();
+    let paste = (e.clipboardData || window.clipboardData).getData('text');
+    paste = paste.replace(/[^\d]/g, '').slice(0, inputs.length);
+    for (let i = 0; i < inputs.length; i++) {
+      inputs[i].value = paste[i] || '';
+    }
+    if (paste.length > 0) {
+      const next = Math.min(paste.length, inputs.length) - 1;
+      inputs[next].focus();
+    }
+  });
 }
 
     function reloadPage(){
@@ -288,11 +307,42 @@
             code += input.value;
         });
 
-        // We can't verify the code here anymore since localStorage is not shared across browsers.
-        // We will pass the code to the join page and let the WebRTC logic handle the connection.
-        sessionStorage.setItem('gwamble_join_code', code);
-        sessionStorage.setItem('gwamble_role', 'peer');
-        window.location.href = 'join.html?code=' + code;
+        if (code.length !== 6) {
+            alert("Please enter a 6-digit code.");
+            return;
+        }
+
+        const joinButton = document.querySelector('#join-gwamble-options button[onclick="joinGwambleSession()"]');
+        const joinButtonSpan = joinButton.querySelector('span');
+        const joinButtonIcon = joinButton.querySelector('i');
+
+        // Disable button and show loading state
+        joinButton.disabled = true;
+        document.getElementById('join-gwamble-container').style.pointerEvents = 'none';
+        document.getElementById('join-gwamble-container').style.opacity = '0.5';
+        joinButton.innerHTML = '<i class="ri-loader-4-fill" style="animation: spin 1s linear infinite;"></i>';
+
+        validateJoinCode(code,
+            () => { // onSuccess
+                // Validation successful, proceed to join page
+                sessionStorage.setItem('gwamble_join_code', code);
+                sessionStorage.setItem('gwamble_role', 'peer');
+                window.location.href = 'join.html?code=' + code;
+            },
+            (error) => { // onError
+                // Validation failed, show error and re-enable button
+                alert(error.message);
+                joinButton.disabled = false;
+                joinButtonSpan.textContent = 'Join';
+                joinButtonIcon.className = 'ri-check-fill';
+                document.getElementById('join-gwamble-container').style.pointerEvents = 'all';
+                document.getElementById('join-gwamble-container').style.opacity = '1';
+
+                inputs.forEach(input => input.value = ''); // Clear inputs
+
+                joinButton.innerHTML = '<i class="ri-check-fill"></i> <span>Join</span>';
+            }
+        );
     }
 
     function verifyCode(code) {

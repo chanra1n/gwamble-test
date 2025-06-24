@@ -442,7 +442,7 @@ function updateBetDisplay() {
 
 function copyGwambleCode() {
     var code = document.getElementById('gwamble-share-code').getAttribute('data-code');
-    navigator.clipboard.writeText(code.replace('-', ''));
+    navigator.clipboard.writeText(code.replace(' - ', ''));
     var icon = document.getElementById('gwamble-copy-icon');
     icon.classList.remove('ri-file-copy-fill');
     icon.classList.add('ri-check-fill');

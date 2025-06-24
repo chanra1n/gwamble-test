@@ -9,6 +9,63 @@ let inactivityTimer = null; // Timer to close inactive sessions
 const INACTIVITY_TIMEOUT_MS = 10 * 60 * 1000; // 5 minutes
 
 /**
+ * (Index Page) Validates if a join code corresponds to an active host.
+ * @param {string} joinCode The 6-digit code to validate.
+ * @param {function} onSuccess Callback function on successful validation.
+ * @param {function} onError Callback function on failed validation.
+ */
+function validateJoinCode(joinCode, onSuccess, onError) {
+    const tempPeer = new Peer();
+    let connection = null;
+
+    const validationTimeout = setTimeout(() => {
+        console.error("Validation timed out for code:", joinCode);
+        cleanup();
+        if (onError) onError({ type: 'timeout', message: 'Could not verify the session code in time. The host may be on a slow network. Please try again.' });
+    }, 7000); // 7-second timeout, as peer creation can sometimes be slow.
+
+    const cleanup = () => {
+        clearTimeout(validationTimeout);
+        if (connection) {
+            // We close the connection immediately after validation.
+            // The actual connection will be re-established on the join.html page.
+            connection.close();
+        }
+        if (tempPeer && !tempPeer.destroyed) {
+            tempPeer.destroy();
+        }
+        console.log("Validation cleanup complete.");
+    };
+
+    tempPeer.on('open', id => {
+        console.log('Temporary peer created for validation: ' + id);
+        connection = tempPeer.connect(joinCode, { reliable: false });
+
+        connection.on('open', () => {
+            console.log('Validation successful: Host exists.');
+            cleanup();
+            if (onSuccess) onSuccess();
+        });
+
+        connection.on('error', err => {
+            console.error('Validation connection error:', err);
+            cleanup();
+            if (onError) onError({ type: 'connection-error', message: 'An error occurred while trying to connect to the host.' });
+        });
+    });
+
+    tempPeer.on('error', err => {
+        console.error('Validation peer error:', err);
+        cleanup();
+        if (err.type === 'peer-unavailable') {
+            if (onError) onError({ type: 'peer-unavailable', message: 'This Gwamble session does not exist. Please check the code and try again.' });
+        } else {
+            if (onError) onError({ type: 'generic-error', message: 'An unknown error occurred during validation.' });
+        }
+    });
+}
+
+/**
  * (Host only) Resets the inactivity timer. If no peers are connected,
  * the session will be closed after a timeout.
  */
