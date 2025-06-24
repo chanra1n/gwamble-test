@@ -232,17 +232,13 @@ function setupHostUI() {
 
 // Host's function to declare a winner.
 function declareWinner(outcome) {
-    console.log(`Host declared winner: ${outcome}`);
-    
-    // Update local session state
-    gwamble_session.winner = outcome;
-    sessionStorage.setItem('gwamble', JSON.stringify(gwamble_session));
-
-    // 1. Broadcast the winner declaration to all peers
-    broadcastMessage({ type: 'winner-declared', payload: { winner: outcome } });
-
-    // 2. Update the host's own UI
-    showWinnerUI(gwamble_session);
+    console.log(`Host is declaring winner: ${outcome}. Calling centralized handler.`);
+    // This function in webrtc.js now handles all logic:
+    // - Broadcasting winner
+    // - Calculating and distributing credits
+    // - Broadcasting updated credits
+    // - Triggering events to update this (host) UI
+    handleHostWinnerDeclared(outcome);
 }
 
 function showWinnerUI(session) {
@@ -272,34 +268,41 @@ function showWinnerUI(session) {
     if (postedGwamble) postedGwamble.style.marginTop = "20px";
     const leaderboardTable = document.getElementById('gwamble-leaderboard-table');
     leaderboardTable.style.display = "flex";
-    // Hide the old user results section
-    document.getElementById('gwamble-user-results').style.display = 'none';
-    // Populate leaderboard with net credit changes
+    
+    // Update the info message for the host
+    const userResultsDiv = document.getElementById('gwamble-user-results');
+    userResultsDiv.style.display = 'block';
+    userResultsDiv.innerHTML = `
+        <div class="gwamble-text-left">
+            <p><i class="ri-information-line" style="margin-right:5px"></i> Hosts receive 5 credits for hosting the session.</p>
+        </div>
+    `;
+
     const leaderboardList = document.getElementById('gwamble-leaderboard-list');
     leaderboardList.innerHTML = '';
-    if (!session.bets || session.bets.length === 0) {
-        leaderboardTable.querySelector('h1').style.display = 'none';
+
+    // Filter for members who actually had a credit change.
+    const membersWithChanges = session.members ? session.members.filter(m => m.creditChange !== undefined) : [];
+
+    if (membersWithChanges.length === 0) {
+        // This case should not happen if host compensation works, but it's a safe fallback.
+        leaderboardTable.querySelector('h1').innerText = 'No Results';
         leaderboardList.innerHTML = `
             <div class="member-item" style="width:100%;opacity:50%">
                 <div class="gwamble-topper">
-                    <span style="font-family:'Lexend';font-size:18px">No bets were received.</span>
+                    <span style="font-family:'Lexend';font-size:18px">Credit distribution could not be determined.</span>
                 </div>
             </div>`;
         return;
     }
     
-    // Only show users who bet using creditChange
-    session.bets.forEach(bet => {
-        const member = session.members.find(m => m.user_id === bet.user_id);
-        if (!member) return;
-        
-        // Use the creditChange if available
-        let net = member.creditChange;
-        if (net === undefined) {
-            // Fallback: assume they lost 10 if they're a loser, won something if winner
-            const isWinner = bet.selected_outcome.toLowerCase() === session.winner.toLowerCase();
-            net = isWinner ? 10 : -10;
-        }
+    leaderboardTable.querySelector('h1').innerText = 'Results';
+
+    // Sort members by who gained the most.
+    membersWithChanges.sort((a, b) => b.creditChange - a.creditChange);
+
+    membersWithChanges.forEach(member => {
+        const net = member.creditChange;
         
         let netText = '';
         let netClass = '';
@@ -310,14 +313,18 @@ function showWinnerUI(session) {
             netText = `${net}`;
             netClass = 'gwamble-net-loss';
         } else {
+            // Don't show members with no change, unless they are the only one.
+            if (membersWithChanges.length > 1) return;
             netText = '0';
             netClass = 'gwamble-net-loss';
         }
         
+        const hostIcon = member.is_host ? `<i class="ri-vip-crown-fill" style="margin-right: 5px; opacity: 0.7;"></i>` : '';
+
         leaderboardList.innerHTML += `
             <div class="member-item gwamble-result-row">
                 <div class="gwamble-topper">
-                    <span class="gwamble-result-username">${member.username}</span>
+                    <span class="gwamble-result-username">${hostIcon}${member.username}</span>
                     <span class="${netClass}">${netText}</span>
                 </div>
             </div>
@@ -379,6 +386,21 @@ function handleGwambleMessage(event) {
         case 'bets-updated':
             gwamble_session.bets = message.payload.bets;
             updateBetDisplay();
+            break;
+        case 'winner-declared': // Peer UI will use this, host will wait for credits.
+            gwamble_session.winner = message.payload.winner;
+            sessionUpdated = true;
+            break;
+        case 'credits-updated':
+            // The webrtc handler has already updated sessionStorage with the final credit totals and changes.
+            // We just need to re-read it and display the results.
+            let updatedSession = JSON.parse(sessionStorage.getItem('gwamble'));
+            if(updatedSession) {
+                gwamble_session = updatedSession;
+                showWinnerUI(gwamble_session);
+            } else {
+                console.error("Could not find updated session data after credits-updated message.");
+            }
             break;
     }
 
@@ -447,7 +469,7 @@ function copyGwambleCode() {
     icon.classList.add('ri-check-fill');
     setTimeout(function() {
         icon.classList.remove('ri-check-fill');
-        icon.classList.add('ri-file-copy-fill');
+        icon.classList.add('ri-file_COPY-fill');
     }, 2500);
 }
 
