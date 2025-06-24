@@ -84,7 +84,7 @@
             <span id="gwamble-outcome-b-bets" class="gwamble-bets">0</span>
         </div>
 
-        <button onclick="declareWinner('B')" class="winner-button" id="gwamble-winner-b" style="margin-bottom: 0px; display: none; border-radius: 0px 0px 0px 10px;">
+        <button onclick="declareWinner('B')" class="winner-button" id="gwamble-winner-b" style="margin-bottom: 0px; display: none; border-radius: 0px 0px 15px 15px">
         <i class="ri-check-fill"></i>
         Call it
         </button>
@@ -93,7 +93,7 @@
 
 
         <div class = "gwamble-bottom">
-        <button onclick = "copyGwambleCode()" id = "gwamble-share-code" data-code = "888-888">888-888 <i id = "gwamble-copy-icon" class="ri-file-copy-fill"></i></button>
+        <button onclick = "copyGwambleCode()" id = "gwamble-share-code" data-code = "888 - 888">888-888 <i id = "gwamble-copy-icon" class="ri-file-copy-fill"></i></button>
         <button onclick = "UIkit.modal('#qr-modal').show()" id = "gwamble-qr-code"><i class="ri-qr-code-fill"></i></button>
         </div>
 
@@ -201,7 +201,7 @@ function setupHostUI() {
     const joinCode = sessionStorage.getItem('gwamble_join_code');
     if (joinCode) {
         const shareCodeButton = document.getElementById('gwamble-share-code');
-        const formattedCode = joinCode.substring(0, 3) + '-' + joinCode.substring(3);
+        const formattedCode = joinCode.substring(0, 3) + ' - ' + joinCode.substring(3);
         shareCodeButton.setAttribute('data-code', formattedCode);
         shareCodeButton.firstChild.nodeValue = formattedCode + ' ';
         const codeWithLink = window.location.origin + '/join.html?code=' + joinCode;
