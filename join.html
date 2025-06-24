@@ -248,15 +248,28 @@ function showMessageModal(message) {
 function lockInBetUI(outcome) {
     const buttonA = document.getElementById('gwamble-winner-a');
     const buttonB = document.getElementById('gwamble-winner-b');
+    const titleA = document.getElementById('gwamble-outcome-a');
+    const titleB = document.getElementById('gwamble-outcome-b');
     buttonA.disabled = true;
     buttonB.disabled = true;
+    titleA.disabled = true;
+    titleB.disabled = true;
+    titleA.style.pointerEvents = 'none';
+    titleB.style.pointerEvents = 'none';
+    buttonA.style.pointerEvents = 'none';
+    buttonB.style.pointerEvents = 'none';
     buttonA.style.opacity = '0.5';
     buttonB.style.opacity = '0.5';
+    titleA.style.opacity = '0.5';
+    titleB.style.opacity = '0.5';
 
     if (outcome) {
         const selectedButton = document.getElementById(`gwamble-winner-${outcome.toLowerCase()}`);
+        const selectedTitle = document.getElementById(`gwamble-outcome-${outcome.toLowerCase()}`);
         if (selectedButton) {
-            selectedButton.innerHTML = '✓ Bet Placed';
+            selectedButton.innerHTML = '<div class="bet-left">Bet placed!</div><div class="bet-right"><i class="ri-coins-fill"></i> 10</div>';
+            selectedTitle.disabled = false;
+            selectedTitle.style.opacity = '1';
             selectedButton.style.opacity = '1';
         }
     }
