@@ -19,6 +19,12 @@ body, html {
     overscroll-behavior: none;
     height: 100vh;
     height: 100dvh;
+    opacity: 1; /* Ensure body is visible */
+}
+
+body.fade-out {
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
 }
 
 body {
@@ -40,6 +46,9 @@ body {
     position: sticky;
     top: 0;
     z-index: 10;
+    opacity: 0; /* Set initial opacity to 0 */
+    animation: slide-in-down 0.6s cubic-bezier(0.68, -0.7, 0.265, 1.7) forwards;
+    animation-delay: 0.1s;
 }
 
 #gwamble-bar h1 {
@@ -112,7 +121,7 @@ body {
     font-size: 25px;
     margin: 0;
     flex-grow: 0;
-    font-weight:700;
+    font-weight: 900;
 }
 
 #gwamble-body i {
@@ -136,15 +145,15 @@ body {
     font-family: 'Lexend';
     padding: 20px;
     box-sizing: border-box;
-    transition: all 0.2s;
-    transition-timing-function: ease-in-out;
     overflow: hidden;
     position: relative;
     height: fit-content;
     overflow-y: scroll;
+    animation: bounce-in-no-opacity 0.5s cubic-bezier(0.68, -0.7, 0.265, 1.7) forwards;
+    animation-delay: 0s;
 }
 
-#create-gwamble-container.open, #join-gwamble-container.open {
+.create-gwamble-container.open, #join-gwamble-container.open {
     height: fit-content!important; /* Full height when open */
 }
 
@@ -183,6 +192,12 @@ body {
     margin-top: 10px; /* Adds some space between the button and previous elements */
     color:white;
     font-weight:900;
+    position: relative;
+}
+
+.gwamble-option button:disabled, .gwamble-button-bottom:disabled {
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 .gwamble-option .cancel, .gwamble-button-bottom.cancel {
@@ -375,10 +390,12 @@ input::placeholder, textarea::placeholder {
 }
 
 /* Base transition for all interactive elements, now including max-height */
+#create-gwamble-container,
+#join-gwamble-container,
 .gwamble-option, button, .gwamble-button-bottom {
-  transition: transform 0.5s cubic-bezier(0.68, -0.6, 0.32, 1.6),
-              box-shadow 0.5s cubic-bezier(0.68, -0.6, 0.32, 1.6),
-              max-height 0.7s cubic-bezier(0.77, 0, 0.175, 1); /* Animate the height change */
+  transition: transform 0.5s cubic-bezier(0.68, -0.7, 0.265, 1.7),
+              box-shadow 0.5s cubic-bezier(0.68, -0.7, 0.265, 1.7),
+              max-height 0.2s ease-in-out; /* Animate the height change */
 }
 
 /* Smooth scaling on hover */
@@ -399,7 +416,7 @@ input::placeholder, textarea::placeholder {
 }
 
 /* Remove old/conflicting animation rules */
-.gwamble-option, #gwamble-body, .small-title, #create-gwamble-subject, #create-gwamble-options input, #otp input {
+#gwamble-body, .small-title, #create-gwamble-subject, #create-gwamble-options input, #otp input {
   animation: none !important;
 }
 
@@ -437,7 +454,7 @@ body {
 }
 
 .uk-modal-dialog {
-    transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    transition: all 0.33s cubic-bezier(0.68, -0.7, 0.265, 1.7);
     border-radius: 20px;
     background: #bf3266;
     color: #ffb6d5;
@@ -482,5 +499,53 @@ body {
 .uk-modal-dialog .uk-button:hover {
     background: rgba(255, 111, 174, 0.2);
     color: white;
+}
+
+@keyframes slide-in-down {
+    from {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce-in-no-opacity {
+    from {
+        transform: scale(0.9);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+@keyframes bounce-in {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Loading state for create button */
+#create-gwamble-options .gwamble-button-bottom.loading {
+    opacity: 0.7;
+    color: transparent;
+    pointer-events: none;
+}
+
+#create-gwamble-options .gwamble-button-bottom.loading .ri-loader-4-fill {
+    display: inline-block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    animation: spin 1s linear infinite;
+    color: white; /* Ensure spinner is visible */
 }
 

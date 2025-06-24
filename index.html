@@ -98,7 +98,7 @@
                     <button onclick="closeJoinGwamble()" class="cancel">
                     <i class="ri-close-fill"></i>
                     </button>
-                    <button onclick="joinGwambleSession()">
+                    <button onclick="joinGwambleSession()" disabled>
                         <i class="ri-check-fill"></i>
                         <span>Join</span>
                     </button>
@@ -111,7 +111,12 @@
     <div id="gwamble-uikit-modal" uk-modal>
         <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical" style="border-radius:16px; min-width:260px; max-width:90vw; text-align:center;">
             <div id="gwamble-uikit-modal-content" style="margin-bottom:24px; font-size:1.1em;"></div>
-            <button class="uk-button uk-button-default" type="button" onclick="UIkit.modal('#gwamble-uikit-modal').hide()">OK</button>
+            <button class="uk-button uk-button-default" type="button" onclick="UIkit.modal('#gwamble-uikit-modal').hide()">
+            <i class="ri-check-fill"></i>
+            <span>
+                OK
+            </span>
+            </button>
         </div>
     </div>
 
@@ -222,50 +227,61 @@
     }
 
     function OTPInput() {
-  const inputs = document.querySelectorAll('#otp > *[id]');
-  for (let i = 0; i < inputs.length; i++) {
-    inputs[i].setAttribute('inputmode', 'numeric');
-    inputs[i].setAttribute('maxlength', '1');
-    inputs[i].addEventListener('keydown', function(event) {
-      if (event.key === "Backspace") {
-        inputs[i].value = '';
-        if (i !== 0)
-          inputs[i - 1].focus();
-      } else if (event.key.length === 1 && !/\d/.test(event.key)) {
-        event.preventDefault();
-      } else {
-        if (i === inputs.length - 1 && inputs[i].value !== '') {
-          return true;
-        } else if (/\d/.test(event.key)) {
-          inputs[i].value = event.key;
-          if (i !== inputs.length - 1)
-            inputs[i + 1].focus();
-          event.preventDefault();
+        const inputs = document.querySelectorAll('#otp > *[id]');
+        const joinButton = document.querySelector('#join-gwamble-options button[onclick="joinGwambleSession()"]');
+
+        const checkAndToggleButton = () => {
+            const allInputsFilled = Array.from(inputs).every(i => i.value.trim() !== '');
+            joinButton.disabled = !allInputsFilled;
+        };
+
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].setAttribute('inputmode', 'numeric');
+            inputs[i].setAttribute('maxlength', '1');
+            inputs[i].addEventListener('keydown', function (event) {
+                if (event.key === "Backspace") {
+                    inputs[i].value = '';
+                    if (i !== 0)
+                        inputs[i - 1].focus();
+                } else if (event.key.length === 1 && !/\d/.test(event.key)) {
+                    event.preventDefault();
+                } else {
+                    if (i === inputs.length - 1 && inputs[i].value !== '') {
+                        return true;
+                    } else if (/\d/.test(event.key)) {
+                        inputs[i].value = event.key;
+                        if (i !== inputs.length - 1)
+                            inputs[i + 1].focus();
+                        event.preventDefault();
+                    }
+                }
+            });
+            inputs[i].addEventListener('input', function (event) {
+                // Only allow one digit
+                this.value = this.value.replace(/[^\d]/g, '').slice(0, 1);
+                if (this.value && i < inputs.length - 1) {
+                    inputs[i + 1].focus();
+                }
+            });
+            // Add the keyup listener for checking
+            inputs[i].addEventListener('keyup', checkAndToggleButton);
         }
-      }
-    });
-    inputs[i].addEventListener('input', function(event) {
-      // Only allow one digit
-      this.value = this.value.replace(/[^\d]/g, '').slice(0, 1);
-      if (this.value && i < inputs.length - 1) {
-        inputs[i + 1].focus();
-      }
-    });
-  }
-  // Paste event for the whole OTP container
-  document.getElementById('otp').addEventListener('paste', function(e) {
-    e.preventDefault();
-    let paste = (e.clipboardData || window.clipboardData).getData('text');
-    paste = paste.replace(/[^\d]/g, '').slice(0, inputs.length);
-    for (let i = 0; i < inputs.length; i++) {
-      inputs[i].value = paste[i] || '';
+        // Paste event for the whole OTP container
+        document.getElementById('otp').addEventListener('paste', function (e) {
+            e.preventDefault();
+            let paste = (e.clipboardData || window.clipboardData).getData('text');
+            paste = paste.replace(/[^\d]/g, '').slice(0, inputs.length);
+            for (let i = 0; i < inputs.length; i++) {
+                inputs[i].value = paste[i] || '';
+            }
+            if (paste.length > 0) {
+                const next = Math.min(paste.length, inputs.length) - 1;
+                inputs[next].focus();
+            }
+            // check after paste
+            checkAndToggleButton();
+        });
     }
-    if (paste.length > 0) {
-      const next = Math.min(paste.length, inputs.length) - 1;
-      inputs[next].focus();
-    }
-  });
-}
 
     function reloadPage(){
     console.log('APP resumed');
@@ -273,11 +289,31 @@
 }
 
     function passGwamble() {
-        var subject = document.getElementById('create-gwamble-subject').value;
-        var outcomeA = document.getElementById('create-gwamble-options').querySelectorAll('input')[0].value;
-        var outcomeB = document.getElementById('create-gwamble-options').querySelectorAll('input')[1].value;
+        var subjectInput = document.getElementById('create-gwamble-subject');
+        var outcomeAInput = document.getElementById('create-gwamble-options').querySelectorAll('input')[0];
+        var outcomeBInput = document.getElementById('create-gwamble-options').querySelectorAll('input')[1];
+        
+        var subject = subjectInput.value;
+        var outcomeA = outcomeAInput.value;
+        var outcomeB = outcomeBInput.value;
+
         var user = getLocalUser();
         var join_code = generateJoinCode();
+
+        if (!subject.trim() || !outcomeA.trim() || !outcomeB.trim()) {
+            showModalMessage("All fields are required to create a gwamble.");
+            return;
+        }
+
+        const createButton = document.getElementById('create-gwamble-post-button');
+        const cancelButton = document.getElementById('cancel-gwamble-post-button');
+        const inputs = [subjectInput, outcomeAInput, outcomeBInput];
+
+        // Disable button and show loading state
+        createButton.disabled = true;
+        cancelButton.disabled = true;
+        inputs.forEach(input => input.disabled = true);
+        createButton.innerHTML = '<i class="ri-loader-4-fill" style="animation: spin 1s linear infinite;"></i>';
 
         // Using camelCase properties to match the GwambleSession class
         var session = new GwambleSession(user.token, user.username, subject, outcomeA, outcomeB);
@@ -286,7 +322,16 @@
         sessionStorage.setItem('gwamble_username', user.username);
 
         // Initialize the host via WebRTC and redirect upon successful connection.
-        initializeHostAndRedirect(join_code);
+        initializeHostAndRedirect(join_code, () => {
+            // on error
+            createButton.disabled = false;
+            cancelButton.disabled = false;
+            inputs.forEach(input => input.disabled = false);
+            createButton.innerHTML = '<i class="ri-check-fill"></i> <span>Post</span>';
+            // Re-check if button should be disabled
+            const allInputsHaveValues = Array.from(document.getElementById('create-gwamble-options').querySelectorAll('input, textarea')).every(input => input.value.trim());
+            createButton.disabled = !allInputsHaveValues;
+        });
     }
 
     // let's set an even listener for the inputs and textareas inside the create-gwamble-options.
@@ -305,7 +350,6 @@
         });
     }
 
-
     function joinGwambleSession() {
         const inputs = document.querySelectorAll('#otp > *[id]');
         let code = '';
@@ -319,13 +363,12 @@
         }
 
         const joinButton = document.querySelector('#join-gwamble-options button[onclick="joinGwambleSession()"]');
-        const joinButtonSpan = joinButton.querySelector('span');
-        const joinButtonIcon = joinButton.querySelector('i');
+        const cancelButton = document.querySelector('#join-gwamble-options .cancel');
 
-        // Disable button and show loading state
+        // Disable controls and show loading state
         joinButton.disabled = true;
-        document.getElementById('join-gwamble-container').style.pointerEvents = 'none';
-        document.getElementById('join-gwamble-container').style.opacity = '0.5';
+        cancelButton.disabled = true;
+        inputs.forEach(input => input.disabled = true);
         joinButton.innerHTML = '<i class="ri-loader-4-fill" style="animation: spin 1s linear infinite;"></i>';
 
         validateJoinCode(code,
@@ -336,17 +379,21 @@
                 window.location.href = 'join.html?code=' + code;
             },
             (error) => { // onError
-                // Validation failed, show error and re-enable button
+                // Validation failed, show error and re-enable everything
                 showModalMessage(error.message);
                 joinButton.disabled = false;
-                joinButtonSpan.textContent = 'Join';
-                joinButtonIcon.className = 'ri-check-fill';
-                document.getElementById('join-gwamble-container').style.pointerEvents = 'all';
-                document.getElementById('join-gwamble-container').style.opacity = '1';
-
-                inputs.forEach(input => input.value = ''); // Clear inputs
+                cancelButton.disabled = false;
+                
+                inputs.forEach(input => {
+                    input.disabled = false;
+                    input.value = ''; 
+                }); 
 
                 joinButton.innerHTML = '<i class="ri-check-fill"></i> <span>Join</span>';
+                
+                // After clearing inputs, the join button should be disabled again by the listener
+                const allInputsFilled = Array.from(inputs).every(i => i.value.trim() !== '');
+                joinButton.disabled = !allInputsFilled;
             }
         );
     }

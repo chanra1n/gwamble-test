@@ -111,8 +111,9 @@ function resetInactivityTimer() {
  * Initializes the host's PeerJS object, waits for it to register with the
  * signaling server, and then redirects to the session page.
  * @param {string} joinCode The 6-digit code for the session.
+ * @param {function} [onError] Optional callback for when an error occurs.
  */
-function initializeHostAndRedirect(joinCode) {
+function initializeHostAndRedirect(joinCode, onError) {
     if (peer) {
         peer.destroy();
     }
@@ -131,6 +132,9 @@ function initializeHostAndRedirect(joinCode) {
         console.error('PeerJS error:', err);
         showModalMessage('An error occurred while trying to host the session. The join code might already be in use. Please try again.');
         sessionStorage.clear();
+        if (onError) {
+            onError();
+        }
     });
 }
 
@@ -373,7 +377,7 @@ function joinSession(hostId, updateCallback) {
 
         hostConnection.on('close', () => {
             console.log('Connection to host closed.');
-            showModalMessage('The host has ended the session.');
+            showModalMessage('This gwamble is over! You have been disconnected.');
             sessionStorage.clear();
             window.location.href = 'index.html';
         });
@@ -382,7 +386,7 @@ function joinSession(hostId, updateCallback) {
     peer.on('error', (err) => {
         console.error('PeerJS error:', err);
         if (err.type === 'peer-unavailable') {
-            showModalMessage('Could not find the session. Please check the code and try again.');
+            showModalMessage(`Couldn't join that gwamble, sorry. Something went wrong.`);
         } else {
             showModalMessage('An error occurred. Could not join the session.');
         }
@@ -441,7 +445,7 @@ function handleHostMessage(data) {
             // The UI callback will now handle showing the results screen
             break;
         case 'kicked':
-            showModalMessage('You have been kicked from the session by the host.');
+            showModalMessage('You have been kicked.');
             disconnectFromHost();
             window.location.href = 'index.html';
             break;
