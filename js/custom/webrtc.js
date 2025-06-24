@@ -58,7 +58,7 @@ function validateJoinCode(joinCode, onSuccess, onError) {
         console.error('Validation peer error:', err);
         cleanup();
         if (err.type === 'peer-unavailable') {
-            if (onError) onError({ type: 'peer-unavailable', message: `That gwamble doesn't exist, sorry. Try a different code.` });
+            if (onError) onError({ type: 'peer-unavailable', message: `Couldn't find that gwamble, sorry. Try a different code?` });
         } else {
             if (onError) onError({ type: 'generic-error', message: 'An unknown error occurred during validation.' });
         }
