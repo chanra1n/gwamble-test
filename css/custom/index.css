@@ -129,7 +129,7 @@ body {
     -webkit-backdrop-filter: blur(15px) saturate(1.2);
     border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
-    border-radius: 20px;
+    border-radius: 15px;
     color: white;
     font-family: 'Lexend';
     padding: 20px;
@@ -148,7 +148,7 @@ body {
 
 
 .gwamble-option {
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     width: 100%;
     color: white;
@@ -231,16 +231,16 @@ body {
 }
 
 #join-gwamble-options input[type="text"] {
-  border: none;
-  border-radius: 5px;
-  height: 64px;
-  font-family: 'Lexend';
-  font-size: 35px;
-  margin: 2.5px;
-  padding: 2.5px;
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  font-weight: 900;
+    border: none;
+    border-radius: 10px;
+    height: 70px;
+    font-family: 'Lexend';
+    font-size: 30px;
+    margin: 2.5px;
+    padding: 2.5px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-weight: 900;
 }
 
 .text-center {
@@ -328,6 +328,14 @@ input::placeholder, textarea::placeholder {
     transition: all 0.3s ease;
 }
 
+#otp {
+    white-space: nowrap;
+    margin-left: -2.5px;
+    margin-right: -2.5px;
+    margin-bottom: -5px;
+    margin-top: -5px;
+}
+
 #otp input:focus {
     border-color: #a0aec0;
     box-shadow: 0 0 0 3px rgba(160, 174, 192, 0.3);
@@ -384,4 +392,13 @@ input::placeholder, textarea::placeholder {
 body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+#gwamble-options-container {
+    width: 100%;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    box-sizing: border-box;
+    gap: 20px;
+    display: flex;
+    flex-direction: column;
 }
