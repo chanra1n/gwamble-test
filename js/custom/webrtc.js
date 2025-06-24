@@ -58,7 +58,7 @@ function validateJoinCode(joinCode, onSuccess, onError) {
         console.error('Validation peer error:', err);
         cleanup();
         if (err.type === 'peer-unavailable') {
-            if (onError) onError({ type: 'peer-unavailable', message: 'This Gwamble session does not exist. Please check the code and try again.' });
+            if (onError) onError({ type: 'peer-unavailable', message: `That gwamble doesn't exist, sorry. Try a different code.` });
         } else {
             if (onError) onError({ type: 'generic-error', message: 'An unknown error occurred during validation.' });
         }
@@ -92,7 +92,7 @@ function resetInactivityTimer() {
         // Check one last time before closing.
         if (peerConnections.length === 0) {
             console.log("Session timed out due to inactivity.");
-            alert("Session closed due to inactivity.");
+            showModalMessage("Session closed due to inactivity.");
             
             // The closeSession function in session.html handles cleanup and redirect.
             if (typeof closeSession === 'function') {
@@ -129,7 +129,7 @@ function initializeHostAndRedirect(joinCode) {
 
     peer.on('error', (err) => {
         console.error('PeerJS error:', err);
-        alert('An error occurred while trying to host the session. The join code might already be in use. Please try again.');
+        showModalMessage('An error occurred while trying to host the session. The join code might already be in use. Please try again.');
         sessionStorage.clear();
     });
 }
@@ -367,13 +367,13 @@ function joinSession(hostId, updateCallback) {
 
         hostConnection.on('error', (err) => {
             console.error('Connection error:', err);
-            alert('Failed to connect to host. The session may be full or no longer exist.');
+            showModalMessage('Failed to connect to host. The session may be full or no longer exist.');
             window.location.href = 'index.html';
         });
 
         hostConnection.on('close', () => {
             console.log('Connection to host closed.');
-            alert('The host has ended the session.');
+            showModalMessage('The host has ended the session.');
             sessionStorage.clear();
             window.location.href = 'index.html';
         });
@@ -382,9 +382,9 @@ function joinSession(hostId, updateCallback) {
     peer.on('error', (err) => {
         console.error('PeerJS error:', err);
         if (err.type === 'peer-unavailable') {
-            alert('Could not find the session. Please check the code and try again.');
+            showModalMessage('Could not find the session. Please check the code and try again.');
         } else {
-            alert('An error occurred. Could not join the session.');
+            showModalMessage('An error occurred. Could not join the session.');
         }
         window.location.href = 'index.html';
     });
@@ -441,7 +441,7 @@ function handleHostMessage(data) {
             // The UI callback will now handle showing the results screen
             break;
         case 'kicked':
-            alert('You have been kicked from the session by the host.');
+            showModalMessage('You have been kicked from the session by the host.');
             disconnectFromHost();
             window.location.href = 'index.html';
             break;

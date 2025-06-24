@@ -17,7 +17,7 @@ function initUser() {
         console.log('User created', user);
     } else {
         // handle case where user cancels prompt
-        alert("You need a username to play!");
+        showModalMessage("You need a username to play!");
         initUser();
     }
 }

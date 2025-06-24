@@ -107,6 +107,12 @@
             </div>
 
         </div>
+    </div>    <!-- UIkit modal for displaying messages -->
+    <div id="gwamble-uikit-modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical" style="border-radius:16px; min-width:260px; max-width:90vw; text-align:center;">
+            <div id="gwamble-uikit-modal-content" style="margin-bottom:24px; font-size:1.1em;"></div>
+            <button class="uk-button uk-button-default" type="button" onclick="UIkit.modal('#gwamble-uikit-modal').hide()">OK</button>
+        </div>
     </div>
 
 </body>
@@ -308,7 +314,7 @@
         });
 
         if (code.length !== 6) {
-            alert("Please enter a 6-digit code.");
+            showModalMessage("Please enter a 6-digit code.");
             return;
         }
 
@@ -331,7 +337,7 @@
             },
             (error) => { // onError
                 // Validation failed, show error and re-enable button
-                alert(error.message);
+                showModalMessage(error.message);
                 joinButton.disabled = false;
                 joinButtonSpan.textContent = 'Join';
                 joinButtonIcon.className = 'ri-check-fill';
@@ -354,6 +360,12 @@
     function generateJoinCode() {
         return Math.floor(100000 + Math.random() * 900000).toString();
     }
+
+    // Modal for displaying messages
+function showModalMessage(message) {
+    document.getElementById('gwamble-uikit-modal-content').innerText = message;
+    UIkit.modal('#gwamble-uikit-modal').show();
+}
 
     window.onload = function() {
         // Clear any previous session state to ensure a clean start every time.

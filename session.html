@@ -173,7 +173,7 @@ var gwamble_session;
 window.onload = function() {
     // 1. Verify this user is the host. If not, redirect them immediately.
     if (sessionStorage.getItem('isHost') !== 'true') {
-        alert('This page is for the session host only.');
+        showModalMessage('This page is for the session host only.');
         window.location.replace('index.html');
         return; // Stop all further execution.
     }
@@ -181,7 +181,7 @@ window.onload = function() {
     // 2. Verify essential session data exists.
     const sessionData = sessionStorage.getItem('gwamble');
     if (!sessionData) {
-        alert('FATAL: No session data found. Returning to home page.');
+        showModalMessage('FATAL: No session data found. Returning to home page.');
         window.location.replace('index.html');
         return;
     }
