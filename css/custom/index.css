@@ -232,22 +232,27 @@ body {
     text-overflow: ellipsis;
 }
 
-#join-gwamble-options input[type="text"] {
+#join-gwamble-options input[type="number"] {
     border: none;
     border-radius: 10px;
-    height: 70px;
+    height: 80px;
+    width: 100%;
+    flex: 1;
     font-family: 'Lexend';
     font-size: 30px;
-    margin: 2.5px;
+    margin: 0;
     padding: 2.5px;
     background: rgba(255, 255, 255, 0.15);
     color: white;
     font-weight: 900;
+    text-align: center;
+    min-width: 0;
 }
 
 .text-center {
     margin: auto;
     margin-bottom: 10px;
+    width: 100%;
 }
 
 #create-gwamble-options textarea, #join-gwamble-options textarea {
@@ -328,14 +333,15 @@ input::placeholder, textarea::placeholder {
     vertical-align: sub;
     opacity: 50%;
     transition: all 0.3s ease;
+    flex-shrink: 0;
 }
 
 #otp {
-    white-space: nowrap;
-    margin-left: -2.5px;
-    margin-right: -2.5px;
-    margin-bottom: -5px;
-    margin-top: -5px;
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+    width: 100%;
+    align-items: center;
 }
 
 #otp input:focus {
