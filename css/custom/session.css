@@ -425,7 +425,7 @@ body {
     color: white;
     font-weight: 900;
     font-family: 'Lexend';
-    border-radius: 10px;
+    border-radius: 15px;
     box-sizing: border-box;
     display: flex;
     flex-flow: nowrap;
@@ -441,7 +441,6 @@ body {
 .member-item {
     border-radius: 15px;
     padding: 10px 20px;
-    min-width: 150px;
     transition: all 0.3s ease;
     margin-bottom: 15px;
     background: rgba(255,255,255,0.15);
@@ -487,6 +486,7 @@ body {
     justify-content: space-between;
     align-items: center;
     font-weight: bold;
+    white-space: nowrap;
 }
 
 .payout {
@@ -721,6 +721,7 @@ body {
     border: none;
     box-shadow: 0 2px 12px 0 rgba(255, 111, 174, 0.10);
     letter-spacing: 1px;
+    margin-top: -10px;
 }
 
 .gwamble-leaderboard-button:hover {
@@ -795,11 +796,11 @@ body {
 .gwamble-net-gain {
     color: #7fffad;
     font-weight: 900;
-    font-size: 22px;
+    font-size: 20px;
     margin-left: 10px;
     background: rgba(127,255,173,0.12);
     border-radius: 100vmin;
-    padding: 4px 16px;
+    padding: 0px 20px;
     letter-spacing: 1px;
 }
 .gwamble-net-loss {
@@ -811,10 +812,4 @@ body {
     border-radius: 100vmin;
     padding: 4px 16px;
     letter-spacing: 1px;
-}
-
-.gwamble-result-me {
-    border: 2px solid #7fffad;
-    background: rgba(127,255,173,0.08);
-    box-shadow: 0 0 0 2px #7fffad33;
 }

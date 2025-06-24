@@ -135,7 +135,7 @@
             </div>
             <button class = "gwamble-leaderboard-button" onclick = "closeSession()" >
         <i class="ri-close-fill"></i>
-            Close session
+            Exit
         </button>
         </div>
 
@@ -273,9 +273,7 @@ function showWinnerUI(session) {
     const userResultsDiv = document.getElementById('gwamble-user-results');
     userResultsDiv.style.display = 'block';
     userResultsDiv.innerHTML = `
-        <div class="gwamble-text-left">
-            <p><i class="ri-information-line" style="margin-right:5px"></i> Hosts receive 5 credits for hosting the session.</p>
-        </div>
+            <p style = "white-space: initial;font-size: 15px;">You earned 5 credits for hosting.</p>
     `;
 
     const leaderboardList = document.getElementById('gwamble-leaderboard-list');
@@ -307,10 +305,10 @@ function showWinnerUI(session) {
         let netText = '';
         let netClass = '';
         if (net > 0) {
-            netText = `+${net}`;
+            netText = `+ <i class="ri-coins-fill" style="margin-right: 2.5px;"></i>${net}`;
             netClass = 'gwamble-net-gain';
         } else if (net < 0) {
-            netText = `${net}`;
+            netText = `<i class="ri-coins-fill" style="margin-right: 2.5px;"></i>${net}`;
             netClass = 'gwamble-net-loss';
         } else {
             // Don't show members with no change, unless they are the only one.
@@ -319,13 +317,14 @@ function showWinnerUI(session) {
             netClass = 'gwamble-net-loss';
         }
         
-        const hostIcon = member.is_host ? `<i class="ri-vip-crown-fill" style="margin-right: 5px; opacity: 0.7;"></i>` : '';
+        const hostIcon = member.is_host ? `<i class="ri-vip-crown-fill" style="margin-right: 15px; opacity: 0.7;"></i>` : '';
 
         leaderboardList.innerHTML += `
             <div class="member-item gwamble-result-row">
                 <div class="gwamble-topper">
                     <span class="gwamble-result-username">${hostIcon}${member.username}</span>
-                    <span class="${netClass}">${netText}</span>
+                    <span class="${netClass}">
+                    ${netText}</span>
                 </div>
             </div>
         `;

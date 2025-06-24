@@ -185,7 +185,7 @@ function showWinnerUI(session) {
         leaderboardList.innerHTML += `
             <div class="member-item gwamble-result-row${bet.user_id === persistentId ? ' gwamble-result-me' : ''}">
                 <div class="gwamble-topper">
-                    <span class="gwamble-result-username">${member.username}${bet.user_id === persistentId ? ' (You)' : ''}</span>
+                    <span class="gwamble-result-username">${member.username}${bet.user_id === persistentId ? '' : ''}</span>
                     <span class="${netClass}">${netText}</span>
                 </div>
             </div>
@@ -204,11 +204,11 @@ function showWinnerUI(session) {
         
         let msg = '';
         if (net > 0) {
-            msg = `<p><i class="ri-trophy-fill" style="margin-right:5px"></i> You won! Gain: <span class='gwamble-net-gain'>+${net}</span></p>`;
+            msg = `<p><i class="ri-trophy-fill" style="margin-right:5px"></i> You won! <span class='gwamble-net-gain'>+${net}</span></p>`;
         } else if (net < 0) {
-            msg = `<p><i class="ri-close-circle-fill" style="margin-right:5px"></i> You lost. Loss: <span class='gwamble-net-loss'>${net}</span></p>`;
+            msg = `<p><i class="ri-close-circle-fill" style="margin-right:5px"></i> You lost. <span class='gwamble-net-loss'>${net}</span></p>`;
         } else {
-            msg = `<p><i class="ri-close-circle-fill" style="margin-right:5px"></i> You lost. Loss: <span class='gwamble-net-loss'>0</span></p>`;
+            msg = `<p><i class="ri-close-circle-fill" style="margin-right:5px"></i> You lost. <span class='gwamble-net-loss'>0</span></p>`;
         }
         document.getElementById('gwamble-user-results').innerHTML = msg;
     } else {
