@@ -338,7 +338,7 @@ body {
     flex-grow: 1;
     text-align: center;
     width: auto;
-    gap: 20px;
+    gap: 10px;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -565,11 +565,11 @@ body {
     bottom: 20px;
     left: 20px;
     right: 20px;
-    padding: 20px;
+    padding: 15px;
     }
 
     .gwamble-bottom button#gwamble-share-code {
-    font-size: 27.5px;
+    font-size: 25px;
     }
 
     .gwamble-bottom button#gwamble-qr-code {
