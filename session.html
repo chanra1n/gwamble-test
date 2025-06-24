@@ -74,7 +74,7 @@
 
         <button onclick = "declareWinner('A')" class = "winner-button" id="gwamble-winner-a" style="display: none;">
         <i class="ri-check-fill"></i>
-        Call it
+        Settle
         </button>
 
         <div class="gwamble-button-container" id = "outcome-b">
@@ -86,7 +86,7 @@
 
         <button onclick="declareWinner('B')" class="winner-button" id="gwamble-winner-b" style="margin-bottom: 0px; display: none; border-radius: 0px 0px 15px 15px">
         <i class="ri-check-fill"></i>
-        Call it
+        Settle
         </button>
 
         </div>
@@ -240,7 +240,7 @@ function showWinnerUI(session) {
     }
     if (winner_button) {
         winner_button.style.marginBottom = "0px";
-        winner_button.innerHTML = "Settled!";
+        winner_button.innerHTML = "<i class='ri-check-double-fill'></i> Settled!";
         winner_button.style.opacity = "0.5";
         winner_button.style.pointerEvents = "none";
     }

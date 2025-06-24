@@ -218,7 +218,7 @@ body {
 }
 
 .winner-button {
-    display: block!important;
+    display: flex;
     width: 100%!important;
     margin-top: 0px;
     margin-bottom: 20px;
@@ -231,11 +231,23 @@ body {
     font-weight: 900;
     color: white;
     position: relative;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
 }
 
 .winner-button i {
     margin-right: 2.5px;
     font-weight: 900;
+}
+
+.winner-button .bet-right {
+        background-color: white;
+    color: #e76093;
+    padding: 0px 10px;
+    border-radius: 100vmin;
+    font-size: 15px;
+    align-content: center;
 }
 
 #gwamble-share-container {
@@ -420,7 +432,7 @@ body {
 }
 
 .member-item {
-    border-radius: 15px 15px 15px 0px;
+    border-radius: 15px;
     padding: 10px 20px;
     min-width: 150px;
     transition: all 0.3s ease;
@@ -685,9 +697,9 @@ body {
 
 .gwamble-leaderboard-button {
     width: 100%;
-    border-radius: 10px;
+    border-radius: 15px;
     box-sizing: border-box;
-    padding: 20px;
+    padding: 10px;
     font-size: 20px;
     font-family: 'Lexend', sans-serif;
     background: rgba(255, 111, 174, 0.18);
