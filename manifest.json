@@ -1,8 +1,8 @@
 {
   "name": "gwamble",
   "short_name": "gwamble",
-  "theme_color": "#ffc0cb",
-  "background_color": "#ffc0cb",
+  "theme_color": "#d72660",
+  "background_color": "#d72660",
   "display": "standalone",
   "orientation": "portrait",
   "scope": "/gwamble-test/",
