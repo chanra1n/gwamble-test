@@ -113,7 +113,10 @@
             </div>
             <div id = "gwamble-leaderboard-list">
             </div>
-            <button class = "gwamble-leaderboard-button" onclick = "closeSession()" >Exit Session</button>
+            <button class = "gwamble-leaderboard-button" onclick = "closeSession()" >
+                        <i class="ri-close-fill"></i>
+            <span>Exit</span>
+            </button>
         </div>
 
         <div id="message-modal" uk-modal>
@@ -204,11 +207,11 @@ function showWinnerUI(session) {
         
         let msg = '';
         if (net > 0) {
-            msg = `<p><i class="ri-trophy-fill" style="margin-right:5px"></i> You won! <span class='gwamble-net-gain'>+${net}</span></p>`;
+            msg = `<p>You earned credits.</p>`;
         } else if (net < 0) {
-            msg = `<p><i class="ri-close-circle-fill" style="margin-right:5px"></i> You lost. <span class='gwamble-net-loss'>${net}</span></p>`;
+            msg = `<p>You lost credits.</p>`;
         } else {
-            msg = `<p><i class="ri-close-circle-fill" style="margin-right:5px"></i> You lost. <span class='gwamble-net-loss'>0</span></p>`;
+            msg = `<p>You broke even.</p>`;
         }
         document.getElementById('gwamble-user-results').innerHTML = msg;
     } else {

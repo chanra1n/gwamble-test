@@ -376,11 +376,11 @@ body {
 }
 
 #gwamble-leaderboard-table {
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(20px) saturate(1.5);
-    -webkit-backdrop-filter: blur(20px) saturate(1.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    background: #bf3266;
+    backdrop-filter: blur(15px) saturate(1.2);
+    -webkit-backdrop-filter: blur(15px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
     padding: 20px;
     box-sizing: border-box;
     display: none;
@@ -398,12 +398,12 @@ body {
 
 #gwamble-leaderboard-table h1 {
     font-size: 25px;
-    color: pink;
-    font-family: 'Lexend';
+    color: #ff6fae;
+    font-family: 'Lexend', sans-serif;
     font-weight: 900;
     margin: 0px;
-    opacity: 50%;
-    margin-top: -5px;
+    margin-top: 10px;
+    text-shadow: 0 2px 12px rgba(255, 111, 174, 0.15);
 }
 
 
@@ -418,20 +418,38 @@ body {
     align-self: center;
 }
 
+/* Final badge styling for the host's results message */
 #gwamble-user-results {
-    width: 100%;
-    background: rgba(0, 0, 0, 0.15);
-    padding: 5px;
-    color: white;
-    font-weight: 900;
-    font-family: 'Lexend';
-    border-radius: 15px;
-    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: -10px;
+    padding: 8px 15px;
     display: flex;
-    flex-flow: nowrap;
-    flex-direction: row;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Lexend', sans-serif;
     text-align: center;
+    box-sizing: border-box;
+    border-radius: 100vmin;
+    z-index: 100;
+    background: #e76595;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: white;
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.15);
+    max-width: 80%;
+}
+
+#gwamble-user-results p {
+    margin: 0;
+    padding: 0;
+    font-size: inherit;
+    white-space: normal;
+    opacity: 1;
 }
 
 .winner-trophy {
@@ -439,6 +457,7 @@ body {
 }
 
 .member-item {
+    position: relative;
     border-radius: 15px;
     padding: 10px 20px;
     transition: all 0.3s ease;
@@ -524,7 +543,7 @@ body {
 #gwamble-user-results p {
     font-family: 'Lexend';
     margin: 0px;
-    padding: 5px;
+    padding: 0px;
     opacity: 50%;
     font-size: 18px;
     white-space: nowrap;
@@ -583,35 +602,28 @@ body {
     }
 }
 
+/* --- Generic Modal Styles --- */
+/* Based on index.css and member-modal for consistency */
 .uk-modal {
     padding: 20px;
-}
-
-
-.uk-modal#qr-modal {
-    align-content: center;
-    backdrop-filter: blur(5px);
-}
-
-.uk-modal#qr-modal .uk-modal-dialog {
-    width: fit-content;
-    padding: 0px;
-}
-
-.uk-modal#member-modal {
     align-content: center;
     backdrop-filter: blur(5px);
     background: rgba(0,0,0,0.4);
 }
 
-.uk-modal#member-modal .uk-modal-dialog {
-    transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+.uk-modal.uk-open {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+}
+
+.uk-modal-dialog {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1.25);
     border-radius: 20px;
     background: #bf3266;
     color: #ffb6d5;
     padding: 20px;
     max-height: 80vh;
-    overflow: hidden;
     backdrop-filter: blur(15px) saturate(1.2);
     -webkit-backdrop-filter: blur(15px) saturate(1.2);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -620,8 +632,24 @@ body {
     flex-direction: column;
     justify-content: flex-end;
     box-shadow: 0 8px 32px 0 rgba(0,0,0,0.15);
+    text-align: center;
+    min-width: 270px;
+    max-width: 92vw;
+    overflow: hidden;
 }
 
+/* Specific overrides for QR Code Modal */
+.uk-modal#qr-modal .uk-modal-dialog {
+    width: fit-content;
+    padding: 0px;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+/* Specific overrides for Member List Modal */
 .uk-modal#member-modal .uk-modal-dialog h1 {
     color: #ff6fae;
     font-family: 'Lexend', sans-serif;
@@ -631,7 +659,8 @@ body {
     text-shadow: 0 2px 12px rgba(255, 111, 174, 0.15);
 }
 
-.uk-modal#member-modal .uk-modal-dialog .uk-modal-close {
+.uk-modal-dialog .uk-button,
+.uk-modal-dialog .uk-modal-close {
     background: rgba(255,255,255,0.15);
     color: white;
     border: none;
@@ -641,17 +670,23 @@ body {
     width: 100%;
     font-size: 20px;
     padding: 5px 0;
-    position: sticky;
-    bottom: 0;
     box-shadow: 0px 0px 16px 0px rgba(255, 111, 174, 0.15);
-    z-index: 3;
-    margin-top: 20px;
     transition: background 0.2s;
+    text-transform: none;
+    margin-top: 20px;
 }
 
-.uk-modal#member-modal .uk-modal-dialog .uk-modal-close:hover {
+.uk-modal-dialog .uk-button:hover,
+.uk-modal-dialog .uk-modal-close:hover {
     background: rgba(255, 111, 174, 0.2);
     color: white;
+}
+
+/* Make member list close button sticky as it can scroll */
+.uk-modal#member-modal .uk-modal-dialog .uk-modal-close {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
 }
 
 #member-modal-list .member-item {
@@ -687,13 +722,6 @@ body {
     font-size: 20px;
 }
 
-.uk-modal-dialog {
-    transition: all 0.33s cubic-bezier(0.68, -0.7, 0.265, 1.7)!important;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.08);
-    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.18);
-}
-
 #gwamble-qr-display img {
     width: 75vw;
     height: 75vw;
@@ -710,7 +738,7 @@ body {
     padding: 10px;
     font-size: 20px;
     font-family: 'Lexend', sans-serif;
-    background: rgba(255, 111, 174, 0.18);
+    background: rgba(0, 0, 0, 0.2);
     color: white;
     display: flex;
     align-items: center;
@@ -719,14 +747,14 @@ body {
     transition: background 0.3s, color 0.3s;
     font-weight: 900;
     border: none;
-    box-shadow: 0 2px 12px 0 rgba(255, 111, 174, 0.10);
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     letter-spacing: 1px;
-    margin-top: -10px;
+    margin-top: 5px;
 }
 
 .gwamble-leaderboard-button:hover {
-    background: rgba(255, 111, 174, 0.35);
-    color: #fff0fa;
+    background: rgba(0, 0, 0, 0.3);
+    color: #fff;
 }
 
 #gwamble-user-results .gwamble-leaderboard-button {
@@ -776,15 +804,15 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(255,255,255,0.08);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 15px;
-    margin-bottom: 10px;
+    margin-bottom: 0;
     padding: 15px 20px;
     font-family: 'Lexend', sans-serif;
     font-size: 20px;
     font-weight: 700;
     color: white;
-    box-shadow: 0 2px 12px 0 rgba(255, 111, 174, 0.10);
+    box-shadow: none;
 }
 .gwamble-result-username {
     font-family: 'Lexend', sans-serif;

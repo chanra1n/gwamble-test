@@ -135,7 +135,7 @@
             </div>
             <button class = "gwamble-leaderboard-button" onclick = "closeSession()" >
         <i class="ri-close-fill"></i>
-            Exit
+            <span>Exit</span>
         </button>
         </div>
 
@@ -273,7 +273,7 @@ function showWinnerUI(session) {
     const userResultsDiv = document.getElementById('gwamble-user-results');
     userResultsDiv.style.display = 'block';
     userResultsDiv.innerHTML = `
-            <p style = "white-space: initial;font-size: 15px;">You earned 5 credits for hosting.</p>
+            <p style = "white-space: initial;font-size: 15px;">You earned credits for hosting.</p>
     `;
 
     const leaderboardList = document.getElementById('gwamble-leaderboard-list');
