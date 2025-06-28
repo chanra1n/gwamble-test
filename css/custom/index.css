@@ -57,9 +57,6 @@ body {
     color: white;
     margin: 0;
     line-height: normal;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
 }
 
 #reload-icon, #user-icon, #loading-icon {

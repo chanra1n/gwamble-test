@@ -385,12 +385,11 @@ function distributeCredits(winningOutcome, bets, userCredits) {
         }
     }
 
-    // --- HOST COMPENSATION: Random credits for hosting ---
+    // --- HOST COMPENSATION: +5 credits for hosting ---
     if (hostId && userCredits[hostId] !== undefined) {
-        const hostBonus = Math.floor(Math.random() * 4) + 2; // Random number from 2 to 5
-        userCredits[hostId] += hostBonus;
-        creditChanges[hostId] = (creditChanges[hostId] || 0) + hostBonus;
-        console.log(`Host ${hostId} compensated +${hostBonus} credits for hosting.`);
+        userCredits[hostId] += 5;
+        creditChanges[hostId] += 5;
+        console.log(`Host ${hostId} compensated +5 credits for hosting.`);
     }
 
     // --- Ensure host is present in session.members for credit update ---
@@ -437,105 +436,89 @@ function handleHostWinnerDeclared(winningOutcome) {
         return;
     }
 
-    // NEW: Check if host is alone and prevent settling the bet.
-    if (peerConnections.length === 0) {
-        showModalMessage("Someone needs to join your gwamble first!");
-        return;
-    }
-
     let session = JSON.parse(sessionStorage.getItem('gwamble'));
     if (!session) {
         console.error("CRITICAL: Could not find session data for credit distribution.");
         return;
     }
 
-    // Set winner, then broadcast and handle for all UIs to see the result animation.
+    // FIX: Set the winner on the session object so the UI can find it.
     session.winner = winningOutcome;
-    const winnerPayload = { type: 'winner-declared', payload: { winner: winningOutcome } };
-    broadcastMessage(winnerPayload);
-    handleMessage(winnerPayload); // Update host UI immediately
 
-    // --- Credit Distribution ---
-    // Only distribute credits if there are enough players (host + 2 peers).
-    if (session.members && session.members.length >= 3) {
-        console.log(`Distributing credits for session with ${session.members.length} members.`);
+    // First, broadcast the winner to all peers so their UI can update.
+    broadcastMessage({ type: 'winner-declared', payload: { winner: winningOutcome } });
 
-        // --- Build userCredits for ALL members, always include host ---
-        let userCredits = {};
-        const hostId = localStorage.getItem('gwamble_persistent_user_id');
+    // --- Build userCredits for ALL members, always include host ---
+    let userCredits = {};
+    const hostId = localStorage.getItem('gwamble_persistent_user_id');
 
-        // Ensure host is in the members list for credit calculation
-        if (hostId && session.members && !session.members.find(m => m.user_id === hostId)) {
-            let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
-            session.members.push({
-                user_id: hostId,
-                username: user.username || 'Host',
-                is_host: true,
-                credits: user.credits !== undefined ? user.credits : 100
-            });
-            console.log("Host was not in session members, added for credit calculation.");
-        }
-        
-        // Populate userCredits from session members
-        if (session.members && session.members.length > 0) {
-            session.members.forEach(m => {
-                // For host, always use the most up-to-date credits from localStorage
-                if (m.is_host) {
-                    let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
-                    userCredits[m.user_id] = user.credits !== undefined ? user.credits : 100;
-                } else {
-                    // For peers, use their credits stored in the session.
-                    userCredits[m.user_id] = m.credits !== undefined ? m.credits : 100;
-                }
-            });
-        }
-
-        // If for some reason userCredits is empty (e.g., no members), ensure host is still in.
-        if (hostId && userCredits[hostId] === undefined) {
-            let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
-            userCredits[hostId] = user.credits !== undefined ? user.credits : 100;
-            console.log("Host credits added to calculation as a fallback.");
-        }
-
-        console.log('Initial credits before distribution:', JSON.parse(JSON.stringify(userCredits)));
-        
-        // --- Distribute credits ---
-        const result = distributeCredits(winningOutcome, session.bets || [], userCredits);
-        const creditChanges = result._changes;
-        delete result._changes; // Clean up the object
-
-        console.log('Final credits after distribution:', result);
-        console.log('Credit changes:', creditChanges);
-
-        // Update credits AND creditChanges in the host's session.members object
+    // Ensure host is in the members list for credit calculation
+    if (hostId && session.members && !session.members.find(m => m.user_id === hostId)) {
+        let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
+        session.members.push({
+            user_id: hostId,
+            username: user.username || 'Host',
+            is_host: true,
+            credits: user.credits !== undefined ? user.credits : 100
+        });
+        console.log("Host was not in session members, added for credit calculation.");
+    }
+    
+    // Populate userCredits from session members
+    if (session.members && session.members.length > 0) {
         session.members.forEach(m => {
-            if (result[m.user_id] !== undefined) {
-                m.credits = result[m.user_id];
-            }
-            // Add the creditChange to the member object for the UI leaderboard.
-            if (creditChanges && creditChanges[m.user_id] !== undefined) {
-                m.creditChange = creditChanges[m.user_id];
+            // For host, always use the most up-to-date credits from localStorage
+            if (m.is_host) {
+                let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
+                userCredits[m.user_id] = user.credits !== undefined ? user.credits : 100;
+            } else {
+                // For peers, use their credits stored in the session.
+                userCredits[m.user_id] = m.credits !== undefined ? m.credits : 100;
             }
         });
-        sessionStorage.setItem('gwamble', JSON.stringify(session));
-
-        // Broadcast the final credit state to all peers
-        const finalPayload = { 
-            type: 'credits-updated', 
-            payload: { 
-                userCredits: result, 
-                creditChanges 
-            } 
-        };
-        broadcastMessage(finalPayload);
-
-        // And handle it for the host's own UI
-        handleMessage(finalPayload);
-
-    } else {
-        console.log("Session has fewer than 3 members. Skipping credit distribution.");
-        // Winner declaration has already been sent, so no further action is needed.
     }
+
+    // If for some reason userCredits is empty (e.g., no members), ensure host is still in.
+    if (hostId && userCredits[hostId] === undefined) {
+        let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
+        userCredits[hostId] = user.credits !== undefined ? user.credits : 100;
+        console.log("Host credits added to calculation as a fallback.");
+    }
+
+    console.log('Initial credits before distribution:', JSON.parse(JSON.stringify(userCredits)));
+    
+    // --- Distribute credits ---
+    const result = distributeCredits(winningOutcome, session.bets || [], userCredits);
+    const creditChanges = result._changes;
+    delete result._changes; // Clean up the object
+
+    console.log('Final credits after distribution:', result);
+    console.log('Credit changes:', creditChanges);
+
+    // Update credits AND creditChanges in the host's session.members object
+    session.members.forEach(m => {
+        if (result[m.user_id] !== undefined) {
+            m.credits = result[m.user_id];
+        }
+        // Add the creditChange to the member object for the UI leaderboard.
+        if (creditChanges && creditChanges[m.user_id] !== undefined) {
+            m.creditChange = creditChanges[m.user_id];
+        }
+    });
+    sessionStorage.setItem('gwamble', JSON.stringify(session));
+
+    // Broadcast the final credit state to all peers
+    const finalPayload = { 
+        type: 'credits-updated', 
+        payload: { 
+            userCredits: result, 
+            creditChanges 
+        } 
+    };
+    broadcastMessage(finalPayload);
+
+    // And handle it for the host's own UI
+    handleMessage(finalPayload);
 }
 
 /**
@@ -566,6 +549,217 @@ function sendBet(outcome) {
 
     hostConnection.send({ type: 'bet-placed', payload: { betInfo: betInfo } });
     console.log('sendBet: Bet sent to host');
+}
+
+/**
+ * (Peer Only) Disconnects from the host and cleans up the peer object.
+ */
+function disconnectFromHost() {
+    if (hostConnection) {
+        hostConnection.close();
+    }
+    if (peer) {
+        peer.destroy();
+    }
+    console.log("Disconnected from host.");
+}
+
+/**
+ * (Peer Only) Connects a peer to a host.
+ * This is called from join.html
+ * @param {string} hostId The 6-digit code of the host to connect to.
+ * @param {function} updateCallback The function to call to update the UI.
+ */
+function joinSession(hostId, updateCallback) {
+    // Explicitly clear the isHost flag to ensure this client is treated as a peer.
+    sessionStorage.removeItem('isHost');
+    uiUpdateCallback = updateCallback;
+
+    // Get or create a persistent user ID to prevent duplicate betting on reload.
+    let persistentId = localStorage.getItem('gwamble_persistent_user_id');
+    if (!persistentId) {
+        persistentId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+        localStorage.setItem('gwamble_persistent_user_id', persistentId);
+    }
+
+    if (peer) {
+        peer.destroy();
+    }
+    
+    peer = new Peer();
+
+    peer.on('open', (id) => {
+        console.log('My PeerJS ID is ' + id + ', connecting to host ' + hostId);
+        hostConnection = peer.connect(hostId, { reliable: true });
+
+        hostConnection.on('open', () => {
+            console.log('Connection to host established. Announcing myself.');
+            const username = getLocalUsername();
+            // --- FIX: Send credits on connect ---
+            const user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
+            const credits = user.credits !== undefined ? user.credits : 100;
+
+            sessionStorage.setItem('myPeerId', peer.id);
+            // Send the persistent ID along with the username and current credits.
+            hostConnection.send({
+                type: 'user-reconnected',
+                payload: {
+                    username: username,
+                    persistentId: persistentId,
+                    credits: credits
+                }
+            });
+        });
+
+        hostConnection.on('data', (data) => {
+            console.log('Received data from host:', data);
+            handleHostMessage(data);
+        });
+
+        hostConnection.on('error', (err) => {
+            console.error('Connection error:', err);
+            showModalMessage('Failed to connect to host. The session may be full or no longer exist.');
+            window.location.href = 'index.html';
+        });
+
+        hostConnection.on('close', () => {
+            console.log('Connection to host closed.');
+            showModalMessage('This gwamble is over! You have been disconnected.');
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        });
+    });
+
+    peer.on('error', (err) => {
+        console.error('PeerJS error:', err);
+        if (err.type === 'peer-unavailable') {
+            showModalMessage(`Couldn't join that gwamble, sorry. Something went wrong.`);
+        } else {
+            showModalMessage('An error occurred. Could not join the session.');
+        }
+        window.location.href = 'index.html';
+    });
+}
+
+/**
+ * (Peer Only) Handles messages received from the host.
+ * @param {object} data The data object from the host.
+ */
+function handleHostMessage(data) {
+    const { type, payload } = data;
+
+    // Initialize sessionData if it's the first message
+    if (!sessionData && type === 'session-data') {
+        sessionData = payload;
+    } else if (!sessionData) {
+        // If sessionData is not set yet and we receive another message type, we probably missed the initial data.
+        // We can either request it again or wait. For now, we'll just log a warning.
+        console.warn("Received message before session data was initialized. Type: ", type);
+        return;
+    }
+
+    switch (type) {
+        case 'session-data':
+            // Already handled, but we can merge just in case
+            sessionData = { ...sessionData, ...payload };
+            break;
+        case 'user-list':
+            sessionData.members = payload.users.map(u => ({
+                user_id: u.peerId, // Keep peerId as the primary key for UI elements
+                persistent_id: u.persistentId, // Store the persistent ID
+                username: u.username,
+                is_host: u.peerId === sessionStorage.getItem('gwamble_join_code')
+            }));
+            break;
+        case 'user-joined':
+            if (!sessionData.members.find(m => m.user_id === payload.peerId)) {
+                sessionData.members.push({
+                    user_id: payload.peerId,
+                    persistent_id: payload.persistentId, // Store the persistent ID
+                    username: payload.username,
+                    is_host: false,
+                    credits: payload.credits // --- FIX: Store credits for new user ---
+                });
+            }
+            break;
+        case 'user-left':
+            sessionData.members = sessionData.members.filter(m => m.user_id !== payload.peerId);
+            break;
+        case 'bets-updated':
+            sessionData.bets = payload.bets;
+            break;
+        case 'winner-declared':
+            // The host now calculates credits and sends a separate 'credits-updated' message.
+            // The peer just needs to know the winner for UI purposes.
+            sessionData.winner = payload.winner;
+            break;
+        case 'credits-updated':
+            // Update local credits for all users and localStorage
+            if (sessionData && sessionData.members) {
+                Object.entries(payload.userCredits).forEach(([user_id, credits]) => {
+                    let m = sessionData.members.find(m => m.user_id === user_id);
+                    if (m) {
+                        m.credits = credits;
+                        // Store the credit change for this user
+                        if (payload.creditChanges && payload.creditChanges[user_id] !== undefined) {
+                            m.creditChange = payload.creditChanges[user_id];
+                        }
+                    }
+                    // If this is me, update my localStorage too
+                    const myId = localStorage.getItem('gwamble_persistent_user_id');
+                    if (user_id === myId) {
+                        console.log(`UPDATING MY CREDITS: ${credits} for user ${myId}`);
+                        let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
+                        user.credits = credits;
+                        localStorage.setItem('gwambleUser', JSON.stringify(user));
+                        console.log('Updated localStorage:', localStorage.getItem('gwambleUser'));
+                        
+                        // FORCE UPDATE PROFILE PAGE IF IT EXISTS
+                        if (typeof updateCreditsDisplay === 'function') {
+                            updateCreditsDisplay();
+                        }
+                    }
+                });
+            }
+            break;
+        default:
+            console.warn('Unknown message type from host:', type);
+            return; 
+    }
+
+    if (uiUpdateCallback) {
+        uiUpdateCallback(sessionData);
+    }
+}
+
+
+/**
+ * (Peer Only) Sends a bet to the host.
+ * @param {string} outcome The outcome being bet on ('a' or 'b').
+ */
+function sendBet(outcome) {
+    console.log('sendBet called with outcome:', outcome);
+    
+    if (!hostConnection) {
+        console.error("Cannot send bet, not connected to host.");
+        return;
+    }
+
+    const persistentId = localStorage.getItem('gwamble_persistent_user_id');
+    if (!persistentId) {
+        console.error("Cannot send bet, no persistent user ID found.");
+        return;
+    }
+
+    console.log('sendBet: About to send bet to host');
+
+    const betInfo = {
+        userId: persistentId,
+        outcome: outcome,
+        amount: 10
+    };
+
+    hostConnection.send({ type: 'bet-placed', payload: { betInfo: betInfo } });
 }
 
 /**
@@ -629,38 +823,7 @@ function handleMessage(data) {
 // Show a modal message (UIkit or fallback to alert)
 function showModalMessage(msg) {
     if (window.UIkit && UIkit.modal) {
-        // Use a custom modal structure to match the site's design
-        const modalId = 'gwamble-generic-alert';
-
-        // Remove any existing alert modal to prevent duplicates
-        const existingModal = document.getElementById(modalId);
-        if (existingModal) {
-            UIkit.modal(existingModal).hide().then(() => existingModal.remove());
-        }
-
-        // Create the new modal HTML, matching the structure of member-modal
-        const modalHtml = `
-            <div id="${modalId}" uk-modal>
-                <div class="uk-modal-dialog">
-                    <div id="gwamble-uikit-modal-content">
-                        ${msg}
-                    </div>
-                    <button class="uk-button uk-modal-close" type="button" autofocus>OK</button>
-                </div>
-            </div>
-        `;
-
-        // Append, show, and set up cleanup
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
-        const modalElement = document.getElementById(modalId);
-        const modalInstance = UIkit.modal(modalElement);
-        
-        UIkit.util.on(modalElement, 'hidden', () => {
-            modalElement.remove();
-        });
-
-        modalInstance.show();
-
+        UIkit.modal.alert(`<div style='font-family:Lexend;font-size:20px;text-align:center;'>${msg}</div>`);
     } else {
         alert(msg);
     }
