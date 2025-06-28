@@ -139,102 +139,154 @@
 <script>
 
 function showWinnerUI(session) {
-    // Only show net gain/loss for each user who bet, not which outcome they bet on
-    const persistentId = localStorage.getItem('gwamble_persistent_user_id');
-    const leaderboardTable = document.getElementById('gwamble-leaderboard-table');
-    leaderboardTable.style.display = 'flex';
-    const leaderboardList = document.getElementById('gwamble-leaderboard-list');
-    leaderboardList.innerHTML = '';
+    const outcome = session.winner ? session.winner.toUpperCase() : '';
+    const winner_post = document.getElementById('outcome-'+outcome.toLowerCase());
+    const winner_button = document.getElementById('gwamble-winner-'+outcome.toLowerCase());
+    const loser_post = document.getElementById('outcome-'+(outcome.toLowerCase() === 'a' ? 'b' : 'a'));
+    const loser_button = document.getElementById('gwamble-winner-'+(outcome.toLowerCase() === 'a' ? 'b' : 'a'));
 
-    // Show results for each user who bet using creditChange
-    session.bets.forEach(bet => {
-        const member = session.members.find(m => m.user_id === bet.user_id);
-        if (!member) return;
-        
-        // Use the creditChange if available, otherwise calculate from credits
-        let net = member.creditChange;
-        if (net === undefined) {
-            // Fallback: assume they lost 10 if they're a loser, won something if winner
-            const isWinner = bet.selected_outcome.toLowerCase() === session.winner.toLowerCase();
-            net = isWinner ? 10 : -10; // Simplified fallback
-        }
-        
-        console.log(`User ${member.username}: creditChange = ${net}`);
-        
-        // IF THIS IS ME, FORCE UPDATE MY LOCALSTORAGE WITH FINAL CREDITS
-        if (bet.user_id === persistentId) {
-            let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
-            const currentCredits = user.credits || 90;
-            const finalCredits = member.credits || (currentCredits + net);
-            user.credits = finalCredits;
-            localStorage.setItem('gwambleUser', JSON.stringify(user));
-            console.log(`FORCE UPDATED MY CREDITS: ${currentCredits} -> ${finalCredits}`);
-            console.log('Final localStorage:', localStorage.getItem('gwambleUser'));
-        }
-        
-        let netText = '';
-        let netClass = '';
-        if (net > 0) {
-            netText = `+${net}`;
-            netClass = 'gwamble-net-gain';
-        } else if (net < 0) {
-            netText = `${net}`;
-            netClass = 'gwamble-net-loss';
-        } else {
-            netText = '0';
-            netClass = 'gwamble-net-loss';
-        }
-        
-        leaderboardList.innerHTML += `
-            <div class="member-item gwamble-result-row${bet.user_id === persistentId ? ' gwamble-result-me' : ''}">
-                <div class="gwamble-topper">
-                    <span class="gwamble-result-username">${member.username}${bet.user_id === persistentId ? '' : ''}</span>
-                    <span class="${netClass}">${netText}</span>
-                </div>
-            </div>
+    if (loser_post) loser_post.remove();
+    if (loser_button) loser_button.remove();
+    if (winner_post) winner_post.classList.add('animate__animated', 'animate__tada');
+    if (winner_button) {
+        winner_button.style.marginBottom = "0px";
+        winner_button.innerHTML = `
+        <div class="bet-left">Settled!</div>
+        <div class="bet-right"><i class="ri-check-double-fill"></i></div>
         `;
-    });
-
-    // Show your own result at the top if you bet
-    const myBet = session.bets.find(b => b.user_id === persistentId);
-    if (myBet) {
-        const member = session.members.find(m => m.user_id === persistentId);
-        let net = member ? member.creditChange : undefined;
-        if (net === undefined) {
-            const isWinner = myBet.selected_outcome.toLowerCase() === session.winner.toLowerCase();
-            net = isWinner ? 10 : -10;
-        }
-        
-        let msg = '';
-        if (net > 0) {
-            msg = `<p>You earned credits.</p>`;
-        } else if (net < 0) {
-            msg = `<p>You lost credits.</p>`;
-        } else {
-            msg = `<p>You broke even.</p>`;
-        }
-        document.getElementById('gwamble-user-results').innerHTML = msg;
-    } else {
-        document.getElementById('gwamble-user-results').innerHTML = `<p>You didn't place a bet.</p>`;
+        winner_button.style.opacity = "0.5";
+        winner_button.style.pointerEvents = "none";
     }
-
-    // Hide all outcome/bet UI
-    const outcomeA = document.getElementById('outcome-a');
-    const outcomeB = document.getElementById('outcome-b');
-    if (outcomeA) outcomeA.remove();
-    if (outcomeB) outcomeB.remove();
-    const winnerA = document.getElementById('gwamble-winner-a');
-    const winnerB = document.getElementById('gwamble-winner-b');
-    if (winnerA) winnerA.remove();
-    if (winnerB) winnerB.remove();
     const bottomBar = document.querySelector('.gwamble-bottom');
     if (bottomBar) bottomBar.remove();
     const topBar = document.getElementById('gwamble-bar');
     if (topBar) topBar.style.display = "none";
     const postedGwamble = document.getElementById('posted-gwamble');
     if (postedGwamble) postedGwamble.style.marginTop = "20px";
-}
+    const leaderboardTable = document.getElementById('gwamble-leaderboard-table');
+    leaderboardTable.style.display = "flex";
 
+    // Info message for the user
+    const userResultsDiv = document.getElementById('gwamble-user-results');
+    userResultsDiv.style.display = 'block';
+
+    // Show correct message for host or player
+    const persistentId = localStorage.getItem('gwamble_persistent_user_id');
+    const isHost = session.hostId === persistentId;
+    if (isHost) {
+        userResultsDiv.innerHTML = `<p style="font-size: 15px;">You earned credits for hosting.</p>`;
+    } else {
+        // Show win/loss message for player
+        const myBet = session.bets ? session.bets.find(b => b.user_id === persistentId) : null;
+        let net = 0;
+        if (myBet) {
+            const member = session.members.find(m => m.user_id === persistentId);
+            net = member && typeof member.creditChange === 'number' ? member.creditChange : 0;
+        }
+        if (net > 0) {
+            userResultsDiv.innerHTML = `<p style="font-size: 15px;">You earned credits.</p>`;
+        } else if (net < 0) {
+            userResultsDiv.innerHTML = `<p style="font-size: 15px;">You lost credits.</p>`;
+        } else if (myBet) {
+            userResultsDiv.innerHTML = `<p style="font-size: 15px;">You broke even.</p>`;
+        } else {
+            userResultsDiv.innerHTML = `<p style="font-size: 15px;">You didn't place a bet.</p>`;
+        }
+    }
+
+    const leaderboardList = document.getElementById('gwamble-leaderboard-list');
+    leaderboardList.innerHTML = '';
+
+    // --- PATCH: Robust host detection ---
+    let hostId = session.hostId;
+    if (!hostId) {
+        const hostMemberObj = session.members.find(m => m.is_host || m.isHost);
+        if (hostMemberObj) {
+            hostId = hostMemberObj.user_id;
+        } else if (session.members.length > 0) {
+            hostId = session.members[0].user_id;
+        }
+    }
+
+    let hostMember = session.members.find(m => String(m.user_id) === String(hostId));
+    if (!hostMember) {
+        let hostUsername = session.hostUsername || 'Host';
+        let hostCredits = 100;
+        let hostCreditChange = 0;
+        const hostBet = session.bets ? session.bets.find(b => b.user_id === hostId) : null;
+        if (hostBet && hostBet.creditChange !== undefined) {
+            hostCreditChange = hostBet.creditChange;
+        }
+        if (session.creditChanges && session.creditChanges[hostId] !== undefined) {
+            hostCreditChange = session.creditChanges[hostId];
+        }
+        if (session.userCredits && session.userCredits[hostId] !== undefined) {
+            hostCredits = session.userCredits[hostId];
+        }
+        hostMember = {
+            user_id: hostId,
+            username: hostUsername,
+            is_host: true,
+            credits: hostCredits,
+            creditChange: hostCreditChange
+        };
+        session.members.push(hostMember);
+    }
+    // FORCE host flag for robustness on all members
+    session.members.forEach(m => {
+        if (String(m.user_id) === String(hostId)) m.is_host = true;
+    });
+
+    // Filter for members who actually had a credit change.
+    const membersWithChanges = session.members ? session.members.filter(m => m.creditChange !== undefined) : [];
+
+    if (membersWithChanges.length === 0) {
+        leaderboardTable.querySelector('h1').innerText = 'No Results';
+        leaderboardList.innerHTML = `
+            <div class="member-item" style="width:100%;opacity:50%">
+                <div class="gwamble-topper">
+                    <span style="font-family:'Lexend';font-size:18px">Credit distribution could not be determined.</span>
+                </div>
+            </div>`;
+        return;
+    }
+
+    leaderboardTable.querySelector('h1').innerText = 'Results';
+
+    // Sort members by who gained the most.
+    membersWithChanges.sort((a, b) => b.creditChange - a.creditChange);
+
+    membersWithChanges.forEach(member => {
+        const net = member.creditChange;
+
+        let netText = '';
+        let netClass = '';
+        if (net > 0) {
+            netText = `+ <i class="ri-coins-fill" style="margin-right: 2.5px;"></i>${net}`;
+            netClass = 'gwamble-net-gain';
+        } else if (net < 0) {
+            netText = `<i class="ri-coins-fill" style="margin-right: 2.5px;"></i>${net}`;
+            netClass = 'gwamble-net-loss';
+        } else {
+            // Don't show members with no change, unless they are the only one.
+            if (membersWithChanges.length > 1) return;
+            netText = '0';
+            netClass = 'gwamble-net-loss';
+        }
+
+        const hostIcon = member.is_host ? `<i class="ri-vip-crown-fill" style="margin-right: 15px; opacity: 0.7;"></i>` : '';
+
+        leaderboardList.innerHTML += `
+            <div class="member-item gwamble-result-row">
+                <div class="gwamble-topper">
+                    <span class="gwamble-result-username">${hostIcon}${member.username}</span>
+                    <span class="${netClass}">
+                    ${netText}</span>
+                </div>
+            </div>
+        `;
+    });
+}
 function updateUI(session) {
     if (!session) return;
 

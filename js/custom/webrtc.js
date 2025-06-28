@@ -175,105 +175,115 @@ function reestablishHostConnection() {
         console.error('PeerJS error on host:', err);
     });
 
-    peer.on('connection', (conn) => {
-        console.log(`New connection from ${conn.peer}`);
-        conn.on('open', () => {
-            console.log('Connection opened. Sending session data.');
-            const session = JSON.parse(sessionStorage.getItem('gwamble'));
-            conn.send({ type: 'session-data', payload: session });
-            // --- FIX: Always use persistentId for members ---
-            // Find or add member by persistentId
-            if (conn.persistentId) {
-                let sessionObj = JSON.parse(sessionStorage.getItem('gwamble'));
-                if (sessionObj) {
-                    let exists = sessionObj.members.find(m => m.user_id === conn.persistentId);
-                    if (!exists) {
-                        sessionObj.members.push({ user_id: conn.persistentId, username: conn.username, is_host: false });
-                        sessionStorage.setItem('gwamble', JSON.stringify(sessionObj));
-                    }
-                }
-            }
-            peerConnections.push(conn);
-            resetInactivityTimer();
-        });
-        conn.on('data', (data) => {
-            if (data.type === 'user-reconnected') {
-                conn.username = data.payload.username;
-                conn.persistentId = data.payload.persistentId;
-                // --- FIX: Store peer's credits on connection and in session ---
-                conn.credits = data.payload.credits;
+peer.on('connection', (conn) => {
+    console.log(`New connection from ${conn.peer}`);
+    conn.on('open', () => {
+        console.log('Connection opened. Sending session data.');
+        let session = JSON.parse(sessionStorage.getItem('gwamble'));
 
-                let sessionObj = JSON.parse(sessionStorage.getItem('gwamble'));
-                if (sessionObj) {
-                    let member = sessionObj.members.find(m => m.user_id === conn.persistentId);
-                    if (!member) {
-                        sessionObj.members.push({
-                            user_id: conn.persistentId,
-                            username: conn.username,
-                            is_host: false,
-                            credits: conn.credits // Store credits in session
-                        });
-                    } else {
-                        // If user is reconnecting, update their credits in the session state
-                        member.credits = conn.credits;
-                    }
+        // --- FIX: Ensure host is present in session.members before sending session-data ---
+        const hostId = localStorage.getItem('gwamble_persistent_user_id');
+        let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
+        if (hostId && session.members && !session.members.find(m => m.user_id === hostId)) {
+            session.members.push({
+                user_id: hostId,
+                username: user.username || 'Host',
+                is_host: true,
+                credits: user.credits !== undefined ? user.credits : 100
+            });
+            sessionStorage.setItem('gwamble', JSON.stringify(session));
+        }
+
+        conn.send({ type: 'session-data', payload: session });
+
+        // --- Existing logic for persistentId/user-list ---
+        if (conn.persistentId) {
+            let sessionObj = JSON.parse(sessionStorage.getItem('gwamble'));
+            if (sessionObj) {
+                let exists = sessionObj.members.find(m => m.user_id === conn.persistentId);
+                if (!exists) {
+                    sessionObj.members.push({ user_id: conn.persistentId, username: conn.username, is_host: false });
                     sessionStorage.setItem('gwamble', JSON.stringify(sessionObj));
                 }
-                const joinPayload = {
-                    peerId: conn.persistentId, // Use persistentId
-                    username: data.payload.username,
-                    persistentId: data.payload.persistentId,
-                    credits: data.payload.credits // Pass credits in broadcast
-                };
-                const newUserMessage = { type: 'user-joined', payload: joinPayload };
-                broadcastMessage(newUserMessage, conn.peer);
-                handleMessage(newUserMessage);
-                // Send the full list of users (including the new one) back to the new peer
-                const allUsers = peerConnections
-                    .map(p => ({
-                        peerId: p.persistentId || p.peer,
-                        username: p.username,
-                        persistentId: p.persistentId || p.peer
-                    }))
-                    .filter(p => p.username);
-                allUsers.push({
-                    peerId: localStorage.getItem('gwamble_persistent_user_id'),
-                    username: getLocalUsername(),
-                    persistentId: localStorage.getItem('gwamble_persistent_user_id')
-                });
-                conn.send({ type: 'user-list', payload: { users: allUsers } });
-            } else if (data.type === 'bet-placed') {
-                handleBetPlaced(data.payload.betInfo);
-            } else {
-                broadcastMessage(data, conn.peer);
-                handleMessage(data);
             }
-        });
-
-        conn.on('close', () => {
-            console.log(`Connection from ${conn.peer} closed.`);
-            const index = peerConnections.findIndex(p => p.peer === conn.peer);
-            if (index > -1) {
-                const leavingPeer = peerConnections[index];
-                peerConnections.splice(index, 1);
-                // Only broadcast if the user had fully joined (i.e., had a username)
-                if (leavingPeer.username) {
-                    const userLeftMessage = {
-                        type: 'user-left',
-                        payload: {
-                            peerId: leavingPeer.peer,
-                            username: leavingPeer.username,
-                            persistentId: leavingPeer.persistentId // Include for completeness
-                        }
-                    };
-                    handleMessage(userLeftMessage);
-                    broadcastMessage(userLeftMessage);
-                }
-            }
-            // A peer has left. Reset the timer. If it was the last peer, the timeout will start.
-            resetInactivityTimer();
-        });
+        }
+        peerConnections.push(conn);
+        resetInactivityTimer();
     });
+    conn.on('data', (data) => {
+        if (data.type === 'user-reconnected') {
+            conn.username = data.payload.username;
+            conn.persistentId = data.payload.persistentId;
+            conn.credits = data.payload.credits;
+
+            let sessionObj = JSON.parse(sessionStorage.getItem('gwamble'));
+            if (sessionObj) {
+                let member = sessionObj.members.find(m => m.user_id === conn.persistentId);
+                if (!member) {
+                    sessionObj.members.push({
+                        user_id: conn.persistentId,
+                        username: conn.username,
+                        is_host: false,
+                        credits: conn.credits
+                    });
+                } else {
+                    member.credits = conn.credits;
+                }
+                sessionStorage.setItem('gwamble', JSON.stringify(sessionObj));
+            }
+            const joinPayload = {
+                peerId: conn.persistentId,
+                username: data.payload.username,
+                persistentId: data.payload.persistentId,
+                credits: data.payload.credits
+            };
+            const newUserMessage = { type: 'user-joined', payload: joinPayload };
+            broadcastMessage(newUserMessage, conn.peer);
+            handleMessage(newUserMessage);
+            // Send the full list of users (including the new one) back to the new peer
+            const allUsers = peerConnections
+                .map(p => ({
+                    peerId: p.persistentId || p.peer,
+                    username: p.username,
+                    persistentId: p.persistentId || p.peer
+                }))
+                .filter(p => p.username);
+            allUsers.push({
+                peerId: localStorage.getItem('gwamble_persistent_user_id'),
+                username: getLocalUsername(),
+                persistentId: localStorage.getItem('gwamble_persistent_user_id')
+            });
+            conn.send({ type: 'user-list', payload: { users: allUsers } });
+        } else if (data.type === 'bet-placed') {
+            handleBetPlaced(data.payload.betInfo);
+        } else {
+            broadcastMessage(data, conn.peer);
+            handleMessage(data);
+        }
+    });
+
+    conn.on('close', () => {
+        console.log(`Connection from ${conn.peer} closed.`);
+        const index = peerConnections.findIndex(p => p.peer === conn.peer);
+        if (index > -1) {
+            const leavingPeer = peerConnections[index];
+            peerConnections.splice(index, 1);
+            if (leavingPeer.username) {
+                const userLeftMessage = {
+                    type: 'user-left',
+                    payload: {
+                        peerId: leavingPeer.peer,
+                        username: leavingPeer.username,
+                        persistentId: leavingPeer.persistentId
+                    }
+                };
+                handleMessage(userLeftMessage);
+                broadcastMessage(userLeftMessage);
+            }
+        }
+        resetInactivityTimer();
+    });
+});
 }
 
 function handleBetPlaced(betInfo) {
@@ -430,6 +440,12 @@ function distributeCredits(winningOutcome, bets, userCredits) {
  * It calculates credit distribution and broadcasts the results.
  * @param {string} winningOutcome - The outcome that won ('a' or 'b').
  */
+/**
+ * (Host Only) Centralized function for handling winner declaration.
+ * This should be called from the host's UI (session.html) when a winner is declared.
+ * It calculates credit distribution and broadcasts the results.
+ * @param {string} winningOutcome - The outcome that won ('a' or 'b').
+ */
 function handleHostWinnerDeclared(winningOutcome) {
     if (sessionStorage.getItem('isHost') !== 'true') {
         console.error("CRITICAL: handleHostWinnerDeclared called on a non-host client.");
@@ -442,19 +458,15 @@ function handleHostWinnerDeclared(winningOutcome) {
         return;
     }
 
-    // FIX: Set the winner on the session object so the UI can find it.
     session.winner = winningOutcome;
 
     // First, broadcast the winner to all peers so their UI can update.
     broadcastMessage({ type: 'winner-declared', payload: { winner: winningOutcome } });
 
-    // --- Build userCredits for ALL members, always include host ---
-    let userCredits = {};
+    // --- Ensure host is present in session.members BEFORE distributing credits ---
     const hostId = localStorage.getItem('gwamble_persistent_user_id');
-
-    // Ensure host is in the members list for credit calculation
+    let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
     if (hostId && session.members && !session.members.find(m => m.user_id === hostId)) {
-        let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
         session.members.push({
             user_id: hostId,
             username: user.username || 'Host',
@@ -463,64 +475,50 @@ function handleHostWinnerDeclared(winningOutcome) {
         });
         console.log("Host was not in session members, added for credit calculation.");
     }
-    
-    // Populate userCredits from session members
+
+    // --- Build userCredits from session.members ---
+    let userCredits = {};
     if (session.members && session.members.length > 0) {
         session.members.forEach(m => {
-            // For host, always use the most up-to-date credits from localStorage
-            if (m.is_host) {
+            if (m.is_host || m.user_id === hostId) {
                 let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
                 userCredits[m.user_id] = user.credits !== undefined ? user.credits : 100;
             } else {
-                // For peers, use their credits stored in the session.
                 userCredits[m.user_id] = m.credits !== undefined ? m.credits : 100;
             }
         });
     }
-
-    // If for some reason userCredits is empty (e.g., no members), ensure host is still in.
     if (hostId && userCredits[hostId] === undefined) {
         let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
         userCredits[hostId] = user.credits !== undefined ? user.credits : 100;
-        console.log("Host credits added to calculation as a fallback.");
     }
 
-    console.log('Initial credits before distribution:', JSON.parse(JSON.stringify(userCredits)));
-    
     // --- Distribute credits ---
     const result = distributeCredits(winningOutcome, session.bets || [], userCredits);
     const creditChanges = result._changes;
-    delete result._changes; // Clean up the object
+    delete result._changes;
 
-    console.log('Final credits after distribution:', result);
-    console.log('Credit changes:', creditChanges);
-
-    // Update credits AND creditChanges in the host's session.members object
+    // --- Update credits AND creditChange in session.members for ALL users, including host ---
     session.members.forEach(m => {
-        if (result[m.user_id] !== undefined) {
-            m.credits = result[m.user_id];
-        }
-        // Add the creditChange to the member object for the UI leaderboard.
-        if (creditChanges && creditChanges[m.user_id] !== undefined) {
-            m.creditChange = creditChanges[m.user_id];
-        }
+        if (result[m.user_id] !== undefined) m.credits = result[m.user_id];
+        if (creditChanges && creditChanges[m.user_id] !== undefined) m.creditChange = creditChanges[m.user_id];
     });
+
     sessionStorage.setItem('gwamble', JSON.stringify(session));
 
-    // Broadcast the final credit state to all peers
-    const finalPayload = { 
-        type: 'credits-updated', 
-        payload: { 
-            userCredits: result, 
-            creditChanges 
-        } 
+    // --- Broadcast the final credit state to all peers ---
+    const finalPayload = {
+        type: 'credits-updated',
+        payload: {
+            userCredits: result,
+            creditChanges
+        }
     };
     broadcastMessage(finalPayload);
 
     // And handle it for the host's own UI
     handleMessage(finalPayload);
 }
-
 /**
  * (Peer Only) Sends a bet to the host.
  * @param {string} outcome The selected outcome ('a' or 'b').
@@ -665,8 +663,8 @@ function handleHostMessage(data) {
             break;
         case 'user-list':
             sessionData.members = payload.users.map(u => ({
-                user_id: u.peerId, // Keep peerId as the primary key for UI elements
-                persistent_id: u.persistentId, // Store the persistent ID
+                user_id: u.peerId,
+                persistent_id: u.persistentId,
                 username: u.username,
                 is_host: u.peerId === sessionStorage.getItem('gwamble_join_code')
             }));
@@ -675,10 +673,10 @@ function handleHostMessage(data) {
             if (!sessionData.members.find(m => m.user_id === payload.peerId)) {
                 sessionData.members.push({
                     user_id: payload.peerId,
-                    persistent_id: payload.persistentId, // Store the persistent ID
+                    persistent_id: payload.persistentId,
                     username: payload.username,
                     is_host: false,
-                    credits: payload.credits // --- FIX: Store credits for new user ---
+                    credits: payload.credits
                 });
             }
             break;
@@ -689,8 +687,6 @@ function handleHostMessage(data) {
             sessionData.bets = payload.bets;
             break;
         case 'winner-declared':
-            // The host now calculates credits and sends a separate 'credits-updated' message.
-            // The peer just needs to know the winner for UI purposes.
             sessionData.winner = payload.winner;
             break;
         case 'credits-updated':
@@ -698,9 +694,17 @@ function handleHostMessage(data) {
             if (sessionData && sessionData.members) {
                 Object.entries(payload.userCredits).forEach(([user_id, credits]) => {
                     let m = sessionData.members.find(m => m.user_id === user_id);
-                    if (m) {
+                    if (!m) {
+                        // --- FIX: Add missing member (e.g. host) if not present ---
+                        sessionData.members.push({
+                            user_id: user_id,
+                            username: (user_id === sessionStorage.getItem('gwamble_join_code')) ? 'Host' : 'Unknown',
+                            is_host: (user_id === sessionStorage.getItem('gwamble_join_code')),
+                            credits: credits,
+                            creditChange: payload.creditChanges ? payload.creditChanges[user_id] : 0
+                        });
+                    } else {
                         m.credits = credits;
-                        // Store the credit change for this user
                         if (payload.creditChanges && payload.creditChanges[user_id] !== undefined) {
                             m.creditChange = payload.creditChanges[user_id];
                         }
@@ -708,13 +712,9 @@ function handleHostMessage(data) {
                     // If this is me, update my localStorage too
                     const myId = localStorage.getItem('gwamble_persistent_user_id');
                     if (user_id === myId) {
-                        console.log(`UPDATING MY CREDITS: ${credits} for user ${myId}`);
                         let user = JSON.parse(localStorage.getItem('gwambleUser') || '{}');
                         user.credits = credits;
                         localStorage.setItem('gwambleUser', JSON.stringify(user));
-                        console.log('Updated localStorage:', localStorage.getItem('gwambleUser'));
-                        
-                        // FORCE UPDATE PROFILE PAGE IF IT EXISTS
                         if (typeof updateCreditsDisplay === 'function') {
                             updateCreditsDisplay();
                         }
