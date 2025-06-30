@@ -170,35 +170,8 @@ function showWinnerUI(session) {
     const userResultsDiv = document.getElementById('gwamble-user-results');
     userResultsDiv.style.display = 'block';
 
-    // --- ROBUST HOST DETECTION ---
-    let hostId = session.hostId;
-    let hostUsername = session.hostUsername;
-    let hostMember = null;
-    if (session.members && session.members.length > 0) {
-        // 1. Prefer is_host property
-        hostMember = session.members.find(m => m.is_host === true);
-        // 2. Fallback to hostId
-        if (!hostMember && hostId) {
-            hostMember = session.members.find(m => String(m.user_id) === String(hostId));
-        }
-        // 3. Fallback to hostUsername
-        if (!hostMember && hostUsername) {
-            hostMember = session.members.find(m => m.username === hostUsername);
-        }
-        // Mark only the detected host with is_host
-        session.members.forEach(m => { m.is_host = false; });
-        if (hostMember) hostMember.is_host = true;
-    }
-
     // Show correct message for host or player
     const persistentId = localStorage.getItem('gwamble_persistent_user_id');
-<<<<<<< Updated upstream
-    let isHost = false;
-    if (session.members && hostMember) {
-        const me = session.members.find(m => String(m.user_id) === String(persistentId));
-        isHost = me && me.is_host;
-    }
-=======
     // --- PATCH: Use currentSessionHost for robust host detection ---
     let hostId = null;
     let hostUsername = 'Host';
@@ -221,15 +194,14 @@ function showWinnerUI(session) {
     }
 
     const isHost = persistentId === String(hostId);
->>>>>>> Stashed changes
     if (isHost) {
         userResultsDiv.innerHTML = `<p style="font-size: 15px;">You earned credits for hosting.</p>`;
     } else {
         // Show win/loss message for player
-        const myBet = session.bets ? session.bets.find(b => String(b.user_id) === String(persistentId)) : null;
+        const myBet = session.bets ? session.bets.find(b => b.user_id === persistentId) : null;
         let net = 0;
         if (myBet) {
-            const member = session.members.find(m => String(m.user_id) === String(persistentId));
+            const member = session.members.find(m => m.user_id === persistentId);
             net = member && typeof member.creditChange === 'number' ? member.creditChange : 0;
         }
         if (net > 0) {
@@ -246,16 +218,6 @@ function showWinnerUI(session) {
     const leaderboardList = document.getElementById('gwamble-leaderboard-list');
     leaderboardList.innerHTML = '';
 
-<<<<<<< Updated upstream
-    // Show all members who have a creditChange or are the host
-    const displayMembers = session.members ? session.members.filter(m => m.creditChange !== undefined || m.is_host) : [];
-
-    // Sort: host always on top, then by creditChange desc
-    displayMembers.sort((a, b) => {
-        if (a.is_host) return -1;
-        if (b.is_host) return 1;
-        return (b.creditChange || 0) - (a.creditChange || 0);
-=======
     // --- PATCH: Robust host detection and flag ---
     let hostMember = session.members.find(m => String(m.user_id) === String(hostId));
     if (!hostMember) {
@@ -283,10 +245,12 @@ function showWinnerUI(session) {
     // FORCE host flag for robustness on all members
     session.members.forEach(m => {
         if (String(m.user_id) === String(hostId)) m.is_host = true;
->>>>>>> Stashed changes
     });
 
-    if (displayMembers.length === 0) {
+    // Filter for members who actually had a credit change.
+    const membersWithChanges = session.members ? session.members.filter(m => m.creditChange !== undefined) : [];
+
+    if (membersWithChanges.length === 0) {
         leaderboardTable.querySelector('h1').innerText = 'No Results';
         leaderboardList.innerHTML = `
             <div class="member-item" style="width:100%;opacity:50%">
@@ -299,41 +263,37 @@ function showWinnerUI(session) {
 
     leaderboardTable.querySelector('h1').innerText = 'Results';
 
-    displayMembers.forEach(member => {
+    // Sort members by who gained the most.
+    membersWithChanges.sort((a, b) => b.creditChange - a.creditChange);
+
+    membersWithChanges.forEach(member => {
         const net = member.creditChange;
+
         let netText = '';
         let netClass = '';
-        if (typeof net === 'number' && net > 0) {
-            netText = `+ <i class=\"ri-coins-fill\" style=\"margin-right: 2.5px;\"></i>${net}`;
+        if (net > 0) {
+            netText = `+ <i class="ri-coins-fill" style="margin-right: 2.5px;"></i>${net}`;
             netClass = 'gwamble-net-gain';
-        } else if (typeof net === 'number' && net < 0) {
-            netText = `<i class=\"ri-coins-fill\" style=\"margin-right: 2.5px;\"></i>${net}`;
-            netClass = 'gwamble-net-loss';
-        } else if (typeof net === 'number' && net === 0) {
-            netText = '0';
-            netClass = 'gwamble-net-loss';
-        } else if (member.is_host) {
-            netText = '-';
+        } else if (net < 0) {
+            netText = `<i class="ri-coins-fill" style="margin-right: 2.5px;"></i>${net}`;
             netClass = 'gwamble-net-loss';
         } else {
-            return;
+            // Don't show members with no change, unless they are the only one.
+            if (membersWithChanges.length > 1) return;
+            netText = '0';
+            netClass = 'gwamble-net-loss';
         }
-<<<<<<< Updated upstream
-        // Show crown for host only
-        const hostIcon = member.is_host ? `<i class=\"ri-vip-crown-fill\" style=\"margin-right: 15px; opacity: 0.7;\"></i>` : '';
-=======
 
         // --- PATCH: Use is_host for crown ---
-        const hostIcon = (currentSessionHost && member.username === currentSessionHost.username)
+const hostIcon = (currentSessionHost && member.username === currentSessionHost.username)
     ? `<i class="ri-vip-crown-fill" style="margin-right: 15px; opacity: 0.5;"></i>`
     : '';
 
->>>>>>> Stashed changes
         leaderboardList.innerHTML += `
-            <div class=\"member-item gwamble-result-row\">
-                <div class=\"gwamble-topper\">
-                    <span class=\"gwamble-result-username\">${hostIcon}${member.username}</span>
-                    <span class=\"${netClass}\">
+            <div class="member-item gwamble-result-row">
+                <div class="gwamble-topper">
+                    <span class="gwamble-result-username">${hostIcon}${member.username}</span>
+                    <span class="${netClass}">
                     ${netText}</span>
                 </div>
             </div>
