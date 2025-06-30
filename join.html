@@ -192,11 +192,36 @@ function showWinnerUI(session) {
 
     // Show correct message for host or player
     const persistentId = localStorage.getItem('gwamble_persistent_user_id');
+<<<<<<< Updated upstream
     let isHost = false;
     if (session.members && hostMember) {
         const me = session.members.find(m => String(m.user_id) === String(persistentId));
         isHost = me && me.is_host;
     }
+=======
+    // --- PATCH: Use currentSessionHost for robust host detection ---
+    let hostId = null;
+    let hostUsername = 'Host';
+    if (typeof currentSessionHost === 'object' && currentSessionHost !== null) {
+        hostId = currentSessionHost.user_id;
+        hostUsername = currentSessionHost.username;
+    } else if (session.hostId) {
+        hostId = session.hostId;
+        hostUsername = session.hostUsername || 'Host';
+    } else {
+        // fallback: try to find host in members
+        const hostMemberObj = session.members.find(m => m.is_host || m.isHost);
+        if (hostMemberObj) {
+            hostId = hostMemberObj.user_id;
+            hostUsername = hostMemberObj.username;
+        } else if (session.members.length > 0) {
+            hostId = session.members[0].user_id;
+            hostUsername = session.members[0].username;
+        }
+    }
+
+    const isHost = persistentId === String(hostId);
+>>>>>>> Stashed changes
     if (isHost) {
         userResultsDiv.innerHTML = `<p style="font-size: 15px;">You earned credits for hosting.</p>`;
     } else {
@@ -221,6 +246,7 @@ function showWinnerUI(session) {
     const leaderboardList = document.getElementById('gwamble-leaderboard-list');
     leaderboardList.innerHTML = '';
 
+<<<<<<< Updated upstream
     // Show all members who have a creditChange or are the host
     const displayMembers = session.members ? session.members.filter(m => m.creditChange !== undefined || m.is_host) : [];
 
@@ -229,6 +255,35 @@ function showWinnerUI(session) {
         if (a.is_host) return -1;
         if (b.is_host) return 1;
         return (b.creditChange || 0) - (a.creditChange || 0);
+=======
+    // --- PATCH: Robust host detection and flag ---
+    let hostMember = session.members.find(m => String(m.user_id) === String(hostId));
+    if (!hostMember) {
+        let hostCredits = 100;
+        let hostCreditChange = 0;
+        const hostBet = session.bets ? session.bets.find(b => b.user_id === hostId) : null;
+        if (hostBet && hostBet.creditChange !== undefined) {
+            hostCreditChange = hostBet.creditChange;
+        }
+        if (session.creditChanges && session.creditChanges[hostId] !== undefined) {
+            hostCreditChange = session.creditChanges[hostId];
+        }
+        if (session.userCredits && session.userCredits[hostId] !== undefined) {
+            hostCredits = session.userCredits[hostId];
+        }
+        hostMember = {
+            user_id: hostId,
+            username: hostUsername,
+            is_host: true,
+            credits: hostCredits,
+            creditChange: hostCreditChange
+        };
+        session.members.push(hostMember);
+    }
+    // FORCE host flag for robustness on all members
+    session.members.forEach(m => {
+        if (String(m.user_id) === String(hostId)) m.is_host = true;
+>>>>>>> Stashed changes
     });
 
     if (displayMembers.length === 0) {
@@ -263,8 +318,17 @@ function showWinnerUI(session) {
         } else {
             return;
         }
+<<<<<<< Updated upstream
         // Show crown for host only
         const hostIcon = member.is_host ? `<i class=\"ri-vip-crown-fill\" style=\"margin-right: 15px; opacity: 0.7;\"></i>` : '';
+=======
+
+        // --- PATCH: Use is_host for crown ---
+        const hostIcon = (currentSessionHost && member.username === currentSessionHost.username)
+    ? `<i class="ri-vip-crown-fill" style="margin-right: 15px; opacity: 0.5;"></i>`
+    : '';
+
+>>>>>>> Stashed changes
         leaderboardList.innerHTML += `
             <div class=\"member-item gwamble-result-row\">
                 <div class=\"gwamble-topper\">

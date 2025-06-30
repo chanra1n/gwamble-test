@@ -568,6 +568,9 @@ function disconnectFromHost() {
  * @param {string} hostId The 6-digit code of the host to connect to.
  * @param {function} updateCallback The function to call to update the UI.
  */
+
+var currentSessionHost = null; // Store the current host ID for the session
+
 function joinSession(hostId, updateCallback) {
     // Explicitly clear the isHost flag to ensure this client is treated as a peer.
     sessionStorage.removeItem('isHost');
@@ -607,6 +610,7 @@ function joinSession(hostId, updateCallback) {
                     credits: credits
                 }
             });
+
         });
 
         hostConnection.on('data', (data) => {
@@ -643,6 +647,8 @@ function joinSession(hostId, updateCallback) {
  * (Peer Only) Handles messages received from the host.
  * @param {object} data The data object from the host.
  */
+
+
 function handleHostMessage(data) {
     const { type, payload } = data;
 
@@ -660,6 +666,14 @@ function handleHostMessage(data) {
         case 'session-data':
             // Already handled, but we can merge just in case
             sessionData = { ...sessionData, ...payload };
+            // Initialize currentSessionHost if possible
+            if (sessionData.members) {
+                const hostMember = sessionData.members.find(m => m.is_host);
+                if (hostMember) {
+                    currentSessionHost = hostMember;
+                    console.log('currentSessionHost initialized:', currentSessionHost);
+                }
+            }
             break;
         case 'user-list':
             sessionData.members = payload.users.map(u => ({
@@ -668,6 +682,14 @@ function handleHostMessage(data) {
                 username: u.username,
                 is_host: u.peerId === sessionStorage.getItem('gwamble_join_code')
             }));
+            // Initialize currentSessionHost if possible
+            {
+                const hostMember = sessionData.members.find(m => m.is_host);
+                if (hostMember) {
+                    currentSessionHost = hostMember;
+                    console.log('currentSessionHost initialized:', currentSessionHost);
+                }
+            }
             break;
         case 'user-joined':
             if (!sessionData.members.find(m => m.user_id === payload.peerId)) {
@@ -731,7 +753,6 @@ function handleHostMessage(data) {
         uiUpdateCallback(sessionData);
     }
 }
-
 
 /**
  * (Peer Only) Sends a bet to the host.
