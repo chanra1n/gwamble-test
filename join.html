@@ -446,6 +446,23 @@ function generateQRCode(code) {
     });
 }
 
+// Patch: Listen for session-closed event from webrtc.js
+window.addEventListener('DOMContentLoaded', function() {
+    if (typeof handleSessionClosedByHost === 'function') {
+        // Listen for session-closed event from webrtc.js
+        if (typeof handleHostMessage === 'function') {
+            const origHandleHostMessage = handleHostMessage;
+            window.handleHostMessage = function(data) {
+                if (data.type === 'session-closed') {
+                    handleSessionClosedByHost();
+                    return;
+                }
+                origHandleHostMessage.apply(this, arguments);
+            };
+        }
+    }
+});
+
 </script>
 
 </html>

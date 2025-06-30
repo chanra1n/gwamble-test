@@ -92,7 +92,7 @@ function resetInactivityTimer() {
         // Check one last time before closing.
         if (peerConnections.length === 0) {
             console.log("Session timed out due to inactivity.");
-            showModalMessage("Session closed due to inactivity.");
+            showModalMessage("Gwamble closed due to inactivity.");
             
             // The closeSession function in session.html handles cleanup and redirect.
             if (typeof closeSession === 'function') {
@@ -130,7 +130,7 @@ function initializeHostAndRedirect(joinCode, onError) {
 
     peer.on('error', (err) => {
         console.error('PeerJS error:', err);
-        showModalMessage('An error occurred while trying to host the session. The join code might already be in use. Please try again.');
+        showModalMessage("That gwamble code already exists, please try a different one.");
         sessionStorage.clear();
         if (onError) {
             onError();
@@ -346,6 +346,9 @@ function distributeCredits(winningOutcome, bets, userCredits) {
 
     // --- Ensure host is always included for compensation ---
     const hostId = localStorage.getItem('gwamble_persistent_user_id');
+    let session = typeof sessionStorage !== 'undefined' ? JSON.parse(sessionStorage.getItem('gwamble')) : null;
+    let memberCount = session && session.members ? session.members.length : 1;
+    let hostCompensation = Math.max(0, memberCount - 1); // 1 credit per other member
     if (hostId) {
         if (userCredits[hostId] === undefined) {
             // Try to get host's credits from localStorage, fallback to 100
@@ -395,11 +398,11 @@ function distributeCredits(winningOutcome, bets, userCredits) {
         }
     }
 
-    // --- HOST COMPENSATION: +5 credits for hosting ---
+    // --- HOST COMPENSATION: 1 credit per other member ---
     if (hostId && userCredits[hostId] !== undefined) {
-        userCredits[hostId] += 5;
-        creditChanges[hostId] += 5;
-        console.log(`Host ${hostId} compensated +5 credits for hosting.`);
+        userCredits[hostId] += hostCompensation;
+        creditChanges[hostId] += hostCompensation;
+        console.log(`Host ${hostId} compensated +${hostCompensation} credits for hosting (${memberCount - 1} other members).`);
     }
 
     // --- Ensure host is present in session.members for credit update ---
@@ -455,6 +458,12 @@ function handleHostWinnerDeclared(winningOutcome) {
     let session = JSON.parse(sessionStorage.getItem('gwamble'));
     if (!session) {
         console.error("CRITICAL: Could not find session data for credit distribution.");
+        return;
+    }
+
+    // Only allow settlement if there is at least 1 other member (host + 1)
+    if (!session.members || session.members.length < 2) {
+        showModalMessage("Can't end this gwamble yet! Wait for at least one other person to join.");
         return;
     }
 
@@ -620,15 +629,12 @@ function joinSession(hostId, updateCallback) {
 
         hostConnection.on('error', (err) => {
             console.error('Connection error:', err);
-            showModalMessage('Failed to connect to host. The session may be full or no longer exist.');
+            showModalMessage("Couldn't join that gwamble, sorry. Something went wrong.");
             window.location.href = 'index.html';
         });
 
         hostConnection.on('close', () => {
-            console.log('Connection to host closed.');
-            showModalMessage('This gwamble is over! You have been disconnected.');
-            sessionStorage.clear();
-            window.location.href = 'index.html';
+            handleSessionClosedByHost();
         });
     });
 
@@ -637,7 +643,7 @@ function joinSession(hostId, updateCallback) {
         if (err.type === 'peer-unavailable') {
             showModalMessage(`Couldn't join that gwamble, sorry. Something went wrong.`);
         } else {
-            showModalMessage('An error occurred. Could not join the session.');
+            showModalMessage(`Couldn't join that gwamble, sorry. Something went wrong.`);
         }
         window.location.href = 'index.html';
     });
@@ -860,3 +866,46 @@ window.addEventListener('beforeunload', () => {
         peer.destroy();
     }
 });
+
+// --- SESSION END/RELOAD HANDLING ---
+// Host: broadcast session-closed to all peers and show modal
+function closeSessionForHost() {
+    broadcastMessage({ type: 'session-closed' });
+    if (peer) peer.destroy();
+    sessionStorage.clear();
+    showModalMessage('You ended the gwamble!');
+    setTimeout(() => { window.location.replace('index.html'); }, 1500);
+}
+
+// Peer: handle session-closed event
+function handleSessionClosedByHost() {
+    sessionStorage.clear();
+    showModalMessage('The host left the gwamble, sorry.');
+    setTimeout(() => { window.location.replace('index.html'); }, 2000);
+}
+
+// --- Patch host/peer connection close to trigger session end ---
+// Patch for host's session.html closeSession
+// (Call closeSessionForHost instead of just clearing session)
+if (typeof closeSession === 'function') {
+    const originalCloseSession = closeSession;
+    closeSession = function() {
+        console.log("closeSession called, triggering session-closed broadcast.");
+        closeSessionForHost();
+    };
+}
+
+// Patch joinSession peer connection close handler
+hostConnection.on('close', () => {
+    handleSessionClosedByHost();
+});
+
+// --- Listen for session-closed event in peer message handler ---
+const originalHandleHostMessage = handleHostMessage;
+handleHostMessage = function(data) {
+    if (data.type === 'session-closed') {
+        handleSessionClosedByHost();
+        return;
+    }
+    originalHandleHostMessage.apply(this, arguments);
+};

@@ -232,6 +232,13 @@ function setupHostUI() {
 
 // Host's function to declare a winner.
 function declareWinner(outcome) {
+    // Check for at least 1 other member before allowing settlement
+    const sessionData = sessionStorage.getItem('gwamble');
+    let session = sessionData ? JSON.parse(sessionData) : null;
+    if (!session || !session.members || session.members.length < 2) {
+        showModalMessage("Can't end this gwamble yet! Wait for at least one other person to join.");
+        return;
+    }
     console.log(`Host is declaring winner: ${outcome}. Calling centralized handler.`);
     // This function in webrtc.js now handles all logic:
     // - Broadcasting winner
@@ -333,10 +340,7 @@ function showWinnerUI(session) {
 
 // Host's function to close the session for everyone.
 function closeSession() {
-    broadcastMessage({ type: 'session-closed' });
-    if (peer) peer.destroy();
-    sessionStorage.clear();
-    window.location.replace('index.html');
+    closeSessionForHost(); // Now uses the improved handler in webrtc.js
 }
 
 // Host's function to kick a peer.
