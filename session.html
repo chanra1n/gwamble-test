@@ -157,7 +157,19 @@
                 </button>
             </div>
         </div>
-    
+    </div>
+    <!-- Add custom modal for unified modal messages -->
+    <div id="gwamble-uikit-modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical" style="border-radius:16px; min-width:260px; max-width:90vw; text-align:center;">
+            <div id="gwamble-uikit-modal-content" style="margin-bottom:24px; font-size:1.1em;"></div>
+            <button class="uk-button uk-button-default" type="button" onclick="UIkit.modal('#gwamble-uikit-modal').hide()">
+            <i class="ri-check-fill"></i>
+            <span>
+                OK
+            </span>
+            </button>
+        </div>
+    </div>
 
 </body>
 <script src="js/lib/uikit.js"></script>
@@ -236,7 +248,7 @@ function declareWinner(outcome) {
     const sessionData = sessionStorage.getItem('gwamble');
     let session = sessionData ? JSON.parse(sessionData) : null;
     if (!session || !session.members || session.members.length < 2) {
-        showModalMessage("Can't end this gwamble yet! Wait for at least one other person to join.");
+        showModalMessage("You need at least one other person to settle this gwamble.");
         return;
     }
     console.log(`Host is declaring winner: ${outcome}. Calling centralized handler.`);

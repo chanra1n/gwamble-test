@@ -463,7 +463,7 @@ function handleHostWinnerDeclared(winningOutcome) {
 
     // Only allow settlement if there is at least 1 other member (host + 1)
     if (!session.members || session.members.length < 2) {
-        showModalMessage("Can't end this gwamble yet! Wait for at least one other person to join.");
+        showModalMessage("You need at least one other person to settle this gwamble.");
         return;
     }
 
@@ -847,8 +847,21 @@ function handleMessage(data) {
     window.dispatchEvent(event);
 }
 
-// Show a modal message (UIkit or fallback to alert)
+// Show a modal message (UIkit, custom modal, or fallback to alert)
 function showModalMessage(msg) {
+    // Try custom modal first (index.html style)
+    var modalContent = document.getElementById('gwamble-uikit-modal-content');
+    var modal = document.getElementById('gwamble-uikit-modal');
+    if (modalContent && modal) {
+        modalContent.innerHTML = msg;
+        if (window.UIkit && UIkit.modal) {
+            UIkit.modal('#gwamble-uikit-modal').show();
+        } else {
+            modal.style.display = 'flex';
+        }
+        return;
+    }
+    // Fallback to UIkit modal
     if (window.UIkit && UIkit.modal) {
         UIkit.modal.alert(`<div style='font-family:Lexend;font-size:20px;text-align:center;'>${msg}</div>`);
     } else {
@@ -873,7 +886,6 @@ function closeSessionForHost() {
     broadcastMessage({ type: 'session-closed' });
     if (peer) peer.destroy();
     sessionStorage.clear();
-    showModalMessage('You ended the gwamble!');
     setTimeout(() => { window.location.replace('index.html'); }, 1500);
 }
 

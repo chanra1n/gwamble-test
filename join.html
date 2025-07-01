@@ -129,6 +129,19 @@
             </div>
         </div>
 
+    </div>
+    <!-- Add custom modal for unified modal messages -->
+    <div id="gwamble-uikit-modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical" style="border-radius:16px; min-width:260px; max-width:90vw; text-align:center;">
+            <div id="gwamble-uikit-modal-content" style="margin-bottom:24px; font-size:1.1em;"></div>
+            <button class="uk-button uk-button-default" type="button" onclick="UIkit.modal('#gwamble-uikit-modal').hide()">
+            <i class="ri-check-fill"></i>
+            <span>
+                OK
+            </span>
+            </button>
+        </div>
+    </div>
 </body>
 <script src="js/lib/uikit.js"></script>
 <script src="js/lib/qrcode.js"></script>
